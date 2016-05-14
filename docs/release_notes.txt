@@ -1,0 +1,15 @@
+** Changes made to MEICEM - My Experiments In Computational ElectroMagnetics **
+
+ - Version 0.0:
+   -- Started project
+   -- First version of makefile
+
+ - Version 0.0.1
+   -- Start work on a 3D point container
+
+ - Version 0.0.2
+   -- Basic (draft) 3D point container implemented. Once test system is running, need to clean and refactor.
+
+ - Version 0.0.3
+   -- Implemented tests for Points3DContainer (8 tests).
+   -- Code refactoring completed (round 1)
