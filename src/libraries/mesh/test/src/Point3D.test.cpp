@@ -1,5 +1,4 @@
 #include "Point3D.hpp"
-#include <iostream>
 
 //#define BOOST_TEST_DYN_LINK
 #include <boost/test/included/unit_test.hpp>

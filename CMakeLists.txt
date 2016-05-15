@@ -7,7 +7,7 @@ if(UNIX)
 endif(UNIX)
 
 # Get some debug info
-SET(CMAKE_VERBOSE_MAKEFILE on )
+SET(CMAKE_VERBOSE_MAKEFILE on )
 set(CTEST_OUTPUT_ON_FAILURE TRUE )
 
 #CONFIGURATION OF THE PROJECT
@@ -28,6 +28,8 @@ target_link_libraries(meicem ${Boost_LIBRARIES})
 # Local libraries
 target_link_libraries(meicem Point3DContainer)
 target_link_libraries(meicem Point3D)
+#target_link_libraries(meicem PointContainer)
+#target_link_libraries(meicem Triangle)
 
 
 # Tests

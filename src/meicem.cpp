@@ -10,8 +10,8 @@ int main( int argc, char *argv[] )
 {
     Point3DContainer L1;
     Point3D p1;
-    Point3DContainer::SizeType ii;
-    Point3DContainer::SizeType count {50};
+    int ii;
+    int count {50};
 
     // Add a bunch of points
     for ( ii=0; ii < count ; ++ii )

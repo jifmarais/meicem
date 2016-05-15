@@ -7,5 +7,11 @@ target_include_directories(Point3DContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/i
 add_library(Point3D ${CMAKE_CURRENT_SOURCE_DIR}/src/Point3D.cpp)
 target_include_directories(Point3D PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_library(TriangleContainer ${CMAKE_CURRENT_SOURCE_DIR}/src/TriangleContainer.cpp)
+target_include_directories(TriangleContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_library(Triangle ${CMAKE_CURRENT_SOURCE_DIR}/src/Triangle.cpp)
+target_include_directories(Triangle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 
 
