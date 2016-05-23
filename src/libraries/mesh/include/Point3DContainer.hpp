@@ -25,9 +25,9 @@ class Point3DContainer
 
         void        setTolerance(double);
         double      getTolerance() const;
-        SizeType    addPoint(const Point3D&);
-        SizeType    findPoint(const Point3D&) const;
-        Point3D     getPointAt(const SizeType) const;
+        SizeType    add(const Point3D&);
+        SizeType    find(const Point3D&) const;
+        Point3D     at(const SizeType) const;
         SizeType    size() const;
 
     protected:

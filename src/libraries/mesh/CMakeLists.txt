@@ -13,5 +13,8 @@ target_include_directories(TriangleContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/
 add_library(Triangle ${CMAKE_CURRENT_SOURCE_DIR}/src/Triangle.cpp)
 target_include_directories(Triangle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_library(LabelContainer ${CMAKE_CURRENT_SOURCE_DIR}/src/LabelContainer.cpp)
+target_include_directories(LabelContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 
 

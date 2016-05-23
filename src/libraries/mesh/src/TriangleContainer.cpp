@@ -23,11 +23,11 @@ TriangleContainer::SizeType TriangleContainer::add(const Triangle t)
     Point3DContainer::SizeType pIndex;
     index = m_node1.size();
 
-    pIndex = m_pointContainer.addPoint(t.n1());
+    pIndex = m_pointContainer.add(t.n1());
     m_node1.push_back(pIndex);
-    pIndex = m_pointContainer.addPoint(t.n2());
+    pIndex = m_pointContainer.add(t.n2());
     m_node2.push_back(pIndex);
-    pIndex = m_pointContainer.addPoint(t.n3());
+    pIndex = m_pointContainer.add(t.n3());
     m_node3.push_back(pIndex);
     return index;
 }
@@ -66,16 +66,16 @@ TriangleContainer::SizeType TriangleContainer::find(const TriangleContainer::Siz
 
 TriangleContainer::SizeType TriangleContainer::find(const Triangle t) const
 {
-    return find(m_pointContainer.findPoint(t.n1()),
-                m_pointContainer.findPoint(t.n2()),
-                m_pointContainer.findPoint(t.n3()));
+    return find(m_pointContainer.find(t.n1()),
+                m_pointContainer.find(t.n2()),
+                m_pointContainer.find(t.n3()));
 }
 
 Triangle TriangleContainer::getAt(const SizeType index) const
 {
-    Point3D p1 = m_pointContainer.getPointAt(m_node1[index]);
-    Point3D p2 = m_pointContainer.getPointAt(m_node2[index]);
-    Point3D p3 = m_pointContainer.getPointAt(m_node3[index]);
+    Point3D p1 = m_pointContainer.at(m_node1[index]);
+    Point3D p2 = m_pointContainer.at(m_node2[index]);
+    Point3D p3 = m_pointContainer.at(m_node3[index]);
     return Triangle {p1, p2, p3};
 }
 

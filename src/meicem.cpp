@@ -18,7 +18,7 @@ int main( int argc, char *argv[] )
     {
         p1.set(1.0*ii, 2.0*ii, 3.0*ii);
 
-        L1.addPoint(p1);
+        L1.add(p1);
     }
 
     // Points should not be added multiple times 
@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
     {
         p1.set(1.0*ii, 2.0*ii, 3.0*ii);
 
-        L1.addPoint(p1);
+        L1.add(p1);
     }
 
     std::cout << "Hello world!" << std::endl;

@@ -30,10 +30,10 @@ double Point3DContainer::getTolerance() const
     return m_tolerance;
 }
 
-Point3DContainer::SizeType Point3DContainer::addPoint(const Point3D &p)
+Point3DContainer::SizeType Point3DContainer::add(const Point3D &p)
 {
     // Check if the point is already in the container
-    SizeType index = findPoint(p);
+    SizeType index = find(p);
     if ( index == Point3DContainer::invalidIndex )
     {
         index = m_size;
@@ -46,8 +46,10 @@ Point3DContainer::SizeType Point3DContainer::addPoint(const Point3D &p)
     return index;
 }
 
-Point3DContainer::SizeType Point3DContainer::findPoint(const Point3D &p) const
+Point3DContainer::SizeType Point3DContainer::find(const Point3D &p) const
 {
+    // CRC:JIF: Would it be better to try to use std::find for this instead of a FOR loop?
+
     for ( SizeType ii = 0; ii < m_size ; ++ii )
     {
         if ( isEqual(p.x(), m_x[ii]) )
@@ -64,7 +66,7 @@ Point3DContainer::SizeType Point3DContainer::findPoint(const Point3D &p) const
     return Point3DContainer::invalidIndex;    
 }
 
-Point3D Point3DContainer::getPointAt(SizeType index) const
+Point3D Point3DContainer::at(SizeType index) const
 {
     assert(index <= m_size);
 

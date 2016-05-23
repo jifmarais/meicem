@@ -6,6 +6,7 @@
 #include "Point3DContainer.test.cpp"
 #include "TriangleContainer.test.cpp"
 #include "Triangle.test.cpp"
+#include "LabelContainer.test.cpp"
 
 //EOF
 

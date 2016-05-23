@@ -35,4 +35,5 @@ target_link_libraries(meicem Point3D)
 # Tests
 enable_testing ()
 add_test (NAME mesh COMMAND mesh.test)
+add_test (NAME reader_nastran COMMAND reader_nastran.test)
 
