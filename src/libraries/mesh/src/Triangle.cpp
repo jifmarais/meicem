@@ -2,13 +2,13 @@
 
 Triangle::Triangle()
 {
-    Point3D p {0.0, 0.0, 0.0};
+    Node p {0.0, 0.0, 0.0};
     set(p , p, p);
 }
 
-Triangle::Triangle(Point3D n1,
-                   Point3D n2,
-                   Point3D n3)
+Triangle::Triangle(Node n1,
+                   Node n2,
+                   Node n3)
 {
    set(n1, n2, n3);
 }
@@ -18,9 +18,9 @@ Triangle::~Triangle()
     //dtor
 }
 
-void Triangle::set(Point3D n1,
-                   Point3D n2,
-                   Point3D n3)
+void Triangle::set(Node n1,
+                   Node n2,
+                   Node n3)
 {
     m_nodes[0] = n1;
     m_nodes[1] = n2;
@@ -49,17 +49,17 @@ bool operator!=(const Triangle& lhs, const Triangle& rhs)
     return lhs.operator!=(rhs);
 }
 
-Point3D Triangle::n1() const
+Node Triangle::n1() const
 {
     return m_nodes[0];
 }
 
-Point3D Triangle::n2() const
+Node Triangle::n2() const
 {
     return m_nodes[1];
 }
 
-Point3D Triangle::n3() const
+Node Triangle::n3() const
 {
     return m_nodes[2];
 }

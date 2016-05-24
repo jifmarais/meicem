@@ -2,7 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <cmath>
-#include <iostream>  // For text output (should be removed eventually)
+#include <iostream>
 #include <assert.h>
 #include <boost/algorithm/string.hpp>
 #include "Triangle.hpp"
@@ -29,7 +29,7 @@ void NastranReader::setTriangleContainer(TriangleContainer *triangles)
     m_TriangleContainer = triangles;
 }
 
-bool NastranReader::hasTriangleContainer()
+bool NastranReader::hasTriangleContainer() const
 {
     return m_TriangleContainer != nullptr;
 }
@@ -39,7 +39,7 @@ void NastranReader::unsetTriangleContainer()
    m_TriangleContainer = nullptr;
 }
 
-std::vector<std::string> NastranReader::getNextLineOfTokens(std::ifstream &file)
+std::vector<std::string> NastranReader::getNextLineOfTokens(std::ifstream &file) const
 {
     std::string line;
     std::vector<std::string> tokens;
@@ -68,7 +68,7 @@ std::vector<std::string> NastranReader::getNextLineOfTokens(std::ifstream &file)
     return tokens;
 }
 
-bool NastranReader::importModel()
+bool NastranReader::importModel() const
 {
     /*
       NASTRAN Statement (optional)
@@ -88,8 +88,8 @@ bool NastranReader::importModel()
     std::vector<std::string> tokens1;
     std::vector<std::string> tokens2;
 
-    Point3D p;
-    Point3DContainer pContainer;
+    Node p;
+    NodeContainer pContainer;
     LabelContainer lContainer;
 
     // Ensure that file exists
@@ -109,7 +109,7 @@ bool NastranReader::importModel()
                 double y = nasStringToDouble(tokens1.at(4));
                 double z = nasStringToDouble(tokens1.at(5));
                 p.set(x, y, z);
-                Point3DContainer::SizeType index = pContainer.add(p);
+                NodeContainer::SizeType index = pContainer.add(p);
                 lContainer.add(tokens1.at(1), index);
             }
             else if ( tokens1.at(0) == "GRID*" )
@@ -119,7 +119,7 @@ bool NastranReader::importModel()
                 double y = nasStringToDouble(tokens1.at(4));
                 double z = nasStringToDouble(tokens2.at(1));
                 p.set(x, y, z);
-                Point3DContainer::SizeType index = pContainer.add(p);
+                NodeContainer::SizeType index = pContainer.add(p);
                 lContainer.add(tokens1.at(1), index);
             }
         }
@@ -147,9 +147,9 @@ bool NastranReader::importModel()
                 if ( hasTriangleContainer() )
                 {
                     Triangle t;
-                    std::vector<Point3DContainer::SizeType> p1IndexList = lContainer.find(tokens1.at(3));
-                    std::vector<Point3DContainer::SizeType> p2IndexList = lContainer.find(tokens1.at(4));
-                    std::vector<Point3DContainer::SizeType> p3IndexList = lContainer.find(tokens1.at(5));
+                    std::vector<NodeContainer::SizeType> p1IndexList = lContainer.find(tokens1.at(3));
+                    std::vector<NodeContainer::SizeType> p2IndexList = lContainer.find(tokens1.at(4));
+                    std::vector<NodeContainer::SizeType> p3IndexList = lContainer.find(tokens1.at(5));
                     assert(p1IndexList.size() == 1);
                     assert(p2IndexList.size() == 1);
                     assert(p3IndexList.size() == 1);
@@ -161,6 +161,7 @@ bool NastranReader::importModel()
             }
             else if( tokens1.at(0) == "CTRIA3*" )
             {
+                // TODO
 //                tokens2 = getNextLineOfTokens(file);
 
 //                std::cout << tokens1.at(0) << std::endl;
@@ -182,7 +183,7 @@ bool NastranReader::importModel()
     return false;
 }
 
-void NastranReader::printTokens(std::vector<std::string>& tokens)
+void NastranReader::printTokens(const std::vector<std::string>& tokens) const
 {
     int ii = 0;
     std::vector<std::string>::const_iterator token;
@@ -194,7 +195,7 @@ void NastranReader::printTokens(std::vector<std::string>& tokens)
     std::cout << std::endl;
 }
 
-void NastranReader::removeComments(std::string &line)
+void NastranReader::removeComments(std::string &line) const
 {
     std::string::size_type commentStartPossition = line.find("$");
     if (commentStartPossition != std::string::npos){
@@ -213,7 +214,7 @@ void NastranReader::removeComments(std::string &line)
 
      The numbers above can also be preceded with a + or a -.
    */
-double NastranReader::nasStringToDouble(std::string token)
+double NastranReader::nasStringToDouble(std::string token) const
 {
     double real;
 
@@ -259,8 +260,6 @@ double NastranReader::nasStringToDouble(std::string token)
         significandString = manipulatedToken;
         exponentString = "0";
     }
-//    std::cout << "||" << significandString << "||" << std::endl;
-//    std::cout << "||" << exponentString << "||" << std::endl;
 
     significand = significand * std::stod(significandString);
     exponent = exponent * std::stoi(exponentString);
@@ -275,7 +274,7 @@ double NastranReader::nasStringToDouble(std::string token)
      large: 1x8, 4x16. Field 1 must have an asterisk following the character string
      free: each line entry must be separated by a comma
   */
-NastranReader::returnResult NastranReader::determineLineFormat(const std::string line, lineFormat &format )
+NastranReader::returnResult NastranReader::determineLineFormat(std::string line, lineFormat & format ) const
 {
     std::string::size_type foundAsterisk = line.find("*");
     std::string::size_type foundComma = line.find(",");
@@ -305,7 +304,7 @@ NastranReader::returnResult NastranReader::determineLineFormat(const std::string
   */
 NastranReader::returnResult NastranReader::tokenizeLine(const std::string line,
                                                         const lineFormat format,
-                                                        std::vector<std::string> &tokens )
+                                                        std::vector<std::string> &tokens ) const
 {
     std::string field;
 
@@ -317,9 +316,7 @@ NastranReader::returnResult NastranReader::tokenizeLine(const std::string line,
         std::string::size_type lowerBoundary = 0;
         for (unsigned int i=0; line.size() > lowerBoundary ; ++i) {
             field = line.substr( lowerBoundary,fieldLength[i] );
-//            std::cout << ":" << field << ":" << field.size() << std::endl;
             boost::algorithm::trim(field);
-//            std::cout << ":" << field << ":" << field.size() << std::endl;
             tokens.push_back( field );
             lowerBoundary += fieldLength[i];
         }

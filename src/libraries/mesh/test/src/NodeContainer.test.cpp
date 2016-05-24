@@ -1,23 +1,23 @@
-#include "Point3D.hpp"
-#include "Point3DContainer.hpp"
+#include "Node.hpp"
+#include "NodeContainer.hpp"
 
 //#define BOOST_TEST_DYN_LINK
 #include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_SUITE(Point3DContainer_BasicTests)
+BOOST_AUTO_TEST_SUITE(NodeContainer_BasicTests)
 
 BOOST_AUTO_TEST_CASE(constructor)
 {
-    Point3DContainer L1;
+    NodeContainer L1;
     BOOST_CHECK_EQUAL(L1.size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(adds)
 {
-    Point3DContainer L1;
-    Point3D p1;
-    Point3DContainer::SizeType ii;
-    Point3DContainer::SizeType count {50};
+    NodeContainer L1;
+    Node p1;
+    NodeContainer::SizeType ii;
+    NodeContainer::SizeType count {50};
 
     // Add a bunch of points
     for ( ii=0; ii < count ; ++ii )
@@ -38,11 +38,11 @@ BOOST_AUTO_TEST_CASE(adds)
 
 BOOST_AUTO_TEST_CASE(at)
 {
-    Point3DContainer L1;
-    Point3D p1;
-    Point3D p2;
-    Point3DContainer::SizeType index;
-    for ( Point3DContainer::SizeType ii=0; ii <= 4 ; ++ii )
+    NodeContainer L1;
+    Node p1;
+    Node p2;
+    NodeContainer::SizeType index;
+    for ( NodeContainer::SizeType ii=0; ii <= 4 ; ++ii )
     {
         p1.set(1.0*ii, 2.0*ii, 3.0*ii);
         index = L1.add(p1);
@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE(at)
 
 BOOST_AUTO_TEST_CASE(findPoint)
 {
-    Point3DContainer L1;
-    Point3D p1;
-    Point3DContainer::SizeType index;
-    for ( Point3DContainer::SizeType ii=0; ii <= 4 ; ++ii )
+    NodeContainer L1;
+    Node p1;
+    NodeContainer::SizeType index;
+    for ( NodeContainer::SizeType ii=0; ii <= 4 ; ++ii )
     {
         p1.set(1.0*ii, 2.0*ii, 3.0*ii);
         index = L1.add(p1);
@@ -73,12 +73,12 @@ BOOST_AUTO_TEST_CASE(findPoint)
     BOOST_CHECK_MESSAGE(L1.find(p1) == 2, "Expecting to find index 2.");
 
     p1.set(1.0, 1.0, 1.0);
-    BOOST_CHECK_MESSAGE(L1.find(p1) == Point3DContainer::invalidIndex, "Not expecting a valid index to be returned." );
+    BOOST_CHECK_MESSAGE(L1.find(p1) == NodeContainer::invalidIndex, "Not expecting a valid index to be returned." );
 }
 
 BOOST_AUTO_TEST_CASE(SetgetTolerance)
 {
-    Point3DContainer L1;
+    NodeContainer L1;
 
     BOOST_CHECK_MESSAGE(L1.getTolerance() == 1e-6, "The default tolerance is not 1e-6.");
 
@@ -88,14 +88,14 @@ BOOST_AUTO_TEST_CASE(SetgetTolerance)
 
 BOOST_AUTO_TEST_CASE(ToleranceLimitsadd)
 {
-    Point3DContainer L1;
-    Point3DContainer::SizeType index;
-    Point3DContainer::SizeType indexReference;
+    NodeContainer L1;
+    NodeContainer::SizeType index;
+    NodeContainer::SizeType indexReference;
 
     double tolerance = 1e-2;
     L1.setTolerance(tolerance);
 
-    Point3D p1 {1.0, 2.0, 3.0};
+    Node p1 {1.0, 2.0, 3.0};
     index = L1.add(p1);
     BOOST_CHECK_EQUAL(L1.size(), 1);
     indexReference = index;
@@ -134,14 +134,14 @@ BOOST_AUTO_TEST_CASE(ToleranceLimitsadd)
 
 BOOST_AUTO_TEST_CASE(ToleranceLimitsfindPoint)
 {
-    Point3DContainer L1;
-    Point3DContainer::SizeType index;
-    Point3DContainer::SizeType indexReference;
+    NodeContainer L1;
+    NodeContainer::SizeType index;
+    NodeContainer::SizeType indexReference;
 
     double tolerance = 1e-6;
     L1.setTolerance(tolerance);
 
-    Point3D p1;
+    Node p1;
     p1.set(1.0, 2.0, 3.0);
     index = L1.add(p1);
     BOOST_CHECK_EQUAL(L1.size(), 1);
@@ -157,13 +157,13 @@ BOOST_AUTO_TEST_CASE(ToleranceLimitsfindPoint)
     BOOST_CHECK_MESSAGE(L1.find(p1) == indexReference, "Incorrect index returned.");
 
     p1.set(1.0 + 1.01*tolerance, 2.0, 3.0);
-    BOOST_CHECK_MESSAGE(L1.find(p1) == Point3DContainer::invalidIndex, "Not expecting a valid index to be returned.");
+    BOOST_CHECK_MESSAGE(L1.find(p1) == NodeContainer::invalidIndex, "Not expecting a valid index to be returned.");
 
     p1.set(1.0, 2.0 + 1.01*tolerance, 3.0);
-    BOOST_CHECK_MESSAGE(L1.find(p1) == Point3DContainer::invalidIndex, "Not expecting a valid index to be returned.");
+    BOOST_CHECK_MESSAGE(L1.find(p1) == NodeContainer::invalidIndex, "Not expecting a valid index to be returned.");
 
     p1.set(1.0, 2.0, 3.0 + 1.01*tolerance);
-    BOOST_CHECK_MESSAGE(L1.find(p1) == Point3DContainer::invalidIndex, "Not expecting a valid index to be returned.");
+    BOOST_CHECK_MESSAGE(L1.find(p1) == NodeContainer::invalidIndex, "Not expecting a valid index to be returned.");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

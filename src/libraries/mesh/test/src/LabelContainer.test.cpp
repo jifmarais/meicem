@@ -30,6 +30,34 @@ BOOST_AUTO_TEST_CASE(findMissingLabels)
     BOOST_CHECK_MESSAGE(iList.size() == 0, "The list should by empty.");
 }
 
+BOOST_AUTO_TEST_CASE(addIndexMultipleTimes)
+{
+    LabelContainer lContainer;
+    lContainer.add("label1", 1);
+    lContainer.add("label1", 1);
+
+    std::vector<LabelContainer::SizeType> iList;
+    iList = lContainer.find("label1");
+    BOOST_CHECK_MESSAGE(iList.size() == 1, "The list should only contain one element.");
+    BOOST_CHECK_MESSAGE(iList[0] == 1, "The index should be 1.");
+}
+
+BOOST_AUTO_TEST_CASE(addIndexInMultipleLabel)
+{
+    LabelContainer lContainer;
+    lContainer.add("label1", 1);
+    lContainer.add("label2", 1);
+
+    std::vector<LabelContainer::SizeType> iList;
+    iList = lContainer.find("label1");
+    BOOST_CHECK_MESSAGE(iList.size() == 1, "The list should only contain one element.");
+    BOOST_CHECK_MESSAGE(iList[0] == 1, "The index should be 1.");
+
+    iList = lContainer.find("label2");
+    BOOST_CHECK_MESSAGE(iList.size() == 1, "The list should only contain one element.");
+    BOOST_CHECK_MESSAGE(iList[0] == 1, "The index should be 1.");
+}
+
 BOOST_AUTO_TEST_CASE(findIndicesThatExist)
 {
     LabelContainer lContainer;

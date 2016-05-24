@@ -1,37 +1,23 @@
 #pragma once
-#include "Point3D.hpp"
-
-/**
- * @file Triangle.hpp
- * Write description of source file here for dOxygen.
- *
- * @brief Can use "brief" tag to explicitly generate comments for file documentation.
- *
- * @author Me 
- * @version 1.69 
- */
+#include "Node.hpp"
 
 class Triangle
 {
     public:
 
         Triangle();
-        Triangle(Point3D,
-                 Point3D,
-                 Point3D);
-        virtual     ~Triangle();
+        Triangle(Node, Node, Node);
+        virtual  ~Triangle();
 
-        void        set(Point3D,
-                       Point3D,
-                       Point3D);
-        bool        operator==(const Triangle& rhs) const;
-        bool        operator!=(const Triangle& rhs) const;
-        Point3D     n1() const;
-        Point3D     n2() const;
-        Point3D     n3() const;
+        void    set(Node, Node, Node);
+        bool    operator==(const Triangle& rhs) const;
+        bool    operator!=(const Triangle& rhs) const;
+        Node	n1() const;
+        Node	n2() const;
+        Node    n3() const;
 
     protected:
     private:
-        Point3D     m_nodes [3];
+        Node    m_nodes [3];
 };
 

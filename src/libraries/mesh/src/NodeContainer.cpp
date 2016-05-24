@@ -1,21 +1,21 @@
-#include "Point3DContainer.hpp"
+#include "NodeContainer.hpp"
 #include <algorithm>
 #include <assert.h>
 #include <cmath>
 //#include <iostream>
 
-Point3DContainer::Point3DContainer()
+NodeContainer::NodeContainer()
 {
     m_size = 0;
     m_tolerance = 1e-6;
 }
 
-Point3DContainer::~Point3DContainer()
+NodeContainer::~NodeContainer()
 {
     //dtor
 }
 
-void Point3DContainer::setTolerance(double tolerance)
+void NodeContainer::setTolerance(double tolerance)
 {
     assert(tolerance > 0);
 
@@ -25,16 +25,16 @@ void Point3DContainer::setTolerance(double tolerance)
     m_tolerance = tolerance;
 }
 
-double Point3DContainer::getTolerance() const
+double NodeContainer::getTolerance() const
 {
     return m_tolerance;
 }
 
-Point3DContainer::SizeType Point3DContainer::add(const Point3D &p)
+NodeContainer::SizeType NodeContainer::add(const Node &p)
 {
     // Check if the point is already in the container
     SizeType index = find(p);
-    if ( index == Point3DContainer::invalidIndex )
+    if ( index == NodeContainer::invalidIndex )
     {
         index = m_size;
         m_x.push_back(p.x());
@@ -46,7 +46,7 @@ Point3DContainer::SizeType Point3DContainer::add(const Point3D &p)
     return index;
 }
 
-Point3DContainer::SizeType Point3DContainer::find(const Point3D &p) const
+NodeContainer::SizeType NodeContainer::find(const Node &p) const
 {
     // CRC:JIF: Would it be better to try to use std::find for this instead of a FOR loop?
 
@@ -63,25 +63,25 @@ Point3DContainer::SizeType Point3DContainer::find(const Point3D &p) const
             }
         }
     }
-    return Point3DContainer::invalidIndex;    
+    return NodeContainer::invalidIndex;
 }
 
-Point3D Point3DContainer::at(SizeType index) const
+Node NodeContainer::at(SizeType index) const
 {
     assert(index <= m_size);
 
-    Point3D p;
+    Node p;
     p.set(m_x[index], m_y[index], m_z[index]);
     return p;
 }
 
 
-Point3DContainer::SizeType Point3DContainer::size() const
+NodeContainer::SizeType NodeContainer::size() const
 {
     return m_size;
 }
 
-bool Point3DContainer::isEqual(double n1, double n2) const
+bool NodeContainer::isEqual(double n1, double n2) const
 {
     return std::abs(n1 - n2) <= m_tolerance;
 }

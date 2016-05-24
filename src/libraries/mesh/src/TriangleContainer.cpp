@@ -1,7 +1,7 @@
 #include "TriangleContainer.hpp"
 #include <assert.h>
 
-TriangleContainer::TriangleContainer(Point3DContainer& container)
+TriangleContainer::TriangleContainer(NodeContainer& container)
    : m_pointContainer(container)
 {
     m_tolerance = 1e-6;
@@ -12,15 +12,15 @@ TriangleContainer::~TriangleContainer()
     //dtor
 }
 
-Point3DContainer& TriangleContainer::getPointContainer() const
+NodeContainer& TriangleContainer::getPointContainer() const
 {
     return m_pointContainer;
 }
 
-TriangleContainer::SizeType TriangleContainer::add(const Triangle t)
+TriangleContainer::SizeType TriangleContainer::add(Triangle t)
 {
-    Point3DContainer::SizeType index;
-    Point3DContainer::SizeType pIndex;
+    NodeContainer::SizeType index;
+    NodeContainer::SizeType pIndex;
     index = m_node1.size();
 
     pIndex = m_pointContainer.add(t.n1());
@@ -32,9 +32,7 @@ TriangleContainer::SizeType TriangleContainer::add(const Triangle t)
     return index;
 }
 
-TriangleContainer::SizeType TriangleContainer::find(const TriangleContainer::SizeType i1,
-                                                    const TriangleContainer::SizeType i2,
-                                                    const TriangleContainer::SizeType i3) const
+TriangleContainer::SizeType TriangleContainer::find(SizeType i1, SizeType i2, SizeType i3) const
 {
     SizeType index = invalidIndex;
     for (SizeType ii = 0; ii < size() ; ++ii)
@@ -64,30 +62,30 @@ TriangleContainer::SizeType TriangleContainer::find(const TriangleContainer::Siz
     return index;
 }
 
-TriangleContainer::SizeType TriangleContainer::find(const Triangle t) const
+TriangleContainer::SizeType TriangleContainer::find(Triangle t) const
 {
     return find(m_pointContainer.find(t.n1()),
                 m_pointContainer.find(t.n2()),
                 m_pointContainer.find(t.n3()));
 }
 
-Triangle TriangleContainer::getAt(const SizeType index) const
+Triangle TriangleContainer::at(SizeType index) const
 {
-    Point3D p1 = m_pointContainer.at(m_node1[index]);
-    Point3D p2 = m_pointContainer.at(m_node2[index]);
-    Point3D p3 = m_pointContainer.at(m_node3[index]);
+    Node p1 = m_pointContainer.at(m_node1[index]);
+    Node p2 = m_pointContainer.at(m_node2[index]);
+    Node p3 = m_pointContainer.at(m_node3[index]);
     return Triangle {p1, p2, p3};
 }
 
-Point3DContainer::SizeType TriangleContainer::size() const
+NodeContainer::SizeType TriangleContainer::size() const
 {
     return m_node1.size();
 }
 
-TriangleContainer::SizeType TriangleContainer::matchIndices(TriangleContainer::SizeType ii,
-                                                            TriangleContainer::SizeType i1,
-                                                            TriangleContainer::SizeType i2,
-                                                            TriangleContainer::SizeType i3) const
+TriangleContainer::SizeType TriangleContainer::matchIndices(SizeType ii,
+                                                            SizeType i1,
+                                                            SizeType i2,
+                                                            SizeType i3) const
 {
     SizeType index = invalidIndex;
     if ( i1 == m_node1[ii] )

@@ -12,7 +12,7 @@ class NastranReader
         virtual     		~NastranReader();
         void 			setFile(std::string filename);
         void 			setTriangleContainer(TriangleContainer* triangles);
-        bool			importModel();
+        bool			importModel() const;
 
     protected:
     private:
@@ -34,18 +34,16 @@ class NastranReader
         std::string		m_filename;
         TriangleContainer*	m_TriangleContainer;
 
-        bool			hasTriangleContainer();
+        bool			hasTriangleContainer() const;
         void			unsetTriangleContainer();
 
-        void 			printTokens(std::vector<std::string>& tokens);
-        std::vector<std::string> getNextLineOfTokens(std::ifstream &file);
-        void 			removeComments(std::string &line);
-        double 			nasStringToDouble(std::string token);
-        returnResult 		determineLineFormat(const std::string line,
-                                        lineFormat &format );
-        returnResult 		tokenizeLine(const std::string line,
-                                        const lineFormat format,
-                                        std::vector<std::string> &tokens );
+        void 			printTokens(const std::vector<std::string>& tokens) const;
+        std::vector<std::string> getNextLineOfTokens(std::ifstream &file) const;
+        void 			removeComments(std::string &line) const;
+        double 			nasStringToDouble(std::string token) const;
+        returnResult 		determineLineFormat(std::string line, lineFormat &format ) const;
+        returnResult 		tokenizeLine(std::string line, lineFormat format,
+                                             std::vector<std::string> &tokens ) const;
 
 };
 

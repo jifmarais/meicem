@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 
 # Compiler options
 if(UNIX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11 ")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -std=c++11 ")
 endif(UNIX)
 
 # Get some debug info
@@ -26,8 +26,8 @@ find_package( Boost REQUIRED COMPONENTS program_options )
 target_link_libraries(meicem ${Boost_LIBRARIES})
 
 # Local libraries
-target_link_libraries(meicem Point3DContainer)
-target_link_libraries(meicem Point3D)
+target_link_libraries(meicem NodeContainer)
+target_link_libraries(meicem Node)
 #target_link_libraries(meicem PointContainer)
 #target_link_libraries(meicem Triangle)
 

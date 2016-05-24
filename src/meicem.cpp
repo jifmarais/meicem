@@ -1,5 +1,5 @@
-#include "Point3D.hpp"
-#include "Point3DContainer.hpp"
+#include "Node.hpp"
+#include "NodeContainer.hpp"
 #include <iostream>
 #include <iterator>
 
@@ -8,8 +8,8 @@ namespace po = boost::program_options;
 
 int main( int argc, char *argv[] )
 {
-    Point3DContainer L1;
-    Point3D p1;
+    NodeContainer L1;
+    Node p1;
     int ii;
     int count {50};
 

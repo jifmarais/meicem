@@ -13,8 +13,8 @@ class LabelContainer
         LabelContainer();
         virtual     		~LabelContainer();
 
-        void			 add(const std::string label, SizeType index);
-        std::vector<SizeType>	find(const std::string label);
+        void			add(std::string label, SizeType index);
+        std::vector<SizeType>	find(std::string label) const;
         SizeType    		size() const;
 
     protected:
