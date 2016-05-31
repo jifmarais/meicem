@@ -528,7 +528,7 @@ void MoM(double freq, int P, double **points, int T, int **triangles, int N, int
     int i, j, ii, jj, iter;
     int oip, iip;
 
-    int ccount = 0; //used to cound occurances of cancelation quadrature
+    int ccount = 0; //used to count occurrences of cancellation quadrature
 
     double prog = 0.0; //used to monitor progress
 
@@ -685,7 +685,7 @@ int main(void)
       {20.0,2.0,0.0}};
       double z_tilde[3] = {15.1, 3.1, 1.95};
 
-      int iter;
+      int itercancellation
 
       double **rpg;
       rpg = malloc(sizeof(double *) * 1);

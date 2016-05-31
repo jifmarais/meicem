@@ -11,7 +11,8 @@
 
 NastranReader::NastranReader()
 {
-    //ctor
+    m_TriangleContainer = nullptr;
+    m_filename = "";
 }
 
 NastranReader::~NastranReader()

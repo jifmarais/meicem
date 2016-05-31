@@ -36,4 +36,5 @@ target_link_libraries(meicem Node)
 enable_testing ()
 add_test (NAME mesh COMMAND mesh.test)
 add_test (NAME reader_nastran COMMAND reader_nastran.test)
+add_test (NAME reader_wilco_reader COMMAND reader_wilco_input.test)
 
