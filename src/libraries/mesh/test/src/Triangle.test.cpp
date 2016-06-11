@@ -52,6 +52,53 @@ BOOST_AUTO_TEST_CASE(triangleEquality)
     BOOST_CHECK_MESSAGE(not (t1 != t2), "Triangles are expected to be equal.");
 }
 
+BOOST_AUTO_TEST_CASE(triangleArea)
+{
+    Triangle t1;
+    Node p1 {0.0, 0.0, 0.0};
+    Node p2 {0.0, 0.0, 0.0};
+    Node p3 {0.0, 0.0, 0.0};
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.area() == 0.0, "Traingle area should be 0.0.");
+
+    p1.set(0.0, 0.0, 0.0);
+    p2.set(1.0, 0.0, 0.0);
+    p3.set(1.0, 1.0, 0.0);
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.area() == 0.5, "Traingle area should be 0.5.");
+
+    p1.set(0.0, 0.0, 0.0);
+    p2.set(2.0, 0.0, 0.0);
+    p3.set(2.0, 3.0, 4.0);
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.area() == 5.0, "Traingle area should be 5.");
+
+    p3.set(2.0, 0.0, 0.0);
+    p2.set(-2.0, 0.0, 0.0);
+    p1.set(-2.0, -3.0, -4.0);
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.area() == 10.0, "Traingle area should be 10.");
+}
+
+BOOST_AUTO_TEST_CASE(triangleCentre)
+{
+    Triangle t1;
+    Node p1 {0.0, 0.0, 0.0};
+    Node p2 {0.0, 0.0, 0.0};
+    Node p3 {0.0, 0.0, 0.0};
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.centre().x() == 0.0, "Traingle centre should be 0.0.");
+    BOOST_CHECK_MESSAGE(t1.centre().y() == 0.0, "Traingle centre should be 0.0.");
+    BOOST_CHECK_MESSAGE(t1.centre().z() == 0.0, "Traingle centre should be 0.0.");
+
+    p1.set(0.0, 0.0, 1.0);
+    p2.set(1.0, 0.0, 1.0);
+    p3.set(1.0, 1.0, 1.0);
+    t1.set(p1, p2, p3);
+    BOOST_CHECK_MESSAGE(t1.centre().x() == 2.0/3.0, "Traingle centre should be 2.0/3.0.");
+    BOOST_CHECK_MESSAGE(t1.centre().y() == 1.0/3.0, "Traingle centre should be 1.0/3.0.");
+    BOOST_CHECK_MESSAGE(t1.centre().z() == 1.0, "Traingle centre should be 1.0.");
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 

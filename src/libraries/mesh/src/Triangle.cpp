@@ -49,6 +49,16 @@ bool operator!=(const Triangle& lhs, const Triangle& rhs)
     return lhs.operator!=(rhs);
 }
 
+double Triangle::area() const
+{
+    return 0.5*Node::cross(m_nodes[1]-m_nodes[0], m_nodes[2]-m_nodes[0]).magnitude();
+}
+
+Node Triangle::centre() const
+{
+    return ( m_nodes[0] + m_nodes[1] + m_nodes[2] ) / 3.0;
+}
+
 Node Triangle::n1() const
 {
     return m_nodes[0];

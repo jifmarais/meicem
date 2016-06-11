@@ -68,7 +68,7 @@ NodeContainer::SizeType NodeContainer::find(const Node &p) const
 
 Node NodeContainer::at(SizeType index) const
 {
-    assert(index <= m_size);
+    assert(index < size());
 
     Node p;
     p.set(m_x[index], m_y[index], m_z[index]);

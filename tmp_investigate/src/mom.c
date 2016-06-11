@@ -18,7 +18,7 @@ Adapted from code written by WJ Strydom
 #include "libtriangles.h"
 
 /*
-   return the integration points and weights based on a gaussian rule
+   return the integration points and weights based on a Gaussian rule
    */
 void GaussianQuadrature(double points[][3], int numIntPoints, double **returnPoints)
 {
@@ -195,8 +195,8 @@ double xFromYW (double y, double w)
 }
 
 /*
-   Calculates the integral on subtriangles.
-   The assuption is that the third verice, v3, is the projection of the singularity
+   Calculates the integral on sub triangles.
+   The assumption is that the third vertex, v3, is the projection of the singularity
    */
 void RAR1S_2D(double v1[3], double v2[3], double v3[3], double crux, int numIntPoints, double **returnPoints)
 {
@@ -260,11 +260,6 @@ void RAR1S_2D(double v1[3], double v2[3], double v3[3], double crux, int numIntP
         {0.14945134915058, 0.86506336668899},
         {0.06667134430869, 0.97390652851717}};
 
-
-
-
-    //Gaussian Quadrature rules in 1D
-
     int qpNum;
     double (*qpPointer)[][2];
 
@@ -325,9 +320,9 @@ void RAR1S_2D(double v1[3], double v2[3], double v3[3], double crux, int numIntP
     else
         theta = atan(-1.0*pVec[1]/pVec[0]);
 
-    double rotationMatrix[3][3] = {{cos(theta), -1.0*sin(theta),0},
-        {sin(theta), cos(theta),0},
-        {0,0,1}};
+    double rotationMatrix[3][3] = {{cos(theta), -1.0*sin(theta), 0},
+                                   {sin(theta), cos(theta)     , 0},
+                                   {0         , 0              , 1}};
 
     MatrixMultiplyVector(rotationMatrix, 3, tempV1, newV1);
     MatrixMultiplyVector(rotationMatrix, 3, tempV2, newV2);         //rotate non-origin points

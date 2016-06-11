@@ -12,6 +12,8 @@ class Triangle
         void    set(Node, Node, Node);
         bool    operator==(const Triangle& rhs) const;
         bool    operator!=(const Triangle& rhs) const;
+        double  area() const;
+        Node	centre() const;
         Node	n1() const;
         Node	n2() const;
         Node    n3() const;

@@ -26,14 +26,17 @@ find_package( Boost REQUIRED COMPONENTS program_options )
 target_link_libraries(meicem ${Boost_LIBRARIES})
 
 # Local libraries
+target_link_libraries(meicem Vector)
 target_link_libraries(meicem NodeContainer)
-target_link_libraries(meicem Node)
-#target_link_libraries(meicem PointContainer)
+target_link_libraries(meicem TriangleContainer)
+target_link_libraries(meicem reader_wilco_input)
+#target_link_libraries(meicem Node)
 #target_link_libraries(meicem Triangle)
 
 
 # Tests
 enable_testing ()
+add_test (NAME math COMMAND math.test)
 add_test (NAME mesh COMMAND mesh.test)
 add_test (NAME reader_nastran COMMAND reader_nastran.test)
 add_test (NAME reader_wilco_reader COMMAND reader_wilco_input.test)

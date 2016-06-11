@@ -1,18 +1,18 @@
-#include "Node.hpp"
+#include "Vector.hpp"
 
 //#define BOOST_TEST_DYN_LINK
 #include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_SUITE(Node_BasicTests)
+BOOST_AUTO_TEST_SUITE(Vector_BasicTests)
 
 BOOST_AUTO_TEST_CASE(constructor)
 {
-    Node p1;
+    Vector p1;
     BOOST_CHECK_MESSAGE(p1.x() == 0.0, "The default value for point should be (0.0, 0.0, 0.0).");
     BOOST_CHECK_MESSAGE(p1.y() == 0.0, "The default value for point should be (0.0, 0.0, 0.0).");
     BOOST_CHECK_MESSAGE(p1.z() == 0.0, "The default value for point should be (0.0, 0.0, 0.0).");
 
-    Node p2 {1.0, 2.0, 3.0};
+    Vector p2 {1.0, 2.0, 3.0};
     BOOST_CHECK_MESSAGE(p2.x() == 1.0, "The point was constructed with x = 1.0.");
     BOOST_CHECK_MESSAGE(p2.y() == 2.0, "The point was constructed with y = 2.0.");
     BOOST_CHECK_MESSAGE(p2.z() == 3.0, "The point was constructed with z = 3.0.");
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(constructor)
 
 BOOST_AUTO_TEST_CASE(setAndGetPoint)
 {
-    Node p1;
+    Vector p1;
     p1.set(5.0, 15.0, 25.0);
     BOOST_CHECK_MESSAGE(p1.x() == 5.0 , "The point should have x = 5.0.");
     BOOST_CHECK_MESSAGE(p1.y() == 15.0, "The point should have y = 15.0.");
@@ -30,8 +30,8 @@ BOOST_AUTO_TEST_CASE(setAndGetPoint)
 
 BOOST_AUTO_TEST_CASE(pointEquality)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
 
     BOOST_CHECK_MESSAGE(p1 == p2, "Points are expected to be equal.");
 
@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(pointEquality)
     BOOST_CHECK_MESSAGE(not (p1 != p2), "Points are expected to be equal.");
 }
 
-BOOST_AUTO_TEST_CASE(setEqaulNode)
+BOOST_AUTO_TEST_CASE(setEqaulVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
     p2.set(3.0, 2.0, 1.0);
 
@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(setEqaulNode)
     BOOST_CHECK_MESSAGE(p2.z() == 3.0, "The point should have z = 3.0.");
 }
 
-BOOST_AUTO_TEST_CASE(addEqualsNode)
+BOOST_AUTO_TEST_CASE(addEqualsVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
     p2.set(3.0, 2.0, 1.0);
 
@@ -80,10 +80,10 @@ BOOST_AUTO_TEST_CASE(addEqualsNode)
     BOOST_CHECK_MESSAGE(p2.z() == 7.0, "The point should have z = 7.0.");
 }
 
-BOOST_AUTO_TEST_CASE(addNode)
+BOOST_AUTO_TEST_CASE(addVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
     p2.set(3.0, 2.0, 1.0);
 
@@ -98,10 +98,10 @@ BOOST_AUTO_TEST_CASE(addNode)
     BOOST_CHECK_MESSAGE(p2.z() == 7.0, "The point should have z = 7.0.");
 }
 
-BOOST_AUTO_TEST_CASE(subtractEqualsNode)
+BOOST_AUTO_TEST_CASE(subtractEqualsVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
     p2.set(3.0, 2.0, 1.0);
 
@@ -116,10 +116,10 @@ BOOST_AUTO_TEST_CASE(subtractEqualsNode)
     BOOST_CHECK_MESSAGE(p2.z() == -5.0, "The point should have z = -5.0.");
 }
 
-BOOST_AUTO_TEST_CASE(subtractNode)
+BOOST_AUTO_TEST_CASE(subtractVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
     p2.set(3.0, 2.0, 1.0);
 
@@ -135,9 +135,9 @@ BOOST_AUTO_TEST_CASE(subtractNode)
 }
 
 
-BOOST_AUTO_TEST_CASE(multiplyEqualsNode)
+BOOST_AUTO_TEST_CASE(multiplyEqualsVector)
 {
-    Node p1;
+    Vector p1;
     p1.set(1.0, 2.0, 3.0);
 
     p1 *= 2.0;
@@ -151,10 +151,10 @@ BOOST_AUTO_TEST_CASE(multiplyEqualsNode)
     BOOST_CHECK_MESSAGE(p1.z() == -18.0, "The point should have z = -18.0.");
 }
 
-BOOST_AUTO_TEST_CASE(multiplyNode)
+BOOST_AUTO_TEST_CASE(multiplyVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
 
     p2 = p1 * 2.0;
@@ -173,9 +173,9 @@ BOOST_AUTO_TEST_CASE(multiplyNode)
     BOOST_CHECK_MESSAGE(p2.z() == -36.0, "The point should have z = -36.0.");
 }
 
-BOOST_AUTO_TEST_CASE(divideEqualsNode)
+BOOST_AUTO_TEST_CASE(divideEqualsVector)
 {
-    Node p1;
+    Vector p1;
     p1.set(1.0, 2.0, 3.0);
 
     p1 /= 1.0/2.0;
@@ -189,10 +189,10 @@ BOOST_AUTO_TEST_CASE(divideEqualsNode)
     BOOST_CHECK_MESSAGE(p1.z() == -18.0, "The point should have z = -18.0.");
 }
 
-BOOST_AUTO_TEST_CASE(divideNode)
+BOOST_AUTO_TEST_CASE(divideVector)
 {
-    Node p1;
-    Node p2;
+    Vector p1;
+    Vector p2;
     p1.set(1.0, 2.0, 3.0);
 
     p2 = p1 / (1.0/2.0);
@@ -206,9 +206,9 @@ BOOST_AUTO_TEST_CASE(divideNode)
     BOOST_CHECK_MESSAGE(p2.z() == -18.0, "The point should have z = -18.0.");
 }
 
-BOOST_AUTO_TEST_CASE(magnitudeNode)
+BOOST_AUTO_TEST_CASE(magnitudeVector)
 {
-    Node p1;
+    Vector p1;
     p1.set(4.0, 0.0, 3.0);
     BOOST_CHECK_MESSAGE(p1.magnitude() == 5.0 , "The magnitude should be 5.0.");
     p1.set(4.0, 3.0, 0.0);
@@ -219,30 +219,30 @@ BOOST_AUTO_TEST_CASE(magnitudeNode)
     BOOST_CHECK_MESSAGE(p1.magnitude() == 5.0 , "The magnitude should be 5.0.");
 }
 
-BOOST_AUTO_TEST_CASE(crossProductNode)
+BOOST_AUTO_TEST_CASE(crossProductVector)
 {
-    Node p1;
-    Node p2;
-    Node p3;
+    Vector p1;
+    Vector p2;
+    Vector p3;
 
     p1.set(1.0, 0.0, 0.0);
     p2.set(0.0, 1.0, 0.0);
-    p3 = Node::cross(p1, p2);
+    p3 = Vector::cross(p1, p2);
     BOOST_CHECK_MESSAGE(p3.x() == 0.0, "The point should have x = 0.0.");
     BOOST_CHECK_MESSAGE(p3.y() == 0.0, "The point should have y = 0.0.");
     BOOST_CHECK_MESSAGE(p3.z() == 1.0, "The point should have z = 0.0.");
 
     p1.set(1.0, 0.0, 0.0);
     p2.set(0.0, 0.0, 1.0);
-    p3 = Node::cross(p1, p2);
+    p3 = Vector::cross(p1, p2);
     BOOST_CHECK_MESSAGE(p3.x() == 0.0, "The point should have x = 0.0.");
     BOOST_CHECK_MESSAGE(p3.y() == -1.0, "The point should have y = -1.0.");
     BOOST_CHECK_MESSAGE(p3.z() == 0.0, "The point should have z = 0.0.");
 }
 
-BOOST_AUTO_TEST_CASE(normNode)
+BOOST_AUTO_TEST_CASE(normVector)
 {
-    Node p1;
+    Vector p1;
     p1.set(4.0, 0.0, 3.0);
     BOOST_CHECK_MESSAGE(p1.norm().x() == 4.0/5.0 , "The magnitude should be 4.0/5.0.");
     BOOST_CHECK_MESSAGE(p1.norm().y() == 0.0 , "The magnitude should be 0.0.");
@@ -256,26 +256,6 @@ BOOST_AUTO_TEST_CASE(normNode)
     BOOST_CHECK_MESSAGE(p1.norm().x() == -4.0/5.0 , "The magnitude should be -4.0/5.0.");
     BOOST_CHECK_MESSAGE(p1.norm().y() == 3.0/5.0 , "The magnitude should be 30./5.0.");
     BOOST_CHECK_MESSAGE(p1.norm().z() == 0.0 , "The magnitude should be 0.0.");
-}
-
-BOOST_AUTO_TEST_CASE(distanceNode)
-{
-    Node p1;
-    Node p2;
-    p1.set(4.0, 0.0, 3.0);
-    p2.set(4.0, 0.0, 3.0);
-    BOOST_CHECK_MESSAGE(p1.distance(p2) == 0.0 , "The distance should be 0.");
-
-    p1.set(0.0, 0.0, 0.0);
-    BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 5.0 , "The distance should be 5.");
-    p1.set(-4.0, 0.0, -3.0);
-    BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 10.0 , "The distance should be 10.");
-    p1.set(4.0, 0.0, 0.0);
-    BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 3.0 , "The distance should be 3.");
-    p1.set(0.0, 0.0, 3.0);
-    BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 4.0 , "The distance should be 4.");
-    p1.set(4.0, 9.0, 3.0);
-    BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 9.0 , "The distance should be 9.");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

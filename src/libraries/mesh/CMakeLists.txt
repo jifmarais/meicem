@@ -9,6 +9,7 @@ target_include_directories(Node PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(TriangleContainer ${CMAKE_CURRENT_SOURCE_DIR}/src/TriangleContainer.cpp)
 target_include_directories(TriangleContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(TriangleContainer Node)
 
 add_library(Triangle ${CMAKE_CURRENT_SOURCE_DIR}/src/Triangle.cpp)
 target_include_directories(Triangle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
