@@ -19,6 +19,7 @@ class TriangleContainer
         SizeType                find(SizeType i1, SizeType i2, SizeType i3) const;
         Triangle     		at(SizeType index) const;
         SizeType    		size() const;
+        bool                    hasCommonNode(SizeType index1, SizeType index2) const;
 
     protected:
     private:

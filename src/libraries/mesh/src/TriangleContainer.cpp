@@ -83,6 +83,24 @@ NodeContainer::SizeType TriangleContainer::size() const
     return m_node1.size();
 }
 
+bool TriangleContainer::hasCommonNode(SizeType index1, SizeType index2) const
+{
+    Triangle t1 = at(index1);
+    Triangle t2 = at(index2);
+
+    for (unsigned ii = 0 ; ii < 3 ; ++ii )
+    {
+        for (unsigned jj = 0 ; jj < 3 ; ++jj )
+        {
+            if ( t1[ii] == t2[jj] )
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 TriangleContainer::SizeType TriangleContainer::matchIndices(SizeType ii,
                                                             SizeType i1,
                                                             SizeType i2,

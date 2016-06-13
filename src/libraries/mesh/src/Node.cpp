@@ -1,5 +1,6 @@
 #include "Node.hpp"
 #include <math.h>
+#include <cmath>
 
 Node::Node()
 {
@@ -16,18 +17,24 @@ Node::~Node()
     //dtor
 }
 
-void Node::set(double x, double y, double z)
+void Node::set(double x, double y, double z, double tolerance)
 {
     m_x = x;
     m_y = y;
     m_z = z;
+    m_tolerance = tolerance;
+}
+
+void Node::set(double x, double y, double z)
+{
+   set(x, y, z, 1e-6);
 }
 
 bool Node::operator==(const Node& rhs) const
 {
-    return ( m_x == rhs.x() &&
-             m_y == rhs.y() &&
-             m_z == rhs.z() );
+    return ( isEqual(m_x, rhs.x()) &&
+             isEqual(m_y, rhs.y()) &&
+             isEqual(m_z, rhs.z()) );
 }
 
 bool Node::operator!=(const Node& rhs) const
@@ -52,9 +59,6 @@ bool operator!=(const Node& lhs, const Node& rhs)
 {
     return lhs.operator!=(rhs);
 }
-
-
-
 
 Node Node::operator+(const Node& rhs) const
 {
@@ -185,3 +189,7 @@ double Node::z() const
     return m_z;
 }
 
+bool Node::isEqual(double n1, double n2) const
+{
+    return std::abs(n1 - n2) <= m_tolerance;
+}

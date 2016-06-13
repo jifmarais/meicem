@@ -10,7 +10,8 @@
 //namespace po = boost::program_options;
 
 
-int main( int argc, char *argv[] )
+//int main( int argc, char *argv[] )
+int main()
 {
     std::cout << "Let the MEICEM mayhem begin..." << std::endl;
 
@@ -24,8 +25,18 @@ int main( int argc, char *argv[] )
 
     for (TriangleContainer::SizeType observationIndex = 0; observationIndex < tContainer.size() ; ++observationIndex)
     {
-        Triangle t1 {tContainer.at(observationIndex)};
-        std::cout << "Area: " << std::to_string( t1.area() * 1e6 ) << std::endl;
+        Triangle tObserver {tContainer.at(observationIndex)};
+
+        for (TriangleContainer::SizeType sourceIndex = 0; sourceIndex < tContainer.size() ; ++sourceIndex)
+        {
+            Triangle tSource {tContainer.at(sourceIndex)};
+            std::cout << "Distance ("
+                      << observationIndex
+                      << ", " << sourceIndex
+                      << "):" << std::to_string( Node::distance(tObserver.centre(), tSource.centre()) * 1e3 )
+                      << "    " << tContainer.hasCommonNode(observationIndex, sourceIndex)
+                      << std::endl;
+        }
 
     }
 

@@ -71,7 +71,7 @@ Node NodeContainer::at(SizeType index) const
     assert(index < size());
 
     Node p;
-    p.set(m_x[index], m_y[index], m_z[index]);
+    p.set(m_x[index], m_y[index], m_z[index], m_tolerance);
     return p;
 }
 
