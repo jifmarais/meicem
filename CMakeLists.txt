@@ -26,9 +26,12 @@ find_package( Boost REQUIRED COMPONENTS program_options )
 target_link_libraries(meicem ${Boost_LIBRARIES})
 
 # Local libraries
-target_link_libraries(meicem Vector)
+#target_link_libraries(meicem Vector)
+target_link_libraries(meicem Quadrature)
+target_link_libraries(meicem EdgeContainer)
 target_link_libraries(meicem NodeContainer)
 target_link_libraries(meicem TriangleContainer)
+target_link_libraries(meicem ComplexMatrix)
 target_link_libraries(meicem reader_wilco_input)
 #target_link_libraries(meicem Node)
 #target_link_libraries(meicem Triangle)

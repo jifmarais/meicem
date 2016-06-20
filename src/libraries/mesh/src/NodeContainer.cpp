@@ -83,6 +83,6 @@ NodeContainer::SizeType NodeContainer::size() const
 
 bool NodeContainer::isEqual(double n1, double n2) const
 {
-    return std::abs(n1 - n2) <= m_tolerance;
+    return std::fabs(n1 - n2) <= m_tolerance;
 }
 

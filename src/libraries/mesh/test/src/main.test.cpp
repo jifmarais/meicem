@@ -7,6 +7,8 @@
 #include "TriangleContainer.test.cpp"
 #include "Triangle.test.cpp"
 #include "LabelContainer.test.cpp"
+#include "Edge.test.cpp"
+#include "EdgeContainer.test.cpp"
 
 //EOF
 

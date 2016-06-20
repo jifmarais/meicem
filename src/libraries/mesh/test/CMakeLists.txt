@@ -11,6 +11,8 @@ target_link_libraries(mesh.test Node)
 target_link_libraries(mesh.test Triangle)
 target_link_libraries(mesh.test TriangleContainer)
 target_link_libraries(mesh.test LabelContainer)
+target_link_libraries(mesh.test Edge)
+target_link_libraries(mesh.test EdgeContainer)
 
 target_include_directories(mesh.test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
