@@ -51,7 +51,7 @@ double MatrixDeterminant(double **a, int n)
 }
 
 /*
-   Recursive definition of determinate using expansion by minors.
+   Recursive definition of determinant using expansion by minors.
    */
 complex double ComplexDeterminant(complex double **a, int n)
 {

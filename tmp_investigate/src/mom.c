@@ -28,31 +28,40 @@ void GaussianQuadrature(double points[][3], int numIntPoints, double **returnPoi
        */
     int i, j, ii;
 
-    double quadPoints1 [1][4] = {{1.0/3, 1.0/3, 1.0/3, 1}};
-    double quadPoints3 [1][4] = {{2.0/3, 1.0/6, 1.0/6, 1.0/3}};
-    double quadPoints4 [2][4] = {{1.0/3, 1.0/3, 1.0/3, -0.5625},
+    double quadPoints1 [1][4] = {
+        {1.0/3, 1.0/3, 1.0/3, 1}};
+    double quadPoints3 [1][4] = {
+        {2.0/3, 1.0/6, 1.0/6, 1.0/3}};
+    double quadPoints4 [2][4] = {
+        {1.0/3, 1.0/3, 1.0/3, -0.5625},
         {0.6, 0.2, 0.2, 0.520833333333333}};
-    double quadPoints6 [2][4] = {{0.816847572980459, 0.091576213509771, 0.091576213509771, 0.109951743655322},
+    double quadPoints6 [2][4] = {
+        {0.816847572980459, 0.091576213509771, 0.091576213509771, 0.109951743655322},
         {0.108103018168070, 0.445948490915965, 0.445948490915965, 0.223381589678011}};
-    double quadPoints7 [3][4] = {{1.0/3, 1.0/3, 1.0/3, 0.225},
+    double quadPoints7 [3][4] = {
+        {1.0/3, 1.0/3, 1.0/3, 0.225},
         {0.797426985353087, 0.101286507323456, 0.101286507323456, 0.125939180544827},
         {0.059715871789770, 0.470142064105115, 0.470142064105115, 0.132394152788506}};
-    double quadPoints12 [4][4] = {{0.873821971016996, 0.063089014491502, 0.063089014491502, 0.050844906370207},
+    double quadPoints12 [4][4] = {
+        {0.873821971016996, 0.063089014491502, 0.063089014491502, 0.050844906370207},
         {0.501426509658179, 0.249286745170910, 0.249286745170910, 0.116786275726379},
         {0.636502499121399, 0.310352451033785, 0.053145049844816, 0.082851075618374},
         {0.636502499121399, 0.053145049844816, 0.310352451033785, 0.082851075618374}};
-    double quadPoints13 [5][4] = {{1.0/3, 1.0/3, 1.0/3, -0.149570044467682},
+    double quadPoints13 [5][4] = {
+        {1.0/3, 1.0/3, 1.0/3, -0.149570044467682},
         {0.479308067841920, 0.260345966079040, 0.260345966079040, 0.175615257433208},
         {0.869739794195568, 0.065130102902216, 0.065130102902216, 0.053347235608838},
         {0.048690315425316, 0.312865496004874, 0.638444188569810, 0.077113760890257},
         {0.048690315425316, 0.638444188569810, 0.312865496004874, 0.077113760890257}};
-    double quadPoints16 [6][4] = {{1.0/3, 1.0/3, 1.0/3, 0.144315607677787},
+    double quadPoints16 [6][4] = {
+        {1.0/3, 1.0/3, 1.0/3, 0.144315607677787},
         {0.081414823414554, 0.459292588292723, 0.459292588292723, 0.095091634267284},
         {0.658861384496478, 0.170569307751761, 0.170569307751761, 0.103217370534718},
         {0.898905543365938, 0.050547228317031, 0.050547228317031, 0.032458497623198},
         {0.008394777409958, 0.263112829634638, 0.728492392955404, 0.027230314174435},
         {0.008394777409958, 0.728492392955404, 0.263112829634638, 0.027230314174435}};
-    double quadPoints25 [9][4] = {{0.333333333333333, 0.333333333333333, 0.333333333333333, 0.090817990382754},
+    double quadPoints25 [9][4] = {
+        {0.333333333333333, 0.333333333333333, 0.333333333333333, 0.090817990382754},
         {0.028844733232685, 0.485577633383657, 0.485577633383657, 0.036725957756467},
         {0.781036849029926, 0.109481575485037, 0.109481575485037, 0.045321059435528},
         {0.141707219414880, 0.307939838764121, 0.550352941820999, 0.072757916845420},
@@ -61,7 +70,8 @@ void GaussianQuadrature(double points[][3], int numIntPoints, double **returnPoi
         {0.025003534762686, 0.728323904597411, 0.246672560639903, 0.028327242531057},
         {0.009540815400299, 0.066803251012200, 0.923655933587500, 0.009421666963733},
         {0.009540815400299, 0.923655933587500, 0.066803251012200, 0.009421666963733}};
-    double quadPoints33 [11][4] = {{0.023565220452390, 0.488217389773805, 0.488217389773805, 0.025731066440455},
+    double quadPoints33 [11][4] = {
+        {0.023565220452390, 0.488217389773805, 0.488217389773805, 0.025731066440455},
         {0.120551215411079, 0.439724392294460, 0.439724392294460, 0.043692544538038},
         {0.457579229975768, 0.271210385012116, 0.271210385012116, 0.062858224217885},
         {0.744847708916828, 0.127576145541586, 0.127576145541586, 0.034796112930709},
@@ -136,12 +146,12 @@ void GaussianQuadrature(double points[][3], int numIntPoints, double **returnPoi
     }
 
     double AB[3] = {points[1][0]-points[0][0],
-        points[1][1]-points[0][1],
-        points[1][2]-points[0][2]};
+                    points[1][1]-points[0][1],
+                    points[1][2]-points[0][2]};
 
     double AC[3] = {points[2][0]-points[0][0],
-        points[2][1]-points[0][1],
-        points[2][2]-points[0][2]};
+                    points[2][1]-points[0][1],
+                    points[2][2]-points[0][2]};
 
     double Area = pow(AB[1]*AC[2] - AB[2]*AC[1], 2);
     Area += pow(AB[2]*AC[0] - AB[0]*AC[2], 2);
@@ -151,24 +161,27 @@ void GaussianQuadrature(double points[][3], int numIntPoints, double **returnPoi
     int place = 0;
     int iter;
 
-    for (i=0; i<qpNum; i++)
+    for (i=0; i<qpNum; i++)  // each quadrature point
     {
         if ((*qpPointer)[i][0] != (*qpPointer)[i][1])
-            iter = 3;
+            iter = 1; // just one point
         else
-            iter = 1;
+            iter = 3; // three points (due to symmetry)
 
-        for (j=0; j<iter; j++)
+        for (j=0; j<iter; j++) 
         {
-            for(ii=0; ii<3; ii++)
+            for(ii=0; ii<3; ii++) // for the three coordinates
             {
-                returnPoints[place][ii] = (*qpPointer)[i][j]*points[0][ii] + (*qpPointer)[i][(j+1)%3]*points[1][ii] +
-                    (*qpPointer)[i][(j+2)%3]*points[2][ii];
+                returnPoints[place][ii] = (*qpPointer)[i][j]      *points[0][ii] + 
+                                          (*qpPointer)[i][(j+1)%3]*points[1][ii] +
+                                          (*qpPointer)[i][(j+2)%3]*points[2][ii];
             }
             returnPoints[place][3] = Area*(*qpPointer)[i][3];
             place++;
         }
     }
+
+    //printf("%d - %d \n", qpNum+1, place);
 
     //free(qpPointer2);
 }
@@ -510,8 +523,8 @@ int IsEdgeInMat(int val1, int val2, int **edges, int N)
 
 void MoM(double freq, int P, double **points, int T, int **triangles, int N, int **edges, complex double **Zmat, complex double *Vvec)
 {
-    int NumOuterIntPoints = 3;
-    int NumInnerIntPoints = 7;
+    int NumOuterIntPoints = 3; //3
+    int NumInnerIntPoints = 7; //7
     double prox = 0.33;
 
     const static double c0 = 299792456.2;
@@ -536,7 +549,8 @@ void MoM(double freq, int P, double **points, int T, int **triangles, int N, int
             fflush(stdout);
         }
 
-        double pPoints[3][3] = {{points[triangles[i][0]][0], points[triangles[i][0]][1], points[triangles[i][0]][2]},
+        double pPoints[3][3] = {
+            {points[triangles[i][0]][0], points[triangles[i][0]][1], points[triangles[i][0]][2]},
             {points[triangles[i][1]][0], points[triangles[i][1]][1], points[triangles[i][1]][2]},
             {points[triangles[i][2]][0], points[triangles[i][2]][1], points[triangles[i][2]][2]}};
 
