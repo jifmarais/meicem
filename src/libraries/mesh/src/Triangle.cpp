@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <cmath>
 #include "Triangle.hpp"
 
 Triangle::Triangle()
@@ -117,9 +118,28 @@ Node Triangle::normal() const
     return normalVector.norm();
 }
 
+void Triangle::setOppositeEdge(const Node& p1, const Node& p2)
+{
+    assert((m_nodes[0] == p1) || (m_nodes[1] == p1) || (m_nodes[2] == p1));
+    assert((m_nodes[0] == p2) || (m_nodes[1] == p2) || (m_nodes[2] == p2));
+
+    Node tmp;
+    for (auto index = 0 ; index < 2 ; ++index)
+    {
+        if ( (m_nodes[index] != p1) && (m_nodes[index] != p2) )
+        {
+            tmp = m_nodes[index];
+        }
+    }
+    m_nodes[0] = tmp;
+    m_nodes[1] = p1;
+    m_nodes[2] = p2;
+
+}
+
 Node Triangle::fromSimplex(const Node& p) const
 {
-    assert(p.x() + p.y() + p.z() == 1);
+    assert(std::fabs(p.x() + p.y() + p.z() - 1) < 1e-6);
 
     double x = m_nodes[0].x()*p.x() + m_nodes[1].x()*p.y() + m_nodes[2].x()*p.z();
     double y = m_nodes[0].y()*p.x() + m_nodes[1].y()*p.y() + m_nodes[2].y()*p.z();

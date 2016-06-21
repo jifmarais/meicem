@@ -3,6 +3,8 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include "Vector.test.cpp"
+#include "Quadrature.test.cpp"
+#include "ComplexMatrix.test.cpp"
 
 //EOF
 

@@ -17,5 +17,15 @@ target_include_directories(Triangle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(LabelContainer ${CMAKE_CURRENT_SOURCE_DIR}/src/LabelContainer.cpp)
 target_include_directories(LabelContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_library(Edge ${CMAKE_CURRENT_SOURCE_DIR}/src/Edge.cpp)
+target_include_directories(Edge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(Edge NodeContainer)
+target_link_libraries(Edge TriangleContainer)
+
+add_library(EdgeContainer ${CMAKE_CURRENT_SOURCE_DIR}/src/EdgeContainer.cpp)
+target_include_directories(EdgeContainer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(EdgeContainer Edge)
+target_link_libraries(EdgeContainer NodeContainer)
+target_link_libraries(EdgeContainer TriangleContainer)
 
 

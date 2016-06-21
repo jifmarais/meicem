@@ -53,8 +53,21 @@ bool WilcoInputReader::importModel() const
     std::vector<std::string> tokens;
 
     Node p;
-    NodeContainer pContainer;
     LabelContainer lContainer;
+
+
+    // Using the triangle container's existing point container, if possible (all points are imported, used by triangles or not)
+    NodeContainer* pContainer;
+    if ( hasTriangleContainer() )
+    {
+        pContainer = &(m_TriangleContainer->getPointContainer());
+    }
+    else
+    {
+        NodeContainer internalNodeContainer;
+        pContainer = &internalNodeContainer;
+    }
+
 
     // Ensure that file exists
     assert(file);
@@ -87,7 +100,7 @@ bool WilcoInputReader::importModel() const
         double y = std::stod(tokens.at(1));
         double z = std::stod(tokens.at(2));
         p.set(x, y, z);
-        NodeContainer::SizeType index = pContainer.add(p);
+        NodeContainer::SizeType index = pContainer->add(p);
         lContainer.add(std::to_string(counter), index);
     }
 
@@ -119,9 +132,9 @@ bool WilcoInputReader::importModel() const
             assert(p1IndexList.size() == 1);
             assert(p2IndexList.size() == 1);
             assert(p3IndexList.size() == 1);
-            t.set(pContainer.at(p1IndexList[0]),
-                  pContainer.at(p2IndexList[0]),
-                  pContainer.at(p3IndexList[0]));
+            t.set(pContainer->at(p1IndexList[0]),
+                  pContainer->at(p2IndexList[0]),
+                  pContainer->at(p3IndexList[0]));
             m_TriangleContainer->add(t);
         }
     }
