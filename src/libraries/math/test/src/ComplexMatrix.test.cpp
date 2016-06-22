@@ -1,5 +1,7 @@
 #include "ComplexMatrix.hpp"
 //#include <complex.h>
+#include <cmath>
+#include <math.h>
 #include <complex>
 
 //#define BOOST_TEST_DYN_LINK
@@ -376,9 +378,72 @@ BOOST_AUTO_TEST_CASE(matrixDeterminant)
     ma2(2, 1) = ComplexMatrix::complex_type {4.0, 2.0};
     ma2(2, 2) = ComplexMatrix::complex_type {5.0, 3.0};
     answer = ComplexMatrix::complex_type {-434.0, 198};
-    ma2.print();
-    std::cout << ma2.determinant() << std::endl;
     BOOST_CHECK_MESSAGE(ma2.determinant() == answer, "Should be equal.");
+
+}
+
+double getMaxMagnitudeInMatrix(const ComplexMatrix m)
+{
+    double maxValue = 0.0;
+    ComplexMatrix::complex_type cval;
+    for ( unsigned rr = 0; rr < m.getRowCount() ; ++rr )
+    {
+        for ( unsigned cc = 0; cc < m.getColumnCount() ; ++cc )
+        {
+            cval = m(rr, cc);
+            maxValue = std::max(maxValue, sqrt(cval.real()*cval.real() +
+                                               cval.imag()*cval.imag()));
+        }
+    }
+
+}
+
+BOOST_AUTO_TEST_CASE(matrixInverse)
+{
+    ComplexMatrix ma0 {1, 1};
+    ma0(0, 0) = ComplexMatrix::complex_type {10.0, -15.0};
+    BOOST_CHECK_MESSAGE(ma0.inverse()(0, 0) == 1.0/ma0(0 ,0), "Should be equal.");
+
+    ComplexMatrix ma1 {2, 2};
+    ma1(0, 0) = ComplexMatrix::complex_type {5.0, 3.0};
+    ma1(0, 1) = ComplexMatrix::complex_type {2.0, -2.0};
+    ma1(1, 0) = ComplexMatrix::complex_type {3.0, -1.0};
+    ma1(1, 1) = ComplexMatrix::complex_type {4.0, 4.0};
+    BOOST_CHECK_MESSAGE(getMaxMagnitudeInMatrix(ma1.inverse()*ma1 - ComplexMatrix::identity(2)) <= 1e-6, "Should be equal.");
+
+    ComplexMatrix ma2 {3, 3};
+    ma2(0, 0) = ComplexMatrix::complex_type {5.0, 3.0};
+    ma2(0, 1) = ComplexMatrix::complex_type {2.0, -2.0};
+    ma2(0, 2) = ComplexMatrix::complex_type {4.0, -3.0};
+    ma2(1, 0) = ComplexMatrix::complex_type {3.0, -1.0};
+    ma2(1, 1) = ComplexMatrix::complex_type {4.0, 4.0};
+    ma2(1, 2) = ComplexMatrix::complex_type {2.0, -5.0};
+    ma2(2, 0) = ComplexMatrix::complex_type {6.0, -3.0};
+    ma2(2, 1) = ComplexMatrix::complex_type {4.0, 2.0};
+    ma2(2, 2) = ComplexMatrix::complex_type {5.0, 3.0};
+    BOOST_CHECK_MESSAGE(getMaxMagnitudeInMatrix(ma2.inverse()*ma2 - ComplexMatrix::identity(3)) <= 1e-6, "Should be equal.");
+
+    ComplexMatrix ma3 {4, 4};
+    ma3(0, 0) = ComplexMatrix::complex_type {5.0, 3.0};
+    ma3(0, 1) = ComplexMatrix::complex_type {2.0, -2.0};
+    ma3(0, 2) = ComplexMatrix::complex_type {4.0, -3.0};
+    ma3(0, 3) = ComplexMatrix::complex_type {-14.0, 13.0};
+
+    ma3(1, 0) = ComplexMatrix::complex_type {3.0, -1.0};
+    ma3(1, 1) = ComplexMatrix::complex_type {4.0, 4.0};
+    ma3(1, 2) = ComplexMatrix::complex_type {2.0, -5.0};
+    ma3(1, 3) = ComplexMatrix::complex_type {12.0, -15.0};
+
+    ma3(2, 0) = ComplexMatrix::complex_type {6.0, -3.0};
+    ma3(2, 1) = ComplexMatrix::complex_type {4.0, 2.0};
+    ma3(2, 2) = ComplexMatrix::complex_type {5.0, 3.0};
+    ma3(2, 3) = ComplexMatrix::complex_type {8.0, -1.0};
+
+    ma3(3, 0) = ComplexMatrix::complex_type {6.0, -3.0};
+    ma3(3, 1) = ComplexMatrix::complex_type {4.0, 2.0};
+    ma3(3, 2) = ComplexMatrix::complex_type {5.0, 3.0};
+    ma3(3, 3) = ComplexMatrix::complex_type {7.0, -3.0};
+    BOOST_CHECK_MESSAGE(getMaxMagnitudeInMatrix(ma3.inverse()*ma3 - ComplexMatrix::identity(4)) <= 1e-6, "Should be equal.");
 
 }
 

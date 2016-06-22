@@ -23,6 +23,20 @@ ComplexMatrix::~ComplexMatrix()
     //dtor
 }
 
+ComplexMatrix ComplexMatrix::identity(unsigned rows)
+{
+    complex_type zero {0.0, 0.0};
+    complex_type one  {1.0, 0.0};
+    ComplexMatrix m {rows, rows, zero};
+
+    for (unsigned rr=0; rr < rows; ++rr)
+    {
+        m(rr, rr) = one;
+    }
+
+    return m;
+}
+
 void ComplexMatrix::init(unsigned rows, unsigned columns, const complex_type initialValue)
 {
     // If the matrix has been used in the base, clear it completely
@@ -403,119 +417,107 @@ ComplexMatrix::complex_type ComplexMatrix::determinant() const
     return det;
 }
 
-///// NEED TO ADD TEST FOR ITEMS BELOW (EXCEPT FOR ROUND BRACKED OPERATOR)
-//// swap two values
-//void ComplexMatrix::swapValues(complex_type a, complex_type b)
-//{
-//  double tmp = a;
-//  a = b;
-//  b = tmp;
-//}
+void ComplexMatrix::swapValues(unsigned rowA, unsigned columnA, unsigned rowB, unsigned columnB)
+{
+    assert(rowA < m_rows);
+    assert(rowB < m_rows);
+    assert(columnA < m_columns);
+    assert(columnB < m_columns);
 
-///*
-// * returns the inverse of Matrix a
-// */
-//Matrix Inv(const Matrix& a)
-//{
-//  Matrix res;
-//  double d = 0;    // value of the determinant
-//  int rows = a.GetRows();
-//  int cols = a.GetRows();
+    complex_type tmp {m_matrix[rowA][columnA]};
+    m_matrix[rowA][columnA] = m_matrix[rowB][columnB];
+    m_matrix[rowB][columnB] = tmp;
+}
 
-//  d = Det(a);
-//  if (rows == cols && d != 0)
-//  {
-//    // this is a square matrix
-//    if (rows == 1)
-//    {
-//      // this is a 1 x 1 matrix
-//      res = Matrix(rows, cols);
-//      res(1, 1) = 1 / a.get(1, 1);
-//    }
-//    else if (rows == 2)
-//    {
-//      // this is a 2 x 2 matrix
-//      res = Matrix(rows, cols);
-//      res(1, 1) = a.get(2, 2);
-//      res(1, 2) = -a.get(1, 2);
-//      res(2, 1) = -a.get(2, 1);
-//      res(2, 2) = a.get(1, 1);
-//      res = (1/d) * res;
-//    }
-//    else
-//    {
-//      // this is a matrix of 3 x 3 or larger
-//      // calculate inverse using gauss-jordan elimination
-//      //   http://mathworld.wolfram.com/MatrixInverse.html
-//      //   http://math.uww.edu/~mcfarlat/inverse.htm
-//      res = Diag(rows);   // a diagonal matrix with ones at the diagonal
-//      Matrix ai = a;    // make a copy of Matrix a
+/*
+ * returns the inverse of Matrix a
+ */
+ComplexMatrix ComplexMatrix::inverse()
+{
+    assert(m_rows == m_columns);
 
-//      for (int c = 1; c <= cols; c++)
-//      {
-//        // element (c, c) should be non zero. if not, swap content
-//        // of lower rows
-//        int r;
-//        for (r = c; r <= rows && ai(r, c) == 0; r++)
-//        {
-//        }
-//        if (r != c)
-//        {
-//          // swap rows
-//          for (int s = 1; s <= cols; s++)
-//          {
-//            Swap(ai(c, s), ai(r, s));
-//            Swap(res(c, s), res(r, s));
-//          }
-//        }
+    complex_type d = this->determinant();
+    assert( fabs(d) != 0 );
 
-//        // eliminate non-zero values on the other rows at column c
-//        for (int r = 1; r <= rows; r++)
-//        {
-//          if(r != c)
-//          {
-//            // eleminate value at column c and row r
-//            if (ai(r, c) != 0)
-//            {
-//              double f = - ai(r, c) / ai(c, c);
+    ComplexMatrix res {m_rows, m_columns};
 
-//              // add (f * row c) to row r to eleminate the value
-//              // at column c
-//              for (int s = 1; s <= cols; s++)
-//              {
-//                ai(r, s) += f * ai(c, s);
-//                res(r, s) += f * res(c, s);
-//              }
-//            }
-//          }
-//          else
-//          {
-//            // make value at (c, c) one,
-//            // divide each value on row r with the value at ai(c,c)
-//            double f = ai(c, c);
-//            for (int s = 1; s <= cols; s++)
-//            {
-//              ai(r, s) /= f;
-//              res(r, s) /= f;
-//            }
-//          }
-//        }
-//      }
-//    }
-//  }
-//  else
-//  {
-//    if (rows == cols)
-//    {
-//      throw Exception("Matrix must be square");
-//    }
-//    else
-//    {
-//      throw Exception("Determinant of matrix is zero");
-//    }
-//  }
-//  return res;
-//}
+    if (m_rows == 1)
+    {
+        res(0, 0) = 1.0 / m_matrix[0][0];
+    }
+    else if (m_rows == 2)
+    {
+        res(0, 0) =  m_matrix[1][1];
+        res(0, 1) = -m_matrix[0][1];
+        res(1, 0) = -m_matrix[1][0];
+        res(1, 1) =  m_matrix[0][0];
+        res = res / d;
+    }
+    else
+    {
+        // 3 x 3 or larger
+        // calculate inverse using gauss-jordan elimination
+        //   http://mathworld.wolfram.com/MatrixInverse.html
+        //   http://math.uww.edu/~mcfarlat/inverse.htm
+        res = identity(m_rows);
+        complex_type zero {0.0, 0.0};
+
+        ComplexMatrix ai = *this; // make a copy of Matrix a
+
+        for ( unsigned cc = 0; cc < m_columns; ++cc )
+        {
+            // element (cc, cc) should be non zero. if not, swap content
+            // of lower rows
+            unsigned rr;
+            for ( rr = cc; (rr < m_rows) && (ai(rr, cc) == zero) ; ++rr )
+            {
+            }
+            if ( rr != cc )
+            {
+                // swap rows
+                for (unsigned ss = 0; ss < m_columns ; ++ss )
+                {
+                    ai.swapValues(cc, ss, rr, ss);
+                    res.swapValues(cc, ss, rr, ss);
+                }
+            }
+
+            // eliminate non-zero values on the other rows at column cc
+            for ( unsigned rr = 0; rr < m_rows ; ++rr )
+            {
+                if ( rr != cc )
+                {
+                    // eleminate value at cc and rr
+                    if ( ai(rr, cc) != zero )
+                    {
+                        complex_type f = -ai(rr, cc) / ai(cc, cc);
+
+                        // add (f * row cc) to row rr to eleminate the value
+                        // at column cc
+                        for ( unsigned ss = 0; ss < m_columns ; ++ss )
+                        {
+                            ai(rr, ss) += f * ai(cc, ss);
+                            res(rr, ss) += f * res(cc, ss);
+                        }
+                    }
+                }
+                else
+                {
+                    // make value at (cc, cc) one,
+                    // divide each value on row rr with the value at ai(cc, cc)
+                    complex_type f = ai(cc, cc);
+                    for ( unsigned ss = 0; ss < m_columns; ++ss )
+                    {
+                        ai(rr, ss) /= f;
+                        res(rr, ss) /= f;
+                    }
+                }
+            }
+        }
+    }
+
+    return res;
+}
 
 unsigned ComplexMatrix::getRowCount() const
 {
@@ -524,19 +526,17 @@ unsigned ComplexMatrix::getRowCount() const
 
 unsigned ComplexMatrix::getColumnCount() const
 {
-    return m_columns;
+  return m_columns;
 }
 
 void ComplexMatrix::print() const
 {
-
     for (unsigned rr = 0; rr < m_columns ; ++rr)
     {
         for (unsigned cc = 0; cc < m_rows ; ++cc)
         {
-                std::cout << m_matrix[rr][cc] << " | ";
+            std::cout << m_matrix[rr][cc] << " | ";
         }
         std::cout << std::endl;
     }
-
 }
