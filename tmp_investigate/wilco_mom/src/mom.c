@@ -549,8 +549,7 @@ void MoM(double freq, int P, double **points, int T, int **triangles, int N, int
             fflush(stdout);
         }
 
-        double pPoints[3][3] = {
-            {points[triangles[i][0]][0], points[triangles[i][0]][1], points[triangles[i][0]][2]},
+        double pPoints[3][3] = {{points[triangles[i][0]][0], points[triangles[i][0]][1], points[triangles[i][0]][2]},
             {points[triangles[i][1]][0], points[triangles[i][1]][1], points[triangles[i][1]][2]},
             {points[triangles[i][2]][0], points[triangles[i][2]][1], points[triangles[i][2]][2]}};
 
