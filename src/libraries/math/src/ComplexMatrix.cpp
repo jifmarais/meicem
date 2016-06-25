@@ -18,6 +18,15 @@ ComplexMatrix::ComplexMatrix(unsigned rows, unsigned columns)
     init(rows, columns, defaultValue);
 }
 
+// Create a square matrix
+ComplexMatrix::ComplexMatrix(unsigned rows)
+{
+    m_rows = 0;
+    m_columns = 0;
+    complex_type defaultValue {0.0, 0.0};
+    init(rows, rows, defaultValue);
+}
+
 ComplexMatrix::~ComplexMatrix()
 {
     //dtor
@@ -37,7 +46,7 @@ ComplexMatrix ComplexMatrix::identity(unsigned rows)
     return m;
 }
 
-void ComplexMatrix::init(unsigned rows, unsigned columns, const complex_type initialValue)
+void ComplexMatrix::init(unsigned rows, unsigned columns, const complex_type& initialValue)
 {
     // If the matrix has been used in the base, clear it completely
     if ( (m_rows > 0) || (m_columns > 0) )
@@ -143,7 +152,7 @@ ComplexMatrix& ComplexMatrix::operator+=(const ComplexMatrix& rhs)
     return *this;
 }
 
-ComplexMatrix ComplexMatrix::operator+(const complex_type rhs) const
+ComplexMatrix ComplexMatrix::operator+(const complex_type& rhs) const
 {
     ComplexMatrix m {m_rows, m_columns};
 
@@ -185,7 +194,7 @@ ComplexMatrix& ComplexMatrix::operator-=(const ComplexMatrix& rhs)
     return *this;
 }
 
-ComplexMatrix ComplexMatrix::operator-(const complex_type rhs) const
+ComplexMatrix ComplexMatrix::operator-(const complex_type& rhs) const
 {
     ComplexMatrix m {m_rows, m_columns};
 
@@ -252,7 +261,7 @@ ComplexMatrix& ComplexMatrix::operator*=(const ComplexMatrix& rhs)
     return *this;
 }
 
-ComplexMatrix ComplexMatrix::operator*(const complex_type rhs) const
+ComplexMatrix ComplexMatrix::operator*(const complex_type& rhs) const
 {
     ComplexMatrix m {m_rows, m_columns};
 
@@ -295,7 +304,7 @@ ComplexMatrix& ComplexMatrix::operator/=(const ComplexMatrix& rhs)
     return *this;
 }
 
-ComplexMatrix ComplexMatrix::operator/(const complex_type rhs) const
+ComplexMatrix ComplexMatrix::operator/(const complex_type& rhs) const
 {
     ComplexMatrix m {m_rows, m_columns};
 
@@ -405,9 +414,10 @@ ComplexMatrix::complex_type ComplexMatrix::determinant() const
     else
     {
         double sign = 1.0;
+        ComplexMatrix newMatrix (m_rows-1, m_columns-1);
         for (unsigned cc = 0; cc < m_columns; ++cc )
         {
-            ComplexMatrix newMatrix = this->minorMatrix(0, cc);
+            newMatrix = this->minorMatrix(0, cc);
 //            det += pow(-1.0, cc) * m_matrix[0][cc] * newMatrix.determinant();
             det += sign * m_matrix[0][cc] * newMatrix.determinant();
             sign *= -1.0;
@@ -436,9 +446,6 @@ ComplexMatrix ComplexMatrix::inverse()
 {
     assert(m_rows == m_columns);
 
-    complex_type d = this->determinant();
-    assert( fabs(d) != 0 );
-
     ComplexMatrix res {m_rows, m_columns};
 
     if (m_rows == 1)
@@ -447,6 +454,8 @@ ComplexMatrix ComplexMatrix::inverse()
     }
     else if (m_rows == 2)
     {
+        complex_type d = this->determinant();
+        assert( fabs(d) != 0 );
         res(0, 0) =  m_matrix[1][1];
         res(0, 1) = -m_matrix[0][1];
         res(1, 0) = -m_matrix[1][0];
@@ -471,7 +480,9 @@ ComplexMatrix ComplexMatrix::inverse()
             unsigned rr;
             for ( rr = cc; (rr < m_rows) && (ai(rr, cc) == zero) ; ++rr )
             {
+//                std::cout << cc << "  " << rr << " - " << ai(rr, cc) << std::endl;
             }
+            assert(rr < m_rows); // If this fails, the entire row was zero
             if ( rr != cc )
             {
                 // swap rows
@@ -531,9 +542,9 @@ unsigned ComplexMatrix::getColumnCount() const
 
 void ComplexMatrix::print() const
 {
-    for (unsigned rr = 0; rr < m_columns ; ++rr)
+    for (unsigned rr = 0; rr < m_rows ; ++rr)
     {
-        for (unsigned cc = 0; cc < m_rows ; ++cc)
+        for (unsigned cc = 0; cc < m_columns ; ++cc)
         {
             std::cout << m_matrix[rr][cc] << " | ";
         }

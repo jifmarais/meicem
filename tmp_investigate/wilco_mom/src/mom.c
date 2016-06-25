@@ -511,7 +511,7 @@ int IsEdgeInMat(int val1, int val2, int **edges, int N)
 void MoM(double freq, int P, double **points, int T, int **triangles, int N, int **edges, complex double **Zmat, complex double *Vvec)
 {
     int NumOuterIntPoints = 3;
-    int NumInnerIntPoints = 7;
+    int NumInnerIntPoints = 7; // 7
     double prox = 0.33;
 
     const static double c0 = 299792456.2;
@@ -721,7 +721,7 @@ int main(void)
 
     int i=0, j=0;
 
-    myfile = fopen("../inputoutput/input.txt","r");
+    myfile = fopen("../inputoutput/input_cononical_2basisfunction.txt","r");
     if (!myfile)
     {
         printf("No such file (1)");
@@ -777,6 +777,11 @@ int main(void)
     {
         for(j=0; j<N; j++)
         {
+            printf("%d||", i);
+            printf("%d||", j);
+            printf("%.15g||", creal(Zmat[i][j]));
+            printf("%.15g||\n", cimag(Zmat[i][j]));
+
             fprintf(myfile, "%d--", i);
             fprintf(myfile, "%d--", j);
             fprintf(myfile, "%.15g--", creal(Zmat[i][j]));

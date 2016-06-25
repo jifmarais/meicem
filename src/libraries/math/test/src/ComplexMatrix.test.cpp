@@ -396,6 +396,7 @@ double getMaxMagnitudeInMatrix(const ComplexMatrix m)
         }
     }
 
+    return maxValue;
 }
 
 BOOST_AUTO_TEST_CASE(matrixInverse)

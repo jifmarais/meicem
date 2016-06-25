@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <assert.h>
 
-EdgeContainer::EdgeContainer(TriangleContainer &container)
+EdgeContainer::EdgeContainer(const TriangleContainer &container)
    : m_triangleContainer(container)
 {
     //ctor
@@ -16,7 +16,7 @@ EdgeContainer::~EdgeContainer()
     //dtor
 }
 
-TriangleContainer& EdgeContainer::getTriangleContainer() const
+const TriangleContainer& EdgeContainer::getTriangleContainer() const
 {
     return m_triangleContainer;
 }

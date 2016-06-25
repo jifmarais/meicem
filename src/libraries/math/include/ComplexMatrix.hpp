@@ -11,12 +11,13 @@ class ComplexMatrix
 
         ComplexMatrix(unsigned rows, unsigned columns, complex_type initialValue);
         ComplexMatrix(unsigned rows, unsigned columns);
+        ComplexMatrix(unsigned rows);
         virtual               ~ComplexMatrix();
 
         complex_type&          operator()(unsigned row, unsigned col);
         const complex_type&    operator()(unsigned row, unsigned col) const;
 
-        static ComplexMatrix          identity(unsigned rows);
+        static ComplexMatrix   identity(unsigned rows);
         unsigned               getRowCount() const;
         unsigned               getColumnCount() const;
         ComplexMatrix&         operator=(const ComplexMatrix& rhs);
@@ -24,17 +25,17 @@ class ComplexMatrix
         bool                   operator!=(const ComplexMatrix& rhs) const;
         ComplexMatrix          operator+(const ComplexMatrix& rhs) const;
         ComplexMatrix&         operator+=(const ComplexMatrix& rhs);
-        ComplexMatrix          operator+(const complex_type rhs) const;
+        ComplexMatrix          operator+(const complex_type& rhs) const;
         ComplexMatrix          operator-(const ComplexMatrix& rhs) const;
         ComplexMatrix&         operator-=(const ComplexMatrix& rhs);
-        ComplexMatrix          operator-(const complex_type rhs) const;
+        ComplexMatrix          operator-(const complex_type& rhs) const;
         ComplexMatrix          hadamard(const ComplexMatrix& rhs) const;
         ComplexMatrix          operator*(const ComplexMatrix& rhs) const;
         ComplexMatrix&         operator*=(const ComplexMatrix& rhs);
-        ComplexMatrix          operator*(const complex_type rhs) const;
+        ComplexMatrix          operator*(const complex_type& rhs) const;
         ComplexMatrix          operator/(const ComplexMatrix& rhs) const;
         ComplexMatrix&         operator/=(const ComplexMatrix& rhs);
-        ComplexMatrix          operator/(const complex_type rhs) const;
+        ComplexMatrix          operator/(const complex_type& rhs) const;
         ComplexMatrix 	       conjugateTranspose() const;
         ComplexMatrix 	       transpose() const;
         ComplexMatrix          subMatrix(unsigned rowStart, unsigned rowEnd, unsigned columnStart, unsigned columnEnd) const;
@@ -46,7 +47,7 @@ class ComplexMatrix
     protected:
     private:
         void                   swapValues(unsigned rowA, unsigned columnA, unsigned rowB, unsigned columnB);
-        void                   init(unsigned rows, unsigned columns, const complex_type initialValue);
+        void                   init(unsigned rows, unsigned columns, const complex_type& initialValue);
 
         matrix_type            m_matrix;
         unsigned               m_rows;
