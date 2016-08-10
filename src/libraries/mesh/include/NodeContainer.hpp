@@ -18,6 +18,7 @@ class NodeContainer
         SizeType	find(const Node&) const;
         Node		at(SizeType) const;
         SizeType    	size() const;
+        void        	clear();
 
     protected:
     private:

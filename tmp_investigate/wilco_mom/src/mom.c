@@ -773,6 +773,7 @@ int main(void)
     }
 
 
+    printf("\nZmat\n");
     for (i=0; i<N; i++)
     {
         for(j=0; j<N; j++)
@@ -788,8 +789,14 @@ int main(void)
             fprintf(myfile, "%.15g--\n", cimag(Zmat[i][j]));
         }
     }
+
+    printf("\nVvec\n");
     for (i=0; i<N; i++)
     {
+        printf("%d||", i);
+        printf("%.15g||", creal(Vvec[i]));
+        printf("%.15g||\n", cimag(Vvec[i]));
+
         fprintf(myfile, "%d--", i);
         fprintf(myfile, "%.15g--", creal(Vvec[i]));
         fprintf(myfile, "%.15g--\n", cimag(Vvec[i]));

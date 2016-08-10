@@ -86,3 +86,10 @@ bool NodeContainer::isEqual(double n1, double n2) const
     return std::fabs(n1 - n2) <= m_tolerance;
 }
 
+void NodeContainer::clear()
+{
+    m_x.clear();
+    m_y.clear();
+    m_z.clear();
+    m_size = 0;
+}
