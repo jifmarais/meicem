@@ -3,11 +3,14 @@
 #include "NodeContainer.hpp"
 #include "ComplexMatrix.hpp"
 #include "TriangleContainer.hpp"
-#include "reader_wilco_input.hpp"
+#include "reader_nastran.hpp"
+//#include "reader_wilco_input.hpp"
 #include "MoM.hpp"
 //#include "math.h"
 #include "assert.h"
 #include <iostream>
+#include "NearFieldContainer.hpp"
+#include "PlaneWave.hpp"
 //#include <iterator>
 //#include <complex>
 //#include <cmath>
@@ -23,13 +26,17 @@ int main()
 
     NodeContainer pContainer;
     TriangleContainer tContainer(pContainer);
-    WilcoInputReader reader;
-    std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
-    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
+//    WilcoInputReader reader;
+    NastranReader reader;
+//    std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
+    std::string baseTestFilesDirectory = "/home/jif/Dropbox/Altair/tmp/meicem_simple_plate_test/";
+//    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
+    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
     reader.setTriangleContainer(&tContainer);
     reader.importModel();
 
-    double freq = reader.getFrequency();
+//    double freq = reader.getFrequency();
+    double freq = 1e8;
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
@@ -49,8 +56,34 @@ int main()
     Vsolution.print();
 
     // Calculate currents (and export them)
+    MoMSetup.writeCurrentsToOS("test1", Vsolution);
 
     // Calculate near fields and export them
+    NearFieldContainer nfContainer;
+    NearFieldContainer nfContainer2;
+    nfContainer.setFieldType(NearFieldContainer::ELECTICFIELD);
+    nfContainer2.setFieldType(NearFieldContainer::MAGNETICFIELD);
+    Node startCorner {-1.0, -1.0, -1.0};
+    Node endCorner   {+1.0, +1.0, +1.0};
+    nfContainer.setPoints(startCorner, endCorner, 11, 11, 51);
+    nfContainer2.setPoints(startCorner, endCorner, 11, 11, 51);
+    PlaneWave pw;
+    pw.setAngleOfIncidence(0.0, 0.0);
+    pw.setPolarisationAngle(0.0);
+    pw.setFrequency(1.5e8);
+    for ( unsigned pIndex = 0; pIndex < nfContainer.size(); ++pIndex )
+    {
+            pw.setFieldPoint(nfContainer.getPointAt(pIndex));
+            nfContainer.setValueAt(pIndex, pw.getElectricField());
+
+            pw.setFieldPoint(nfContainer2.getPointAt(pIndex));
+            nfContainer2.setValueAt(pIndex, pw.getMagneticField());
+    }
+
+//    std::ofstream file ('test.efe');
+    nfContainer.writeToEFEHFE("test1");
+    nfContainer2.writeToEFEHFE("test1");
+
 
     return EXIT_SUCCESS;
 }

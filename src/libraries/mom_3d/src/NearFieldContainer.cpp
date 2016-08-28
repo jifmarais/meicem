@@ -1,11 +1,15 @@
 #include "NearFieldContainer.hpp"
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
 #include "assert.h"
 #include "fstream"
 
 NearFieldContainer::NearFieldContainer()
 {
     //ctor
-    m_numPoints = 0;
+    m_numPointsX = 0;
+    m_numPointsY = 0;
+    m_numPointsZ = 0;
     m_fieldType = FieldType::UNDEFINED;
 }
 
@@ -19,7 +23,7 @@ void NearFieldContainer::setFieldType(NearFieldContainer::FieldType field)
     m_fieldType = field;
 }
 
-double NearFieldContainer::calcDelta(double start, double end, unsigned count)
+double NearFieldContainer::calcDelta(double start, double end, unsigned count) const
 {
     assert(count > 0);
 
@@ -35,6 +39,12 @@ double NearFieldContainer::calcDelta(double start, double end, unsigned count)
     return dx;
 }
 
+unsigned NearFieldContainer::localToGlobalIndex(unsigned xIndex, unsigned yIndex, unsigned zIndex) const
+{
+//    return xIndex*(m_numPointsY*m_numPointsZ) + yIndex*m_numPointsZ + zIndex;
+    return xIndex*(m_numPointsY*m_numPointsZ) + yIndex*m_numPointsZ + zIndex;
+}
+
 void NearFieldContainer::setPoints(Node start,
                                    Node end,
                                    unsigned xCount,
@@ -44,6 +54,10 @@ void NearFieldContainer::setPoints(Node start,
     assert(xCount > 0);
     assert(yCount > 0);
     assert(zCount > 0);
+
+    m_numPointsX = xCount;
+    m_numPointsY = yCount;
+    m_numPointsZ = zCount;
 
     m_fieldValueXcomponent.clear();
     m_fieldValueYcomponent.clear();
@@ -102,6 +116,15 @@ NearFieldContainer::FieldType NearFieldContainer::getFieldType() const
     return m_fieldType;
 }
 
+void NearFieldContainer::setValueAt(unsigned xIndex, unsigned yIndex, unsigned zIndex , NearFieldValue value)
+{
+    assert(xIndex < m_numPointsX);
+    assert(yIndex < m_numPointsY);
+    assert(zIndex < m_numPointsZ);
+
+    setValueAt(localToGlobalIndex(xIndex, yIndex, zIndex), value);
+}
+
 void NearFieldContainer::setValueAt(unsigned index, NearFieldValue value)
 {
     assert(index < size());
@@ -117,6 +140,15 @@ Node NearFieldContainer::getPointAt(unsigned index) const
     return m_nodes.at(index);
 }
 
+Node NearFieldContainer::getPointAt(unsigned xIndex, unsigned yIndex, unsigned zIndex) const
+{
+    assert(xIndex < m_numPointsX);
+    assert(yIndex < m_numPointsY);
+    assert(zIndex < m_numPointsZ);
+
+    return getPointAt(localToGlobalIndex(xIndex, yIndex, zIndex));
+}
+
 NearFieldValue NearFieldContainer::getValueAt(unsigned index) const
 {
     assert(index < size());
@@ -128,7 +160,16 @@ NearFieldValue NearFieldContainer::getValueAt(unsigned index) const
     return result;
 }
 
-void NearFieldContainer::writeToEFEHFE(std::string fname)
+NearFieldValue NearFieldContainer::getValueAt(unsigned xIndex, unsigned yIndex, unsigned zIndex) const
+{
+    assert(xIndex < m_numPointsX);
+    assert(yIndex < m_numPointsY);
+    assert(zIndex < m_numPointsZ);
+
+    return getValueAt(localToGlobalIndex(xIndex, yIndex, zIndex));
+}
+
+void NearFieldContainer::writeToEFEHFE(std::string fname) const
 {
     assert(m_fieldType != NearFieldContainer::UNDEFINED);
     assert(fname != "");
@@ -146,7 +187,66 @@ void NearFieldContainer::writeToEFEHFE(std::string fname)
 
     if (file.is_open())
     {
-        file << "JIF" << std::endl;
+        if (m_fieldType == NearFieldContainer::ELECTICFIELD)
+        {
+            file << "##File Type: Electric near field" << std::endl;
+        }
+        else
+        {
+            file << "##File Type: Magnetic near field" << std::endl;
+        }
+        file << "##File Format: 4" << std::endl;
+        file << "** File exported by MEICEM" << std::endl;
+        file << std::endl;
+//        file << "#Configuration Name: StandardConfiguration1" << std::endl;
+//        file << "#Request Name: NearField11" << std::endl;
+        file << "#Frequency:   1.00000000E+009" << std::endl;
+        file << "#Coordinate System: Cartesian" << std::endl;
+        file << "#No. of X Samples: " << m_numPointsX << std::endl;
+        file << "#No. of Y Samples: " << m_numPointsY << std::endl;
+        file << "#No. of Z Samples: " << m_numPointsZ << std::endl;
+        if (m_fieldType == NearFieldContainer::ELECTICFIELD)
+        {
+            file << "#Result Type: Electric Field Values" << std::endl;
+        }
+        else
+        {
+            file << "#Result Type: Magnetic Field Values" << std::endl;
+        }
+        file << "#No. of Header Lines: 1" << std::endl;
+        file << "#         \"X\"       ";
+        file << "        \"Y\"         ";
+        file << "        \"Z\"         ";
+        file << "      \"Re(Ex)\"      ";
+        file << "      \"Im(Ex)\"      ";
+        file << "      \"Re(Ey)\"      ";
+        file << "      \"Im(Ey)\"      ";
+        file << "      \"Re(Ez)\"      ";
+        file << "      \"Im(Ez)\" ";
+        file << std::endl;
+
+        for (unsigned zIndex=0; zIndex < m_numPointsZ ; ++zIndex)
+        {
+            for (unsigned yIndex=0; yIndex < m_numPointsY ; ++yIndex)
+            {
+                for (unsigned xIndex=0; xIndex < m_numPointsX ; ++xIndex)
+                {
+                    file << std::fixed << std::setprecision(9) ;
+                    file << getPointAt(xIndex, yIndex, zIndex).x() << "  " ;
+                    file << getPointAt(xIndex, yIndex, zIndex).y() << "  " ;
+                    file << getPointAt(xIndex, yIndex, zIndex).z() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getX().real() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getX().imag() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getY().real() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getY().imag() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getZ().real() << "  " ;
+                    file << getValueAt(xIndex, yIndex, zIndex).getZ().imag() ;
+                    file << std::endl;
+                }
+            }
+        }
+
+        file << std::endl;
         file.close();
     }
 

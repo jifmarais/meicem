@@ -24,19 +24,25 @@ class NearFieldContainer
                                   unsigned zCount);
         void 		setPoint(Node point);
         Node		getPointAt(unsigned index) const;
+        Node		getPointAt(unsigned xIndex, unsigned yIndex, unsigned zIndex) const;
         void		setValueAt(unsigned index, NearFieldValue value);
+        void 		setValueAt(unsigned xIndex, unsigned yIndex, unsigned zIndex, NearFieldValue value);
         NearFieldValue 	getValueAt(unsigned index) const;
+        NearFieldValue 	getValueAt(unsigned xIndex, unsigned yIndex, unsigned zIndex) const;
         unsigned	size() const;
-        void		writeToEFEHFE(std::string fname);
+        void		writeToEFEHFE(std::string fname) const;
 
-    protected:
+protected:
     private:
-        unsigned	m_numPoints;
         FieldType	m_fieldType;
         NodeContainer 	m_nodes;
+        unsigned	m_numPointsX;
+        unsigned	m_numPointsY;
+        unsigned	m_numPointsZ;
         std::vector<std::complex<double>> m_fieldValueXcomponent;
         std::vector<std::complex<double>> m_fieldValueYcomponent;
         std::vector<std::complex<double>> m_fieldValueZcomponent;
 
-        double 		calcDelta(double start, double end, unsigned count);
+        double 		calcDelta(double start, double end, unsigned count) const;
+        unsigned	localToGlobalIndex(unsigned xIndex, unsigned yIndex, unsigned zIndex) const;
 };

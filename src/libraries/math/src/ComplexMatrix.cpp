@@ -546,7 +546,11 @@ void ComplexMatrix::print() const
     {
         for (unsigned cc = 0; cc < m_columns ; ++cc)
         {
-            std::cout << m_matrix[rr][cc] << " | ";
+            std::cout << m_matrix[rr][cc] ;
+            if (cc < m_columns-1)
+            {
+                std::cout << " | ";
+            }
         }
         std::cout << std::endl;
     }

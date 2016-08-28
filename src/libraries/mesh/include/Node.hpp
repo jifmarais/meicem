@@ -25,6 +25,7 @@ class Node
         Node        norm() const;
         Node        cross(const Node& v) const;
         static Node cross(const Node& u, const Node& v);
+        static double   dot(const Node&u, const Node&v);
         double 	    distance(const Node& p1) const;
         static double distance(const Node& p1, const Node& p2);
         double      x() const;

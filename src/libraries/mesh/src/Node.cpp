@@ -158,6 +158,13 @@ Node Node::cross(const Node& u, const Node& v)
     return n;
 }
 
+double Node::dot(const Node &u, const Node &v)
+{
+    double n;
+    n  = u.x()*v.x() + u.y()*v.y() + u.z()*v.z();
+    return n;
+}
+
 Node Node::cross(const Node& v) const
 {
     return cross(*this, v);

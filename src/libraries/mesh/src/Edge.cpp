@@ -44,6 +44,37 @@ double Edge::length() const
     return Node::distance(m_nodes[0], m_nodes[1]);
 }
 
+Node Edge::normal() const
+{
+   //JIF : Has not test
+    Node n;
+    n = m_nodes[1] - m_nodes[0];
+    n = n / n.magnitude();
+    return n;
+}
+
+void Edge::correctOrientation(Triangle t)
+{
+    //JIF: Has not test
+
+    assert(t.n1() == m_nodes[0] || t.n2() == m_nodes[0] || t.n3() == m_nodes[0]);
+    assert(t.n1() == m_nodes[1] || t.n2() == m_nodes[1] || t.n3() == m_nodes[1]);
+
+    for (NodeContainer::SizeType nIndex = 0; nIndex < 3; ++nIndex )
+    {
+        if (t[nIndex] == m_nodes[0])
+        {
+            if (t[(nIndex+1)%3] != m_nodes[1])
+            {
+                Node tmp = m_nodes[0];
+                m_nodes[0] = m_nodes[1];
+                m_nodes[1] = tmp;
+            }
+            break;
+        }
+    }
+}
+
 Node Edge::n1() const
 {
     return m_nodes[0];

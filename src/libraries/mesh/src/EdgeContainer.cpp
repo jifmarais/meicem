@@ -86,6 +86,26 @@ NodeContainer::SizeType EdgeContainer::size() const
     return m_node1Index.size();
 }
 
+std::vector<EdgeContainer::SizeType> EdgeContainer::getEdgeIndecesOnTriangle(EdgeContainer::SizeType tIndex) const
+{
+    //JIF: This method does not have a test
+    std::vector<SizeType> indexList;
+
+    for (unsigned eIndex = 0; eIndex < m_associatedTriangleIndeces.size(); ++eIndex)
+    {
+        for (unsigned tAssociatedIndex = 0; tAssociatedIndex < m_associatedTriangleIndeces.at(eIndex).size(); ++tAssociatedIndex)
+        {
+            if (m_associatedTriangleIndeces.at(eIndex).at(tAssociatedIndex) == tIndex)
+            {
+                // edge is associated with the triangle
+                indexList.push_back(eIndex);
+            }
+        }
+    }
+
+    return indexList;
+}
+
 //EdgeContainer::SizeType EdgeContainer::add(Edge e)
 //{
 //    return 1;
