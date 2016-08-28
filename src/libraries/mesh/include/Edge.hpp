@@ -17,6 +17,8 @@ class Edge
         std::vector<TriangleContainer::SizeType>
                 getTriangles();
         double  length() const;
+        Node	normal() const;
+        void	correctOrientation(Triangle t);
         Node    n1() const;
         Node    n2() const;
 

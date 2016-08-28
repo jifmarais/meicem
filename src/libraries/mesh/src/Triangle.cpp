@@ -118,23 +118,41 @@ Node Triangle::normal() const
     return normalVector.norm();
 }
 
-void Triangle::setOppositeEdge(const Node& p1, const Node& p2)
+void Triangle::setOppositeEdge(const Node p1, const Node p2)
 {
+    //JIF: This needs tests (it had bugs and caused problems already)
     assert((m_nodes[0] == p1) || (m_nodes[1] == p1) || (m_nodes[2] == p1));
     assert((m_nodes[0] == p2) || (m_nodes[1] == p2) || (m_nodes[2] == p2));
+    Node normalBefore = this->normal();
 
     Node tmp;
-    for (auto index = 0 ; index < 2 ; ++index)
+    // Skip the first one - if it is the opposite edge, it is correct already
+    for (auto index = 1 ; index < 3 ; ++index)
     {
         if ( (m_nodes[index] != p1) && (m_nodes[index] != p2) )
         {
             tmp = m_nodes[index];
+            // We should keep the handedness of the triangle
+            if (m_nodes[(index+1)%3] == p1)
+            {
+                m_nodes[0] = tmp;
+                m_nodes[1] = p1;
+                m_nodes[2] = p2;
+            }
+            else
+            {
+                m_nodes[0] = tmp;
+                m_nodes[1] = p2;
+                m_nodes[2] = p1;
+            }
+            break;
         }
     }
-    m_nodes[0] = tmp;
-    m_nodes[1] = p1;
-    m_nodes[2] = p2;
 
+    assert(this->normal() == normalBefore);
+    assert(m_nodes[0] != m_nodes[1]);
+    assert(m_nodes[0] != m_nodes[2]);
+    assert(m_nodes[1] != m_nodes[2]);
 }
 
 Node Triangle::fromSimplex(const Node& p) const

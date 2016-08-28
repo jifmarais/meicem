@@ -16,9 +16,9 @@ class EdgeContainer
 
         const TriangleContainer&      getTriangleContainer() const;
         void                    buildNonboundaryEdgeList();
-
         Edge                    at(SizeType index) const;
         SizeType    		size() const;
+        std::vector<SizeType>	getEdgeIndecesOnTriangle(SizeType tIndex) const;
 
     protected:
     private:

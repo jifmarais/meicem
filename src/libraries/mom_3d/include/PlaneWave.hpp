@@ -1,6 +1,7 @@
 #pragma once
 #include "NearFieldValue.hpp"
 #include "Vector.hpp"
+#include "Node.hpp"
 #include <complex>
 
 class PlaneWave
@@ -14,6 +15,7 @@ class PlaneWave
         void 			setFrequency(double frequency);
 
         void			setFieldPoint(double x, double y, double z);
+        void			setFieldPoint(Node p);
         NearFieldValue		getElectricField();
         NearFieldValue		getMagneticField();
 
