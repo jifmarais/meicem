@@ -142,6 +142,13 @@ Vector Vector::norm() const
     return r;
 }
 
+double Vector::dot(const Vector& u, const Vector& v) //JIF: Need to add test
+{
+    double n;
+    n  = u.x()*v.x() + u.y()*v.y() + u.z()*v.z();
+    return n;
+}
+
 Vector Vector::cross(const Vector& u, const Vector& v)
 {
     Vector n;

@@ -33,6 +33,7 @@ target_link_libraries(meicem NodeContainer)
 target_link_libraries(meicem TriangleContainer)
 target_link_libraries(meicem ComplexMatrix)
 target_link_libraries(meicem reader_wilco_input)
+target_link_libraries(meicem MoM)
 #target_link_libraries(meicem Node)
 #target_link_libraries(meicem Triangle)
 

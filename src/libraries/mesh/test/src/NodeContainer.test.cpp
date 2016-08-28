@@ -166,6 +166,30 @@ BOOST_AUTO_TEST_CASE(ToleranceLimitsfindPoint)
     BOOST_CHECK_MESSAGE(L1.find(p1) == NodeContainer::invalidIndex, "Not expecting a valid index to be returned.");
 }
 
+BOOST_AUTO_TEST_CASE(clear)
+{
+    NodeContainer L1;
+    Node p1;
+    NodeContainer::SizeType ii;
+    NodeContainer::SizeType count {50};
+
+    // Add a bunch of points
+    for ( ii=0; ii < count ; ++ii )
+    {
+        p1.set(1.0*ii, 2.0*ii, 3.0*ii);
+        L1.add(p1);
+    }
+    BOOST_CHECK_EQUAL(L1.size(), count);
+
+    L1.clear();
+    BOOST_CHECK_EQUAL(L1.size(), 0);
+
+    p1.set(1.0, 2.0, 3.0);
+    L1.add(p1);
+    BOOST_CHECK_EQUAL(L1.size(), 1);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //EOF

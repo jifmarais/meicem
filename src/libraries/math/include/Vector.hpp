@@ -28,8 +28,9 @@ class Vector
         double          z() const;
 
         static Vector   cross(const Vector& u, const Vector& v);
+        static double   dot(const Vector &u, const Vector &v);
 
-    protected:
+protected:
     private:
         double m_x;
         double m_y;
