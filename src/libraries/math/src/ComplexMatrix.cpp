@@ -470,7 +470,7 @@ ComplexMatrix ComplexMatrix::inverse()
         //   http://math.uww.edu/~mcfarlat/inverse.htm
         res = identity(m_rows);
         complex_type zero {0.0, 0.0};
-
+        complex_type f {0.0, 0.0};
         ComplexMatrix ai = *this; // make a copy of Matrix a
 
         for ( unsigned cc = 0; cc < m_columns; ++cc )
@@ -501,7 +501,7 @@ ComplexMatrix ComplexMatrix::inverse()
                     // eleminate value at cc and rr
                     if ( ai(rr, cc) != zero )
                     {
-                        complex_type f = -ai(rr, cc) / ai(cc, cc);
+                        f = -ai(rr, cc) / ai(cc, cc);
 
                         // add (f * row cc) to row rr to eleminate the value
                         // at column cc
@@ -516,7 +516,7 @@ ComplexMatrix ComplexMatrix::inverse()
                 {
                     // make value at (cc, cc) one,
                     // divide each value on row rr with the value at ai(cc, cc)
-                    complex_type f = ai(cc, cc);
+                    f = ai(cc, cc);
                     for ( unsigned ss = 0; ss < m_columns; ++ss )
                     {
                         ai(rr, ss) /= f;

@@ -29,7 +29,7 @@ int main()
 //    WilcoInputReader reader;
     NastranReader reader;
 //    std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
-    std::string baseTestFilesDirectory = "/home/jif/Dropbox/Altair/tmp/meicem_simple_plate_test/";
+    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
     reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
     reader.setTriangleContainer(&tContainer);
@@ -44,16 +44,16 @@ int main()
     ComplexMatrix Vvector = MoMSetup.calculateRHS();
 
     std::cout << std::endl << "Zmatrix" << std::endl;
-    Zmatrix.print();
+//    Zmatrix.print();
 
     std::cout << std::endl << "Vvector" << std::endl;
-    Vvector.print();
+//    Vvector.print();
 
 //    (Zmatrix.inverse()*Zmatrix).print();
     std::cout << std::endl << "Coefficients" << std::endl;
     ComplexMatrix Vsolution {(unsigned)Vvector.getRowCount(), 1};
     Vsolution = Zmatrix.inverse()*Vvector;
-    Vsolution.print();
+//    Vsolution.print();
 
     // Calculate currents (and export them)
     MoMSetup.writeCurrentsToOS("test1", Vsolution);

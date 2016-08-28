@@ -38,6 +38,10 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
     double omega = 2 * EMconst::pi*m_frequency;
     double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
 
+    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
+    std::vector<Quadrature::WeightedPoint> weightedPoints;
+    weightedPoints = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
+
     // Container to hold basis functions (non-boundary edges)
     EdgeContainer eContainer(m_tContainer);
     eContainer.buildNonboundaryEdgeList();
@@ -90,10 +94,7 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                     double sign_n = -(double)triangle_nIndex*2.0 + 1.0;
                     assert((sign_n == -1.0) || (sign_n == 1.0));
 
-                    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
-                    std::vector<Quadrature::WeightedPoint> weightedPoints;
-                    weightedPoints = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
-
+                    std::complex<double> expValue {0.0, 0.0};
                     std::complex<double> Phi {0.0, 0.0};
                     std::complex<double> A [3] { {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
 
@@ -113,27 +114,49 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                         // Calculate scalar potential Phi
                         // Note that equation can be simplified - written out for clarity
                         // Also, this should not be done inside the quadrature point loop
-                        Phi += -1.0 / (4.0 * EMconst::pi * EMconst::j * omega * EMconst::eps0) *
-                                 ( sign_n * edge_n.length() / triangle_n.area()) *
-                                 (exp(-1.0 * EMconst::j * k * Rm) / Rm) *
-                                 (wp.weight * triangle_n.area());
+//                        Phi += -1.0 / (4.0 * EMconst::pi * EMconst::j * omega * EMconst::eps0) *
+//                                 ( sign_n * edge_n.length() / triangle_n.area()) *
+//                                 (exp(-1.0 * EMconst::j * k * Rm) / Rm) *
+//                                 (wp.weight * triangle_n.area());
+//                        Phi += -1.0 / (4.0 * EMconst::pi * EMconst::j * omega * EMconst::eps0) *
+//                                 ( sign_n * edge_n.length() ) *
+//                                 (exp(-1.0 * EMconst::j * k * Rm) / Rm) *
+//                                 (wp.weight );
+//                        Phi +=  (exp(-1.0 * EMconst::j * k * Rm) / Rm) *
+//                                 (wp.weight );
+                        expValue =  (exp(-1.0 * EMconst::j * k * Rm) / Rm) *
+                                 (wp.weight );
+                        Phi += expValue;
 
                         // Calculate vector potential A
-                        std::complex<double> Atmp;
-                        Atmp = ( EMconst::mu0 / (4.0 * EMconst::pi) ) *
-                                ( edge_n.length() / ( triangle_n.area() * 2.0) ) *
-                                (exp( -1.0 * EMconst::j * k * Rm) / Rm) *
-                                (wp.weight * triangle_n.area());
-                        A[0] += Atmp * rho_n_qp.x();
-                        A[1] += Atmp * rho_n_qp.y();
-                        A[2] += Atmp * rho_n_qp.z();
+//                        std::complex<double> Atmp;
+//                        Atmp = ( EMconst::mu0 / (4.0 * EMconst::pi) ) *
+//                                ( edge_n.length() / ( triangle_n.area() * 2.0) ) *
+//                                (exp( -1.0 * EMconst::j * k * Rm) / Rm) *
+//                                (wp.weight * triangle_n.area());
+//                        Atmp = ( EMconst::mu0 / (4.0 * EMconst::pi) ) *
+//                                ( edge_n.length() / 2.0 ) *
+//                                (exp( -1.0 * EMconst::j * k * Rm) / Rm) *
+//                                (wp.weight );
+//                        Atmp =  (exp( -1.0 * EMconst::j * k * Rm) / Rm) *
+//                                (wp.weight );
+                        A[0] += expValue * rho_n_qp.x();
+                        A[1] += expValue * rho_n_qp.y();
+                        A[2] += expValue * rho_n_qp.z();
                    }
+                    Phi  *= -1.0 / (4.0 * EMconst::pi * EMconst::j * omega * EMconst::eps0) *
+                            ( sign_n * edge_n.length() );
+
+                    std::complex<double> Atmp;
+                    Atmp  = ( EMconst::mu0 / (4.0 * EMconst::pi) ) *
+                            ( edge_n.length() / 2.0 ) ;
 
                     // Add contribution to Z_mn
-                    std::complex<double> AdotRho = A[0]*rho_mCentre.x() + A[1]*rho_mCentre.y() +  A[2]*rho_mCentre.z();
+                    std::complex<double> AdotRho = Atmp * ( A[0]*rho_mCentre.x() +
+                            A[1]*rho_mCentre.y() +  A[2]*rho_mCentre.z() );
 
                     // JIF: There was a crucial bug here. I initially used sign_n for Phi and not sign_m
-                    Zmatrix(m, n) += edge_m.length() * ( EMconst::j*omega * (AdotRho/2.0) - sign_m*(Phi) );
+                    Zmatrix(m, n) += edge_m.length() * ( EMconst::j * omega * (AdotRho/2.0) - sign_m*(Phi) );
                 }
             }
         }

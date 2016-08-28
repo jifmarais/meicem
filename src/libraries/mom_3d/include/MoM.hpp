@@ -20,6 +20,6 @@ class MoM
         double 			m_frequency;
         TriangleContainer& 	m_tContainer;
 
-        ComplexMatrix fillZmatrixTriangleInefficient();
+        ComplexMatrix   fillZmatrixTriangleInefficient();
 };
 
