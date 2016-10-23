@@ -31,8 +31,56 @@ ComplexMatrix MoM::fillZmatrixTriangle()
     return fillZmatrixTriangleInefficient();
 }
 
+ComplexMatrix MoM::fillZmatrixTriangleEfficient()
+{
+    // Here we fill the matrix by looping over the triangles instead of the
+    // edges. This is more efficient. Initially, we will be using single point
+    // quadrature for the observation triangle and 6 point quadrature for the
+    // source triangle (to avoid singularities).
+
+    assert(m_frequency > 0.0);
+
+    double omega = 2 * EMconst::pi*m_frequency;
+    double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
+
+    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
+    std::vector<Quadrature::WeightedPoint> weightedPointsObservation;
+    weightedPointsObservation = Quadrature::getTriangleSimplexGaussianQuadraturePoints(1);
+    std::vector<Quadrature::WeightedPoint> weightedPointsSource;
+    weightedPointsSource = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
+
+    // Container to hold basis functions (non-boundary edges)
+    EdgeContainer eContainer(m_tContainer);
+    eContainer.buildNonboundaryEdgeList();
+
+    ComplexMatrix Zmatrix {(unsigned)eContainer.size()};
+
+    // For each observation triangle
+    for (unsigned toIndex = 0 ; toIndex < m_tContainer.size() ; ++toIndex)
+    {
+        // For each source triangle
+        for (unsigned toIndex = 0 ; toIndex < m_tContainer.size() ; ++toIndex)
+        {
+            // For each non-boundary edge of the observation triangle (basis function)
+            //getEdgeIndecesOnTriangle
+            for (unsigned toEdgeIndex = 0 ; toEdgeIndex < m_tContainer.size() ; ++toEdgeIndex)
+            {
+
+            }
+
+        }
+    }
+
+    return Zmatrix;
+}
+
+
 ComplexMatrix MoM::fillZmatrixTriangleInefficient()
 {
+    // Here we fill the matrix and simply use 1 point integration at the
+    // observation triangle and 6 at the source triangle to avoid singularities.
+    // Not a good idea, but it gets things going.
+
     assert(m_frequency > 0.0);
 
     double omega = 2 * EMconst::pi*m_frequency;

@@ -15,11 +15,12 @@ class MoM
         ComplexMatrix 	calculateRHS();
         void		writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const;
 
-    protected:
+        ComplexMatrix fillZmatrixTriangleEfficient();
+        ComplexMatrix fillZmatrixTriangleInefficient();
+protected:
     private:
         double 			m_frequency;
         TriangleContainer& 	m_tContainer;
 
-        ComplexMatrix   fillZmatrixTriangleInefficient();
 };
 
