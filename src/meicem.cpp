@@ -28,7 +28,7 @@ int main()
     TriangleContainer tContainer(pContainer);
 //    WilcoInputReader reader;
     NastranReader reader;
-//    std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
+    //std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
     std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
     reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
@@ -43,7 +43,7 @@ int main()
     ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle();
     ComplexMatrix Vvector = MoMSetup.calculateRHS();
 
-    std::cout << std::endl << "Zmatrix" << std::endl;
+    std::cout << std::endl << "Zimatrix" << std::endl;
 //    Zmatrix.print();
 
     std::cout << std::endl << "Vvector" << std::endl;

@@ -1,5 +1,12 @@
 -- Create a currents dataset that matches the triangles.
 
+local function myToNumber(val)
+    if (val == "NaN" or val== "-NaN" or val == "nan" or val == "-nan") then
+        val = 0
+    end
+    return tonumber(val)
+end
+
 local app = pf.GetApplication()
 printlist(pf.SurfaceCurrentsAndCharges.GetNames())
 local surfaceCurrents = app.Models[1].Configurations[1].SurfaceCurrents
@@ -75,49 +82,17 @@ for line in f:lines() do
 --         print(#fields)
         if #fields == 31 
         then
---             print(fields[1], 
---     --               fields[2], 
---     --               fields[3], 
---     --               fields[4], 
---     --               fields[5], 
---     --               fields[6], 
---     --               fields[7], 
---     --               fields[8], 
---     --               fields[9], 
---     --               fields[10], 
---     --               fields[11], 
---     --               fields[11],
---     --               fields[12], 
---     --               fields[13], 
---                   fields[14], -- Re (Jx C1)
---                   fields[15], -- Im (Jx C1)
---                   fields[16], -- Re (Jy C1)
---                   fields[17], -- Im (Jy C1) 
---                   fields[18], -- Re (Jz C1)
---                   fields[19], -- Im (Jz C1)
---                   fields[20], -- Re (Jx C2)
---                   fields[21], -- Im (Jx C2)
---                   fields[22], -- Re (Jy C2)
---                   fields[23], -- Im (Jy C2)
---                   fields[24], -- Re (Jz C2)
---                   fields[25], -- Im (Jz C2)
---                   fields[26], -- Re (Jx C3)
---                   fields[27], -- Im (Jx C3)
---                   fields[28], -- Re (Jy C3)
---                   fields[29], -- Im (Jy C3)
---                   fields[30], -- Re (Jz C3)
---                   fields[31]) -- Im (Jz C3)
-            ds[frequency][(ii-1)*3 + 1].ElectricX = tonumber(fields[14]) + i*tonumber(fields[15])
-            ds[frequency][(ii-1)*3 + 1].ElectricY = tonumber(fields[16]) + i*tonumber(fields[17])
-            ds[frequency][(ii-1)*3 + 1].ElectricZ = tonumber(fields[18]) + i*tonumber(fields[19])
+            ds[frequency][(ii-1)*3 + 1].ElectricX = myToNumber(fields[14]) + i*myToNumber(fields[15])
+            ds[frequency][(ii-1)*3 + 1].ElectricY = myToNumber(fields[16]) + i*myToNumber(fields[17])
+            ds[frequency][(ii-1)*3 + 1].ElectricZ = myToNumber(fields[18]) + i*myToNumber(fields[19])
             
-            ds[frequency][(ii-1)*3 + 2].ElectricX = tonumber(fields[20]) + i*tonumber(fields[21])
-            ds[frequency][(ii-1)*3 + 2].ElectricY = tonumber(fields[22]) + i*tonumber(fields[23])
-            ds[frequency][(ii-1)*3 + 2].ElectricZ = tonumber(fields[24]) + i*tonumber(fields[25])
+            ds[frequency][(ii-1)*3 + 2].ElectricX = myToNumber(fields[20]) + i*myToNumber(fields[21])
+            ds[frequency][(ii-1)*3 + 2].ElectricY = myToNumber(fields[22]) + i*myToNumber(fields[23])
+            ds[frequency][(ii-1)*3 + 2].ElectricZ = myToNumber(fields[24]) + i*myToNumber(fields[25])
             
-            ds[frequency][(ii-1)*3 + 3].ElectricX = tonumber(fields[26]) + i*tonumber(fields[27])
-            ds[frequency][(ii-1)*3 + 3].ElectricY = tonumber(fields[28]) + i*tonumber(fields[29])
-            ds[frequency][(ii-1)*3 + 3].ElectricZ = tonumber(fields[30]) + i*tonumber(fields[31])
+            ds[frequency][(ii-1)*3 + 3].ElectricX = myToNumber(fields[26]) + i*myToNumber(fields[27])
+            ds[frequency][(ii-1)*3 + 3].ElectricY = myToNumber(fields[28]) + i*myToNumber(fields[29])
+            ds[frequency][(ii-1)*3 + 3].ElectricZ = myToNumber(fields[30]) + i*myToNumber(fields[31])
             
             ii = ii+1
         end

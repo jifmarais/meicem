@@ -3,7 +3,7 @@
 #include "TriangleContainer.hpp"
 #include "EdgeContainer.hpp"
 
-class MoM 
+class MoM
 {
     public:
         MoM(TriangleContainer& tContainer);
@@ -16,11 +16,14 @@ class MoM
         void		writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const;
 
         ComplexMatrix fillZmatrixTriangleEfficient();
+        ComplexMatrix fillZmatrixTriangleInefficient1();
         ComplexMatrix fillZmatrixTriangleInefficient();
 protected:
     private:
-        double 			m_frequency;
-        TriangleContainer& 	m_tContainer;
-
+        double 					m_frequency;
+        TriangleContainer& 		m_tContainer;
+        std::complex<double> 	G0(const double R, const double k) const;
+        double 					RWGBasisFunction(const Triangle T) const;
+        double 					divRWGBasisFunction(const Triangle T, const double sign) const;
 };
 
