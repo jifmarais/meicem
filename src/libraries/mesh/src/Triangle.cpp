@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <iostream>
 #include <cmath>
 #include "Triangle.hpp"
 
@@ -166,6 +167,19 @@ Node Triangle::fromSimplex(const Node& p) const
     Node globalCoordinate;
     globalCoordinate.set(x, y, z);
     return globalCoordinate;
+}
+
+Triangle Triangle::transform(const ComplexMatrix& transformMatrix) const
+{
+    assert(transformMatrix.getRowCount() == 3);
+    assert(transformMatrix.getColumnCount() == 3);
+
+    Triangle newT;
+    newT.set(m_nodes[0].transform(transformMatrix),
+             m_nodes[1].transform(transformMatrix),
+             m_nodes[2].transform(transformMatrix));
+    //globalCoordinate.set(x, y, z);
+    return newT;
 }
 
 Node Triangle::operator[](unsigned index) const

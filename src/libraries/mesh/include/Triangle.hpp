@@ -1,5 +1,6 @@
 #pragma once
 #include "Node.hpp"
+#include "ComplexMatrix.hpp"
 
 class Triangle
 {
@@ -23,7 +24,8 @@ class Triangle
         Node	n2() const;
         Node    n3() const;
 
-    protected:
+        Triangle transform(const ComplexMatrix& transformMatrix) const; // Needs tests
+protected:
     private:
         Node    m_nodes [3];
 };

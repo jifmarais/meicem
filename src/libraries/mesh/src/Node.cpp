@@ -1,5 +1,7 @@
+#include <assert.h>
 #include "Node.hpp"
 #include <math.h>
+#include <iostream>
 #include <cmath>
 
 Node::Node()
@@ -180,6 +182,17 @@ double Node::distance(const Node& p1) const
     return distance(*this, p1);
 }
 
+Node Node::transform(const ComplexMatrix& transformMatrix) const
+{
+    assert(transformMatrix.getRowCount() == 3);
+    assert(transformMatrix.getColumnCount() == 3);
+
+    Node newNode;
+    newNode.set(transformMatrix(0,0).real()*m_x + transformMatrix(0,1).real()*m_y + transformMatrix(0,2).real()*m_z,
+                transformMatrix(1,0).real()*m_x + transformMatrix(1,1).real()*m_y + transformMatrix(1,2).real()*m_z,
+                transformMatrix(2,0).real()*m_x + transformMatrix(2,1).real()*m_y + transformMatrix(2,2).real()*m_z);
+    return newNode;
+}
 
 double Node::x() const
 {
@@ -199,4 +212,9 @@ double Node::z() const
 bool Node::isEqual(double n1, double n2) const
 {
     return std::fabs(n1 - n2) <= m_tolerance;
+}
+
+void Node::print() const
+{
+    std::cout << "(" << m_x << ", " << m_y << ", " << m_z << ")" << std::endl;
 }

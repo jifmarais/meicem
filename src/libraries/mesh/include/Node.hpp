@@ -1,4 +1,5 @@
 #pragma once
+#include "ComplexMatrix.hpp"
 
 class Node
 {
@@ -31,8 +32,10 @@ class Node
         double      x() const;
         double      y() const;
         double      z() const;
+        Node 		transform(const ComplexMatrix& transformMatrix) const;
 
-    protected:
+        void print() const;
+protected:
     private:
         double m_x;
         double m_y;

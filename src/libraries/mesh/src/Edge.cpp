@@ -46,7 +46,7 @@ double Edge::length() const
 
 Node Edge::normal() const
 {
-   //JIF : Has not test
+   //JIF : Has no test
     Node n;
     n = m_nodes[1] - m_nodes[0];
     n = n / n.magnitude();
@@ -55,7 +55,7 @@ Node Edge::normal() const
 
 void Edge::correctOrientation(Triangle t)
 {
-    //JIF: Has not test
+    //JIF: Has no test
 
     assert(t.n1() == m_nodes[0] || t.n2() == m_nodes[0] || t.n3() == m_nodes[0]);
     assert(t.n1() == m_nodes[1] || t.n2() == m_nodes[1] || t.n3() == m_nodes[1]);

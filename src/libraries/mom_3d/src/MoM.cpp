@@ -214,11 +214,12 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
 
     //double omega = 2 * EMconst::pi*m_frequency;
     double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
-    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 15.0 ;
+    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 5.0 ;
     double aiCount = 0;
 
     // Calculate quadrature points - we use 6 to avoid sigularity at the centre
-    std::vector<Quadrature::WeightedPoint> weightedPointsSource = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
+    std::vector<Quadrature::WeightedPoint> weightedPointsSourceDefault = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
+    std::vector<Quadrature::WeightedPoint> weightedPointsSource ;
     std::vector<Quadrature::WeightedPoint> weightedPointsTest   = Quadrature::getTriangleSimplexGaussianQuadraturePoints(3);
 
     // Container to hold basis functions (non-boundary edges)
@@ -277,11 +278,17 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                         double sign_n = -(double)triangle_nIndex*2.0 + 1.0;
                         assert((sign_n == -1.0) || (sign_n == 1.0));
 
-
+                        bool isSimplex = true; // JIF: Need a better solution than this
                         //if (r_m_qp.distance(triangle_n.centre()) <  accurateIntegrationDistance)
                         if (triangle_m.centre().distance(triangle_n.centre()) <  accurateIntegrationDistance)
                         {
+                            weightedPointsSource = Quadrature::RAR1S(triangle_n, r_m_qp, weightedPointsSourceDefault.size());
+                            isSimplex = false;
                             aiCount += 1;
+                        }
+                        else
+                        {
+                            weightedPointsSource = weightedPointsSourceDefault;
                         }
 
                         std::complex<double> A [3] { {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
@@ -293,7 +300,15 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                             Quadrature::WeightedPoint wpn = weightedPointsSource.at(qpnIndex);
 
                             // Vector to point from the origin
-                            Node r_n_qp = triangle_n.fromSimplex(wpn.node);
+                            Node r_n_qp;
+                            if (isSimplex)
+                            {
+                                r_n_qp = triangle_n.fromSimplex(wpn.node);
+                            }
+                            else
+                            {
+                                r_n_qp = wpn.node;
+                            }
                             Node rho_n_qp = sign_n * (r_n_qp - triangle_n.n1());
 
                             double R = r_m_qp.distance(r_n_qp);

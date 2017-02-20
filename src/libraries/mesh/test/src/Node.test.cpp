@@ -278,6 +278,48 @@ BOOST_AUTO_TEST_CASE(distanceNode)
     BOOST_CHECK_MESSAGE(Node::distance(p1, p2) == 9.0 , "The distance should be 9.");
 }
 
+BOOST_AUTO_TEST_CASE(transformNode)
+{
+    Node p1;
+    Node p2;
+    Node p3;
+    p1.set(0.0, 0.0, 1.0);
+    ComplexMatrix m {3};
+    double angle = asin(1.0); // 90 degrees
+    m(0, 0) =  cos(angle); // Rotate about Z
+    m(0, 1) = -sin(angle);
+    m(0, 2) =  0.0;
+    m(1, 0) =  sin(angle);
+    m(1, 1) =  cos(angle);
+    m(1, 2) =  0.0;
+    m(2, 0) =  0.0;
+    m(2, 1) =  0.0;
+    m(2, 2) =  1.0;
+    p3 = p1;
+    p2 = p1.transform(m);
+    BOOST_CHECK_MESSAGE(p2 == p3 , "Rotation of (0,0,1) around Z not correct.");
+
+    p1.set(1.0, 1.0, 0.0);
+    p3.set(-1.0, 1.0, 0.0);
+    p2 = p1.transform(m);
+    BOOST_CHECK_MESSAGE(p2 == p3 , "Rotation of (1,1,0) around Z not correct.");
+
+    p1.set(0.0, 0.0, 1.0);
+    p3.set(0.0, -1.0, 0.0);
+    m(0, 0) =  1.0; // Rotate about X
+    m(0, 1) =  0.0;
+    m(0, 2) =  0.0;
+    m(1, 0) =  0.0;
+    m(1, 1) =  cos(angle);
+    m(1, 2) = -sin(angle);
+    m(2, 0) =  0.0;
+    m(2, 1) =  sin(angle);
+    m(2, 2) =  cos(angle);
+    p2 = p1.transform(m);
+    BOOST_CHECK_MESSAGE(p2 == p3 , "Rotation of (0,0,1) around X not correct.");
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //EOF

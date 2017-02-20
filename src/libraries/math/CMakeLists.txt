@@ -10,6 +10,4 @@ target_include_directories(ComplexMatrix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/incl
 add_library(Quadrature ${CMAKE_CURRENT_SOURCE_DIR}/src/Quadrature.cpp)
 target_include_directories(Quadrature PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(Quadrature Node)
-
-
-
+target_link_libraries(Quadrature Triangle)
