@@ -247,6 +247,7 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
 double Quadrature::RAR1SwFromXY (double x, double y)
 {
     return std::asinh(x/y);
+//    return std::log(std::tan(atan2(y, x)/2.0));
 }
 double Quadrature::RAR1SqFromYWZ (double y, double w, double z)
 {

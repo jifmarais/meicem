@@ -18,16 +18,14 @@ double funct1(double x, unsigned numPoints)
     return val;
 }
 
-double funct2(Node n, unsigned numPoints)
+double funct2(double x, unsigned numPoints)
 {
-    std::vector<double> multx {5, -12, 3, 7, -15, 2, 1.1, -20.3, 1.0, 12, 7, -1.0};
-    std::vector<double> multy {15, -2, -3, 1.7, -1.5, 2.8, 1.1, -2.3, 1.9, 1.2, 5.7, -1.2};
+    std::vector<double> mult {15, -2, -3, 1.7, -1.5, 2.8, 1.1, -2.3, 1.9, 1.2, 5.7, -1.2};
     double val = 0.0;
 
     for (unsigned ii=0; ii < numPoints; ++ii)
     {
-        val += std::pow(n.x(), numPoints - 1 - ii) * multx.at(ii);
-        val += std::pow(n.y(), numPoints - 1 - ii) * multy.at(ii);
+        val += std::pow(x, numPoints - 1 - ii) * mult.at(ii);
     }
     return val;
 }
@@ -226,7 +224,7 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_1)
 {
     double answer = 1.0;
     unsigned min = 1;
-    unsigned max = 1;
+    unsigned max = 2;
     double offset = 0.0;
 
     Node n1 {-1.0, 0.0, 0.0};
@@ -244,6 +242,150 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_1)
         }
         std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
         BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "RAR1S 2D failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss0)
+{
+    double answer = 1.0;
+    unsigned min = 1;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * 1.0;
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss1)
+{
+    double answer = 75;
+    unsigned min = 1;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min*2; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss2)
+{
+    double answer = -33.0833333333333;
+    unsigned min = 2;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min*2; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss3)
+{
+    double answer = 2.5;
+    unsigned min = 3;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min*2; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss4)
+{
+    double answer = 12.4693499622071;
+    unsigned min = 4;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min*2; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testTriangleGauss5)
+{
+    double answer = 7.54417812022769;
+    unsigned min = 5;
+    unsigned max = 11;
+
+    Node n1 {-1.0, 0.0, 0.0};
+    Node n2 { 1.0, 0.0, 0.0};
+    Node n3 { 0.0, 1.0, 0.0};
+    Triangle T {n1, n2, n3};
+    for (unsigned numPoints = min*2; numPoints <= max; ++numPoints)
+    {
+        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        double integral = 0;
+        for (unsigned ii=0; ii < wps.size(); ++ii)
+        {
+            Node n = wps.at(ii).node;
+            integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+        }
+//        std::cout << std::setprecision (15)<< numPoints<< ":  " << integral << std::endl;
+        BOOST_CHECK_MESSAGE(std::fabs(integral - answer) < 1e-6, "Triangle Gauss failed.");
     }
 }
 
