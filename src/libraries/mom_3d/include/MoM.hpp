@@ -11,13 +11,13 @@ class MoM
 
         void            setFrequency(double freq);
         void            setTriangleContainer(const TriangleContainer& tContainer);
-        ComplexMatrix 	fillZmatrixTriangle();
-        ComplexMatrix 	calculateRHS();
+        ComplexMatrix 	fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints);
+        ComplexMatrix 	calculateRHS(double numberOfIntegrationPoints);
         void		writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const;
 
         ComplexMatrix fillZmatrixTriangleEfficient();
         ComplexMatrix fillZmatrixTriangleInefficient1();
-        ComplexMatrix fillZmatrixTriangleInefficient();
+        ComplexMatrix fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints);
 protected:
     private:
         double 					m_frequency;

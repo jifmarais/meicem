@@ -26,9 +26,9 @@ void MoM::setFrequency(double freq)
     m_frequency = freq;
 }
 
-ComplexMatrix MoM::fillZmatrixTriangle()
+ComplexMatrix MoM::fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints)
 {
-    return fillZmatrixTriangleInefficient();
+    return fillZmatrixTriangleInefficient(sourceIntegrationPoints, testIntegrationPoints);
 }
 
 ComplexMatrix MoM::fillZmatrixTriangleEfficient()
@@ -76,14 +76,13 @@ ComplexMatrix MoM::fillZmatrixTriangleEfficient()
 
 std::complex<double> MoM::G0(const double R, const double k) const
 {
-    return exp(-1.0 * EMconst::j * k * R) / (4.0 * EMconst::pi * R);
+    return exp(+1.0 * EMconst::j * k * R) / (4.0 * EMconst::pi * R);
 }
 
 double MoM::RWGBasisFunction(const Triangle T) const
 {
     double ln = T.n2().distance(T.n3());
     double A  = T.area();
-    //return (ln/(2*A))*simplexCoordinate;
     return (ln/(2.0*A));
 }
 
@@ -204,7 +203,7 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient1()
     return Zmatrix;
 }
 
-ComplexMatrix MoM::fillZmatrixTriangleInefficient()
+ComplexMatrix MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints)
 {
     // Here we fill the matrix and simply use 1 point integration at the
     // observation triangle and 6 at the source triangle to avoid singularities.
@@ -215,12 +214,11 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
     //double omega = 2 * EMconst::pi*m_frequency;
     double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
     double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 5.0 ;
-    double aiCount = 0;
+    double accurateIntegrationCount = 0;
 
     // Calculate quadrature points - we use 6 to avoid sigularity at the centre
-    std::vector<Quadrature::WeightedPoint> weightedPointsSourceDefault = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
-    std::vector<Quadrature::WeightedPoint> weightedPointsSource ;
-    std::vector<Quadrature::WeightedPoint> weightedPointsTest   = Quadrature::getTriangleSimplexGaussianQuadraturePoints(3);
+//    std::vector<Quadrature::WeightedPoint> weightedPointsSourceDefault = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numSourceIntegrationPoints);
+//    std::vector<Quadrature::WeightedPoint> weightedPointsTest   = Quadrature::getTriangleSimplexGaussianQuadraturePoints(1);
 
     // Container to hold basis functions (non-boundary edges)
     EdgeContainer eContainer(m_tContainer);
@@ -249,13 +247,15 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
             double sign_m = -(double)triangle_mIndex*2.0 + 1.0;
             assert((sign_m == -1.0) || (sign_m == 1.0));
 
+            std::vector<Quadrature::WeightedPoint> weightedPointsTest  = Quadrature::getTriangleGaussianQuadraturePoints(triangle_m, testIntegrationPoints);
+
             // Loop over qudrature points (to perform outer integration)
             for (unsigned qpmIndex = 0; qpmIndex < weightedPointsTest.size() ; ++qpmIndex)
             {
                 Quadrature::WeightedPoint wpm = weightedPointsTest.at(qpmIndex);
 
                 // Vector to point from the origin
-                Node r_m_qp = triangle_m.fromSimplex(wpm.node);
+                Node r_m_qp = wpm.node;
                 Node rho_m_qp = sign_m * (r_m_qp - triangle_m.n1());
 
                 // For each edge/basis function n
@@ -278,17 +278,16 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                         double sign_n = -(double)triangle_nIndex*2.0 + 1.0;
                         assert((sign_n == -1.0) || (sign_n == 1.0));
 
-                        bool isSimplex = true; // JIF: Need a better solution than this
+                        std::vector<Quadrature::WeightedPoint> weightedPointsSource;
                         //if (r_m_qp.distance(triangle_n.centre()) <  accurateIntegrationDistance)
-                        if (triangle_m.centre().distance(triangle_n.centre()) <  accurateIntegrationDistance)
+                        if (triangle_n.centre().distance(r_m_qp) <  accurateIntegrationDistance)
                         {
-                            weightedPointsSource = Quadrature::RAR1S(triangle_n, r_m_qp, weightedPointsSourceDefault.size());
-                            isSimplex = false;
-                            aiCount += 1;
+                            weightedPointsSource = Quadrature::RAR1S(triangle_n, r_m_qp, sourceIntegrationPoints);
+                            accurateIntegrationCount += 1;
                         }
                         else
                         {
-                            weightedPointsSource = weightedPointsSourceDefault;
+                            weightedPointsSource = Quadrature::getTriangleGaussianQuadraturePoints(triangle_n, sourceIntegrationPoints);
                         }
 
                         std::complex<double> A [3] { {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
@@ -300,15 +299,7 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                             Quadrature::WeightedPoint wpn = weightedPointsSource.at(qpnIndex);
 
                             // Vector to point from the origin
-                            Node r_n_qp;
-                            if (isSimplex)
-                            {
-                                r_n_qp = triangle_n.fromSimplex(wpn.node);
-                            }
-                            else
-                            {
-                                r_n_qp = wpn.node;
-                            }
+                            Node r_n_qp = wpn.node;
                             Node rho_n_qp = sign_n * (r_n_qp - triangle_n.n1());
 
                             double R = r_m_qp.distance(r_n_qp);
@@ -329,18 +320,18 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient()
                         std::complex<double> Adotfm = RWGBasisFunction(triangle_m) * ( A[0]*rho_m_qp.x() + A[1]*rho_m_qp.y() +  A[2]*rho_m_qp.z() ) * wpm.weight;
                         std::complex<double> tmp = divRWGBasisFunction(triangle_m, sign_m) * B * wpm.weight;
 
-                        Zmatrix(m, n) += EMconst::j * EMconst::Z0 * (k*Adotfm - tmp/k) * triangle_m.area()*triangle_n.area();
+                        Zmatrix(m, n) += EMconst::j * EMconst::Z0 * (k*Adotfm - tmp/k);
                     }
                 }
             }
         }
     }
-    std::cout << "accurate: " << aiCount << std::endl;
+    std::cout << "accurate: " << accurateIntegrationCount << std::endl;
 
     return Zmatrix;
 }
 
-ComplexMatrix MoM::calculateRHS()
+ComplexMatrix MoM::calculateRHS(double numberOfIntegrationPoints)
 {
     PlaneWave pw;
     pw.setFrequency(m_frequency);
@@ -349,7 +340,6 @@ ComplexMatrix MoM::calculateRHS()
     eContainer.buildNonboundaryEdgeList();
 
     ComplexMatrix Vvector {(unsigned)eContainer.size(), 1};
-    std::vector<Quadrature::WeightedPoint> weightedPointsTest   = Quadrature::getTriangleSimplexGaussianQuadraturePoints(1);
 
     // For each edge/basis function m
     for (unsigned m = 0 ; m < eContainer.size() ; ++m)
@@ -361,23 +351,24 @@ ComplexMatrix MoM::calculateRHS()
         {
             Triangle triangle_m = m_tContainer.at(triangleList_m.at(tmindex));
             triangle_m.setOppositeEdge(eContainer.at(m).n1(), eContainer.at(m).n2()); // Set the remaining vertex as the first node of the triangle
-            //Node rmc = triangle_m.centre();
 
             double sign_m = -(double)tmindex*2.0 + 1.0; // First triangle is positive, second triangle is negative
             assert((sign_m == -1.0) || (sign_m == 1.0));
+
+            std::vector<Quadrature::WeightedPoint> weightedPointsTest = Quadrature::getTriangleGaussianQuadraturePoints(triangle_m, numberOfIntegrationPoints);
 
             for (unsigned qpmIndex = 0; qpmIndex < weightedPointsTest.size() ; ++qpmIndex)
             {
                 Quadrature::WeightedPoint wpm = weightedPointsTest.at(qpmIndex);
 
                 // Vector to point from the origin
-                Node r_m_qp = triangle_m.fromSimplex(wpm.node);
+                Node r_m_qp = wpm.node;
                 Node rho_m_qp = sign_m * (r_m_qp - triangle_m.n1());
 
                 pw.setFieldPoint(r_m_qp);
                 NearFieldValue Em = pw.getElectricField();
                 std::complex<double> Edotfm = RWGBasisFunction(triangle_m) * (Em.getX()*rho_m_qp.x() + Em.getY()*rho_m_qp.y() +  Em.getZ()*rho_m_qp.z()) * wpm.weight;
-                Vvector(m, 0) += triangle_m.area()*Edotfm;
+                Vvector(m, 0) += Edotfm;
            }
         }
     }

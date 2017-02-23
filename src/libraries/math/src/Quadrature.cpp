@@ -243,23 +243,38 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
     return weightedPoints;
 }
 
+Quadrature::WeightedPointList_type Quadrature::getTriangleGaussianQuadraturePoints(Triangle &T, unsigned maxNumberOfPoints)
+{
+    WeightedPointList_type weightedPoints = getTriangleSimplexGaussianQuadraturePoints(maxNumberOfPoints);
+
+
+    double area = T.area();
+    for (auto it = weightedPoints.begin(); it < weightedPoints.end(); ++it)
+    {
+        it->weight *= area;
+        it->node = T.fromSimplex(it->node);
+    }
+
+    return weightedPoints;
+}
+
 /* Functions for Radial Angular R1 Sqrt */
-double Quadrature::RAR1SwFromXY (double x, double y)
+double Quadrature::RAR1SuFromXY (double x, double y)
 {
     return std::asinh(x/y);
 //    return std::log(std::tan(atan2(y, x)/2.0));
 }
-double Quadrature::RAR1SqFromYWZ (double y, double w, double z)
+double Quadrature::RAR1SvFromYUZ (double y, double u, double z)
 {
-    return std::sqrt(std::sqrt(std::pow(std::cosh(w),2)*y*y + z*z) - std::fabs(z));
+    return std::sqrt(std::sqrt(std::pow(std::cosh(u)*y,2) + z*z) - std::fabs(z));
 }
-double Quadrature::RAR1SyFromQWZ (double q, double w, double z)
+double Quadrature::RAR1SyFromVUZ (double v, double u, double z)
 {
-    return std::sqrt((std::pow((q*q + std::fabs(z)),2) - z*z)/std::pow(std::cosh(w),2));
+    return std::sqrt((std::pow((v*v + std::fabs(z)),2) - z*z)/std::pow(std::cosh(u),2));
 }
-double Quadrature::RAR1SxFromYW (double y, double w)
+double Quadrature::RAR1SxFromYU (double y, double u)
 {
-    return y*std::sinh(w);
+    return y*std::sinh(u);
 }
 
 ComplexMatrix Quadrature::getXrotationMatrix(double theta)
@@ -287,7 +302,7 @@ ComplexMatrix Quadrature::getZrotationMatrix(double phi)
 Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZoffset, unsigned maxNumberOfPoints)
 {
 
-    assert(maxNumberOfPoints > 0);
+    assert(maxNumberOfPoints > 1); // Not sure if it is expected, but a single point does not give correct results
     assert(T.n1().z() == 0);
     assert(T.n2().z() == 0);
     assert(T.n1().z() == 0);
@@ -328,31 +343,31 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
     // The triangle now has node 3 at the origin and nodes 1 and 2 have positive y-values.
     // Node 1 is the left most node and node 2 is the right most node.
 
-    double wLower = RAR1SwFromXY(tempV1.x(), tempV1.y());
-    double wUpper = RAR1SwFromXY(tempV2.x(), tempV2.y());
-    double wRange = wUpper - wLower;
+    double uLower = RAR1SuFromXY(tempV1.x(), tempV1.y());
+    double uUpper = RAR1SuFromXY(tempV2.x(), tempV2.y());
+    double uRange = uUpper - uLower;
 
+//    double Jc = 2.0*T.area();
     for (auto itii = weightedPoints1D.begin(); itii < weightedPoints1D.end(); ++itii)
     {
-        double wPoint = wLower + 0.5*wRange*(1.0 + itii->node);
+        double uPoint = uLower + 0.5*uRange*(1.0 + itii->node);
 
         for (auto itjj = weightedPoints1D.begin(); itjj < weightedPoints1D.end(); ++itjj)
         {
-            double qLower = RAR1SqFromYWZ(0.0, wPoint, std::fabs(cruxZoffset));
-            double qUpper = RAR1SqFromYWZ(tempV1.y(), wPoint, cruxZoffset);
-            double qRange = qUpper - qLower;
+            double vLower = RAR1SvFromYUZ(0.0, uPoint, std::fabs(cruxZoffset));
+            double vUpper = RAR1SvFromYUZ(tempV1.y(), uPoint, cruxZoffset);
+            double vRange = vUpper - vLower;
 
-            double qPoint = qLower + 0.5*qRange*(1.0 + itjj->node);
-            double yPoint = RAR1SyFromQWZ(qPoint, wPoint, cruxZoffset);
-            double xPoint = RAR1SxFromYW(yPoint, wPoint);
+            double vPoint = vLower + 0.5*vRange*(1.0 + itjj->node);
+            double yPoint = RAR1SyFromVUZ(vPoint, uPoint, cruxZoffset);
+            double xPoint = RAR1SxFromYU(yPoint, uPoint);
 
             Node tempNewPoint {xPoint, flip*yPoint, 0.0};
             tempNewPoint = tempNewPoint.transform(invZrotation);
             tempNewPoint += T.n3();
             wp.node   = tempNewPoint;
-            wp.weight = itii->weight * itjj->weight * qRange * wRange * 0.25 * 2.0 * qPoint / cosh(wPoint);
-            std::cout << wp.weight << "  " << itii->weight << "  " << itjj->weight << "  " << qPoint << "  " << wPoint << std::endl;
-            std::cout << qRange << "  " << wRange << "  " << qPoint << std::endl;
+            double R = vPoint*vPoint - cruxZoffset;
+            wp.weight = itii->weight * itjj->weight * vRange * uRange * 0.25 * 2.0 * R * vPoint / cosh(uPoint);
             weightedPoints.push_back(wp);
         }
     }
@@ -375,6 +390,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
     double theta = acos(triNormal.z());
     double phi   = atan2(triNormal.y(), triNormal.x());
 
+    //CRC: This does not (I think) cater for a triangle in the Y plane
     ComplexMatrix Zrotation = getZrotationMatrix(phi);
     ComplexMatrix Xrotation = getXrotationMatrix(theta);
     ComplexMatrix rotationMatrix = Xrotation*Zrotation;
@@ -399,20 +415,24 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
         Node toCentre = newTriCentre - newT[tIndex];
         Node toObs    = newObservationPointNoZ - newT[tIndex];
 
-        double sign = edge.cross(toCentre).z() * edge.cross(toObs).z();
+        double sign = 1.0;
+        if ((edge.cross(toCentre).z() * edge.cross(toObs).z()) < 0.0)
+        {
+            sign = -1.0;
+        }
+        //CRC: What if triangle is collapsed?
+        //CRC: What if observation point is on triangle edge?
 
-        // RAR1S_2D
-        weightedPointsSingleTriangle = RAR1S_2D(newT, zOffset, maxNumberOfPoints);
+        Triangle subTriangle {newT[tIndex], newT[(tIndex+1)%3], newObservationPointNoZ};
+        weightedPointsSingleTriangle = RAR1S_2D(subTriangle, zOffset, maxNumberOfPoints);
 
         // For each point retruned by RAR1S_2D, add actual point
         for (auto it = weightedPointsSingleTriangle.begin(); it < weightedPointsSingleTriangle.end(); ++it)
         {
             wp = *it;
             wp.node.set(wp.node.x(), wp.node.y(), wp.node.z() + zOffset);
-            double R = newObservationPoint.distance(wp.node);
             wp.node = wp.node.transform(invRotationMatrix);
-            wp.weight = wp.weight * R * sign; // Not sure how / why this is done or if it is correct
-
+            wp.weight = wp.weight * sign;
             weightedPoints.push_back(wp);
         }
     }

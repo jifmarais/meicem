@@ -32,6 +32,7 @@ int main()
     std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
     reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
+//    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
     reader.setTriangleContainer(&tContainer);
     reader.importModel();
 
@@ -40,11 +41,11 @@ int main()
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
-    ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle();
-    ComplexMatrix Vvector = MoMSetup.calculateRHS();
+    ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle(7, 3);
+    ComplexMatrix Vvector = MoMSetup.calculateRHS(1);
 
     std::cout << std::endl << "Zimatrix" << std::endl;
-//    Zmatrix.print();
+    Zmatrix.print();
 
     std::cout << std::endl << "Vvector" << std::endl;
 //    Vvector.print();
