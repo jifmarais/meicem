@@ -247,7 +247,6 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleGaussianQuadraturePoin
 {
     WeightedPointList_type weightedPoints = getTriangleSimplexGaussianQuadraturePoints(maxNumberOfPoints);
 
-
     double area = T.area();
     for (auto it = weightedPoints.begin(); it < weightedPoints.end(); ++it)
     {

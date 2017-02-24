@@ -376,6 +376,7 @@ ComplexMatrix MoM::calculateRHS(double numberOfIntegrationPoints)
     return Vvector;
 }
 
+
 void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const
 {
     // JIF: This is the wrong place for the method, but I just want to get it working. Should be refactored.
@@ -487,75 +488,53 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
             }
 
             // Find the non-boundary edges for a given triangle
-            std::vector<EdgeContainer::SizeType> edgeIndices;
-            edgeIndices = eContainer.getEdgeIndecesOnTriangle(tIndex);
+            std::vector<EdgeContainer::SizeType> edgeIndices = eContainer.getEdgeIndecesOnTriangle(tIndex);
 
 //            std::cout << "Triangle " << tIndex+1 << ": " << std::endl;
 
             for (auto nIndex=0; nIndex < 3 ; ++nIndex)
             {
+                Triangle T = m_tContainer.at(tIndex);
                 Node n;
-                n = m_tContainer.at(tIndex)[nIndex];
+                n = T[nIndex];
 //                std::cout << "  n" << nIndex << ": " << n.x() << " , " << n.y() << " , " << n.z() << std::endl;
-                Node tNormal;
-                tNormal = m_tContainer.at(tIndex).normal();
-
-
 
                 for (EdgeContainer::SizeType eIndex=0; eIndex < edgeIndices.size() ; ++eIndex)
                 {
+                    // If edge contains the node of interest
                     if (eContainer.at(edgeIndices.at(eIndex)).n1() == n ||
                         eContainer.at(edgeIndices.at(eIndex)).n2() == n )
                     {
-                        // Calculate edge direction (current normal to the edge)
-                        Edge e;
-                        e = eContainer.at(edgeIndices.at(eIndex));
-                        e.correctOrientation(m_tContainer.at(tIndex));
+                        Edge e = eContainer.at(edgeIndices.at(eIndex));
+                        std::vector<TriangleContainer::SizeType> triangleIndeces = e.getTriangles();
 
-                        Node otherEdge;
+                        double sign = -1.0;
+                        if (tIndex == triangleIndeces.at(0))
+                        {
+                            // Current flowing out of this triangle
+                            sign = 1.0;
+                        }
+
+                        Node nodeOppositeToEdge;
                         for (auto oIndex = 0; oIndex < 3; ++oIndex)
                         {
                             if (m_tContainer.at(tIndex)[oIndex] != e.n1() &&
                                 m_tContainer.at(tIndex)[oIndex] != e.n2() )
                             {
-                                otherEdge = m_tContainer.at(tIndex)[oIndex] - n;
+                                nodeOppositeToEdge = m_tContainer.at(tIndex)[oIndex];
                                 break;
                             }
                         }
-                        otherEdge = otherEdge.norm();
 
-                        Node eNormal;
-                        eNormal = e.normal();
-//                        std::cout << "        edge" << edgeIndices.at(eIndex) << ": " << eNormal.x() << " , " << eNormal.y() << " , " << eNormal.z() << std::endl;
-//                        std::cout << "      O edge" << edgeIndices.at(eIndex) << ": " << otherEdge.x() << " , " << otherEdge.y() << " , " << otherEdge.z() << std::endl;
+                        Node rho = n - nodeOppositeToEdge;
+                        Node current = sign*rho*RWGBasisFunction(T);
 
-                        Node current;
-                        current = Node::cross(tNormal, eNormal);
-
-                        if (tIndex == e.getTriangles().at(0))
-                        {
-                            // Current flowing out of this triangle
-                            current *= -1.0;
-                        }
-                        current = otherEdge*Node::dot(current, otherEdge);
-
-//                        std::cout << "              current: " << nIndex << " | " << current.x() << " , " << current.y() << " , " << current.z() << std::endl;
-
-
-                        // Scale by coefficient and add not nodal current value
-//                        current *= solutionMatrix(edgeIndices.at(eIndex), 1);
                         NearFieldValue val;
                         val = nodeCurrents[nIndex];
-//                        std::cout << "val.getY() 1: " << val.getY() << std::endl;
                         val.setX(val.getX() + current.x()*solutionMatrix(edgeIndices.at(eIndex), 0));
                         val.setY(val.getY() + current.y()*solutionMatrix(edgeIndices.at(eIndex), 0));
                         val.setZ(val.getZ() + current.z()*solutionMatrix(edgeIndices.at(eIndex), 0));
                         nodeCurrents[nIndex] = val;
-//                        std::cout << "              val    : " << nIndex << " | " << val.getX() << " , " << val.getY() << " , " << val.getZ() << std::endl;
-
-//                        std::cout << "val.getY() 2: " << val.getY() << std::endl;
-
-//                        file << edgeIndices.at(eIndex) << "  ";
                     }
                 }
             }
@@ -583,7 +562,6 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
 
             for (auto nIndex=0; nIndex < 3 ; ++nIndex)
             {
-
                 file << std::setw(19);
                 file << nodeCurrents.at(nIndex).getX().real();
                 file << std::setw(19);
@@ -596,39 +574,9 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
                 file << nodeCurrents.at(nIndex).getZ().real();
                 file << std::setw(19);
                 file << nodeCurrents.at(nIndex).getZ().imag();
-
             }
-
-
-//            file << edgeIndices.size() << "  ";
-
-
-//            file << m_tContainer.at(tIndex).n1() << "  ";
-
             file << std::endl;
         }
-
-//        for (unsigned zIndex=0; zIndex < m_numPointsZ ; ++zIndex)
-//        {
-//            for (unsigned yIndex=0; yIndex < m_numPointsY ; ++yIndex)
-//            {
-//                for (unsigned xIndex=0; xIndex < m_numPointsX ; ++xIndex)
-//                {
-//                    file << std::fixed << std::setprecision(9) ;
-//                    file << getPointAt(xIndex, yIndex, zIndex).x() << "  " ;
-//                    file << getPointAt(xIndex, yIndex, zIndex).y() << "  " ;
-//                    file << getPointAt(xIndex, yIndex, zIndex).z() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getX().real() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getX().imag() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getY().real() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getY().imag() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getZ().real() << "  " ;
-//                    file << getValueAt(xIndex, yIndex, zIndex).getZ().imag() ;
-//                    file << std::endl;
-//                }
-//            }
-//        }
-
         file << std::endl;
         file.close();
     }
