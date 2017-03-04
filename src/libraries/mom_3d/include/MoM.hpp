@@ -16,7 +16,6 @@ class MoM
         void		writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const;
 
         ComplexMatrix fillZmatrixTriangleEfficient();
-        ComplexMatrix fillZmatrixTriangleInefficient1();
         ComplexMatrix fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints);
 protected:
     private:

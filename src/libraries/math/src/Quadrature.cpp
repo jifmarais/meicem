@@ -230,11 +230,11 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
             iter = 1;
         }
 
-        for (int j=0; j<iter; ++j)
+        for (int jj=0; jj<iter; ++jj)
         {
-            wp.node.set(it->at((0+j)%3),
-                        it->at((1+j)%3),
-                        it->at((2+j)%3));
+            wp.node.set(it->at(jj),
+                        it->at((jj+1)%3),
+                        it->at((jj+2)%3));
             wp.weight = it->at(3);
             weightedPoints.push_back(wp);
         }
@@ -269,11 +269,16 @@ double Quadrature::RAR1SvFromYUZ (double y, double u, double z)
 }
 double Quadrature::RAR1SyFromVUZ (double v, double u, double z)
 {
-    return std::sqrt((std::pow((v*v + std::fabs(z)),2) - z*z)/std::pow(std::cosh(u),2));
+    return std::sqrt((std::pow((v*v + std::fabs(z)),2) - z*z))/std::cosh(u);
 }
 double Quadrature::RAR1SxFromYU (double y, double u)
 {
     return y*std::sinh(u);
+}
+
+double Quadrature::RAR1Sdxdy(double u, double v, double R)
+{
+    return (2.0 * R * v) / cosh(u);
 }
 
 ComplexMatrix Quadrature::getXrotationMatrix(double theta)
@@ -346,7 +351,6 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
     double uUpper = RAR1SuFromXY(tempV2.x(), tempV2.y());
     double uRange = uUpper - uLower;
 
-//    double Jc = 2.0*T.area();
     for (auto itii = weightedPoints1D.begin(); itii < weightedPoints1D.end(); ++itii)
     {
         double uPoint = uLower + 0.5*uRange*(1.0 + itii->node);
@@ -362,11 +366,9 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
             double xPoint = RAR1SxFromYU(yPoint, uPoint);
 
             Node tempNewPoint {xPoint, flip*yPoint, 0.0};
-            tempNewPoint = tempNewPoint.transform(invZrotation);
-            tempNewPoint += T.n3();
-            wp.node   = tempNewPoint;
-            double R = vPoint*vPoint - cruxZoffset;
-            wp.weight = itii->weight * itjj->weight * vRange * uRange * 0.25 * 2.0 * R * vPoint / cosh(uPoint);
+            wp.node = tempNewPoint.transform(invZrotation) + T.n3();
+            double R = vPoint*vPoint + cruxZoffset;
+            wp.weight = itii->weight * itjj->weight * vRange * uRange * 0.25 * RAR1Sdxdy(uPoint, vPoint, R);
             weightedPoints.push_back(wp);
         }
     }

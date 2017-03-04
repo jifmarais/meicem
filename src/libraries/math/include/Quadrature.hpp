@@ -31,6 +31,7 @@ private:
         static double RAR1SvFromYUZ(double y, double u, double z);
         static double RAR1SyFromVUZ(double v, double u, double z);
         static double RAR1SxFromYU(double y, double u);
+        static double RAR1Sdxdy(double u, double v, double R);
         static ComplexMatrix getZrotationMatrix(double phi);
         static ComplexMatrix getXrotationMatrix(double theta);
 };

@@ -93,116 +93,6 @@ double MoM::divRWGBasisFunction(const Triangle T, const double sign) const
     return sign*ln/A;
 }
 
-ComplexMatrix MoM::fillZmatrixTriangleInefficient1()
-{
-    // Here we fill the matrix and simply use 1 point integration at the
-    // observation triangle and 6 at the source triangle to avoid singularities.
-    // Not a good idea, but it gets things going.
-
-    assert(m_frequency > 0.0);
-
-    double omega = 2 * EMconst::pi*m_frequency;
-    double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
-
-    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
-    std::vector<Quadrature::WeightedPoint> weightedPoints;
-    weightedPoints = Quadrature::getTriangleSimplexGaussianQuadraturePoints(6);
-
-    // Container to hold basis functions (non-boundary edges)
-    EdgeContainer eContainer(m_tContainer);
-    eContainer.buildNonboundaryEdgeList();
-
-    ComplexMatrix Zmatrix {(unsigned)eContainer.size()};
-
-    // For each edge/basis function m
-    for (unsigned m = 0 ; m < eContainer.size() ; ++m)
-    {
-        // Triangles bounding the current edge (index m)
-        auto edge_m = eContainer.at(m);
-        auto boundingTrianglesIndexList_m = edge_m.getTriangles();
-
-        // Each triangle at the edge (edge always only has two triangles - we don't support junctions yet)
-        assert(boundingTrianglesIndexList_m.size() == 2);
-        for (unsigned triangle_mIndex = 0; triangle_mIndex < boundingTrianglesIndexList_m.size() ; ++triangle_mIndex)
-        {
-            Triangle triangle_m = m_tContainer.at(boundingTrianglesIndexList_m.at(triangle_mIndex));
-
-            //set triangle n1 to be the vertex opposite to the edge
-            triangle_m.setOppositeEdge(edge_m.n1(), edge_m.n2());
-
-            Node r_mCentre = triangle_m.centre();
-
-            // Triangle current is from triangle with smaller index to larger index
-            // First triangle is positive, second triangle is negative (they are sorted)
-            double sign_m = -(double)triangle_mIndex*2.0 + 1.0;
-            assert((sign_m == -1.0) || (sign_m == 1.0));
-
-            // Vector from opposite vertex to centre of triangle (for positive triangle)
-            Node rho_mCentre = (r_mCentre - triangle_m.n1()) * sign_m;
-
-            // For each edge/basis function n
-            for (unsigned n = 0 ; n < eContainer.size() ; ++n)
-            {
-                // Triangles bounding the current edge (index n)
-                auto edge_n = eContainer.at(n);
-                auto boundingTrianglesIndexList_n = edge_n.getTriangles();
-
-                // Each triangle at the edge (edge always only has two triangles since we don't support junctions yet)
-                assert(boundingTrianglesIndexList_n.size() == 2);
-                for (unsigned triangle_nIndex = 0 ; triangle_nIndex < boundingTrianglesIndexList_n.size() ; ++triangle_nIndex)
-                {
-                    Triangle triangle_n = m_tContainer.at(boundingTrianglesIndexList_n.at(triangle_nIndex));
-
-                    //set triangle n1 to be the vertex opposite to the edge
-                    triangle_n.setOppositeEdge(edge_n.n1(), edge_n.n2());
-
-                    // First triangle is positive, second triangle is negative
-                    double sign_n = -(double)triangle_nIndex*2.0 + 1.0;
-                    assert((sign_n == -1.0) || (sign_n == 1.0));
-
-                    std::complex<double> expValue {0.0, 0.0};
-                    std::complex<double> Phi {0.0, 0.0};
-                    std::complex<double> A [3] { {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
-
-                    // Loop over qudrature points (to perform integration)
-                    for (unsigned qpIndex = 0; qpIndex < weightedPoints.size() ; ++qpIndex)
-                    {
-                        Quadrature::WeightedPoint wp;
-                        wp = weightedPoints.at(qpIndex);
-
-                        // Vector to point from the origin
-                        Node r_n_qp = triangle_n.fromSimplex(wp.node);
-                        Node rho_n_qp = sign_n * (r_n_qp - triangle_n.n1());
-
-                        // Calculate Rm
-                        double Rm = r_mCentre.distance(r_n_qp);
-
-                        // Calculate scalar potential Phi
-                        expValue =  G0(Rm, k) * wp.weight;
-                        Phi += expValue;
-
-                        // Calculate vector potential A
-                        A[0] += expValue * rho_n_qp.x();
-                        A[1] += expValue * rho_n_qp.y();
-                        A[2] += expValue * rho_n_qp.z();
-                   }
-                    Phi  *= -1.0 / (EMconst::j * omega * EMconst::eps0) * ( sign_n * edge_n.length() );
-
-                    std::complex<double> Atmp;
-                    Atmp  = EMconst::mu0 * ( edge_n.length() / 2.0 ) ;
-
-                    // Add contribution to Z_mn
-                    std::complex<double> AdotRho = Atmp * ( A[0]*rho_mCentre.x() + A[1]*rho_mCentre.y() +  A[2]*rho_mCentre.z() );
-
-                    Zmatrix(m, n) += edge_m.length() * ( EMconst::j * omega * (AdotRho/2.0) - sign_m*(Phi) );
-                }
-            }
-        }
-    }
-
-    return Zmatrix;
-}
-
 ComplexMatrix MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints)
 {
     // Here we fill the matrix and simply use 1 point integration at the
@@ -215,10 +105,6 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints
     double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
     double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 5.0 ;
     double accurateIntegrationCount = 0;
-
-    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
-//    std::vector<Quadrature::WeightedPoint> weightedPointsSourceDefault = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numSourceIntegrationPoints);
-//    std::vector<Quadrature::WeightedPoint> weightedPointsTest   = Quadrature::getTriangleSimplexGaussianQuadraturePoints(1);
 
     // Container to hold basis functions (non-boundary edges)
     EdgeContainer eContainer(m_tContainer);
@@ -326,7 +212,7 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints
             }
         }
     }
-    std::cout << "accurate: " << accurateIntegrationCount << std::endl;
+//    std::cout << "accurate: " << accurateIntegrationCount << std::endl;
 
     return Zmatrix;
 }
@@ -581,38 +467,4 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
         file.close();
     }
 }
-
-
-// Efficient matrix fill
-//    for (TriangleContainer::SizeType observationIndex = 0; observationIndex < tContainer.size() ; ++observationIndex)
-//    {
-//        Triangle tObserver {tContainer.at(observationIndex)};
-
-//        std::vector<Quadrature::WeightedPoint> weightedObsPointsSimplex;
-//        std::vector<Quadrature::WeightedPoint> weightedObsPoints;
-//        weightedObsPointsSimplex = Quadrature::getTriangleSimplexGaussianQuadraturePoints(3);
-//        weightedObsPoints = weightedObsPointsSimplex;
-//        for (unsigned ii = 0; ii < weightedObsPoints.size() ; ++ii)
-//        {
-//            weightedObsPoints.at(ii).node = tObserver.fromSimplex(weightedObsPointsSimplex.at(ii).node) ;
-//        }
-
-//        for (TriangleContainer::SizeType sourceIndex = 0; sourceIndex < tContainer.size() ; ++sourceIndex)
-//        {
-//            Triangle tSource {tContainer.at(sourceIndex)};
-
-//            std::vector<Quadrature::WeightedPoint> weightedSourcePointsSimplex;
-//            std::vector<Quadrature::WeightedPoint> weightedSourcePoints;
-//            weightedSourcePointsSimplex = Quadrature::getTriangleSimplexGaussianQuadraturePoints(3);
-//            weightedSourcePoints = weightedSourcePointsSimplex;
-//            for (unsigned ii = 0; ii < weightedSourcePoints.size() ; ++ii)
-//            {
-//                weightedSourcePoints.at(ii).node = tSource.fromSimplex(weightedSourcePointsSimplex.at(ii).node) ;
-//            }
-
-//            bool requiresSingularIntegration = tContainer.hasCommonNode(observationIndex, sourceIndex);
-//            std::cout << requiresSingularIntegration << std::endl;
-
-//        }
-//    }
 

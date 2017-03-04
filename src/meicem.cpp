@@ -45,7 +45,7 @@ int main()
     ComplexMatrix Vvector = MoMSetup.calculateRHS(1);
 
     std::cout << std::endl << "Zimatrix" << std::endl;
-    Zmatrix.print();
+//    Zmatrix.print();
 
     std::cout << std::endl << "Vvector" << std::endl;
 //    Vvector.print();
