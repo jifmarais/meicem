@@ -41,7 +41,7 @@ int main()
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
-    ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle(7, 3);
+    ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle(3, 3);
     ComplexMatrix Vvector = MoMSetup.calculateRHS(1);
 
     std::cout << std::endl << "Zimatrix" << std::endl;

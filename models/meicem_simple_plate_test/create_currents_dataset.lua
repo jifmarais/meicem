@@ -10,16 +10,19 @@ end
 local app = pf.GetApplication()
 printlist(pf.SurfaceCurrentsAndCharges.GetNames())
 local surfaceCurrents = app.Models[1].Configurations[1].SurfaceCurrents
--- local ds = surfaceCurrents[1]:GetDataSet()
+local ds = surfaceCurrents[1]:GetDataSet()
 
--- print(ds)
+print(ds)
 
 frequency = 1
 triangleIndex = 1
 nodeIndex = 1
 
 -- This is not general - assumes a single face (just add a FOR loop)
-numTriangles = app.Models[1].Configurations[1].Mesh.TriangleFaces[1].Triangles.Count
+numTriangles = 0
+for faceIndex = 1, app.Models[1].Configurations[1].Mesh.TriangleFaces.Count do
+    numTriangles = numTriangles + app.Models[1].Configurations[1].Mesh.TriangleFaces[faceIndex].Triangles.Count
+end
 print(numTriangles)
 local indeces = {}
 for ii = 1, numTriangles do
@@ -30,7 +33,7 @@ end
 
 ds = pf.DataSet.New()
 ds.Axes:Add( pf.Enums.DataSetAxisEnum.Frequency, "GHz", 0.1, 0.1, 1)
-ds.Axes:Add( pf.Enums.DataSetAxisEnum.MeshIndex,"m", indeces)
+ds.Axes:Add( pf.Enums.DataSetAxisEnum.MeshIndex,"", indeces)
 
 ds.Quantities:Add( "ElectricX", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
 ds.Quantities:Add( "ElectricY", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
@@ -40,7 +43,8 @@ print(ds)
 
 --- Read in the OS file
 plfile = require("pl.file")
--- fileAsString = plfile.read([[/home/jif/Dropbox/Altair/tmp/meicem_simple_plate_test/simple_plate_test.os]])
+-- fileAsString = plfile.read([[/home/jif/gitRepositories/meicem/models/meicem_simple_plate_test/simple_plate_test.os]])
+-- fileAsString = plfile.read([[/home/jif/gitRepositories/meicem/models/meicem_simple_plate_test/mini_plate_test.os]])
 fileAsString = plfile.read([[/home/jif/gitRepositories/meicem/bin/test1.os]])
 -- print(fileAsString)
 

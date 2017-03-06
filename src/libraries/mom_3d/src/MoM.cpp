@@ -253,6 +253,7 @@ ComplexMatrix MoM::calculateRHS(double numberOfIntegrationPoints)
 
                 pw.setFieldPoint(r_m_qp);
                 NearFieldValue Em = pw.getElectricField();
+//                std::cout << RWGBasisFunction(triangle_m) << std::endl;
                 std::complex<double> Edotfm = RWGBasisFunction(triangle_m) * (Em.getX()*rho_m_qp.x() + Em.getY()*rho_m_qp.y() +  Em.getZ()*rho_m_qp.z()) * wpm.weight;
                 Vvector(m, 0) += Edotfm;
            }
@@ -401,19 +402,12 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
                             sign = 1.0;
                         }
 
-                        Node nodeOppositeToEdge;
-                        for (auto oIndex = 0; oIndex < 3; ++oIndex)
-                        {
-                            if (m_tContainer.at(tIndex)[oIndex] != e.n1() &&
-                                m_tContainer.at(tIndex)[oIndex] != e.n2() )
-                            {
-                                nodeOppositeToEdge = m_tContainer.at(tIndex)[oIndex];
-                                break;
-                            }
-                        }
+                        Triangle Tl = T;
+                        Tl.setOppositeEdge(e.n1(), e.n2());
+                        Node nodeOppositeToEdge = Tl.n1();
 
                         Node rho = n - nodeOppositeToEdge;
-                        Node current = sign*rho*RWGBasisFunction(T);
+                        Node current = sign*rho*RWGBasisFunction(Tl);
 
                         NearFieldValue val;
                         val = nodeCurrents[nIndex];
@@ -425,7 +419,7 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
                 }
             }
 
-            // Write out current at the node
+            // Currents at the centre
             file << std::setw(19);
             file << (nodeCurrents.at(0).getX().real() + nodeCurrents.at(1).getX().real() + nodeCurrents.at(2).getX().real()) / 3;
             file << std::setw(19);
@@ -446,6 +440,7 @@ void MoM::writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) con
             file << std::setw(19);
             file << 0.0;
 
+            // Write out current at the node
             for (auto nIndex=0; nIndex < 3 ; ++nIndex)
             {
                 file << std::setw(19);
