@@ -103,7 +103,7 @@ ComplexMatrix MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints
 
     //double omega = 2 * EMconst::pi*m_frequency;
     double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
-    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 5.0 ;
+    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 10.0 ;
     double accurateIntegrationCount = 0;
 
     // Container to hold basis functions (non-boundary edges)

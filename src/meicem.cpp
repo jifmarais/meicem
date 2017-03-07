@@ -29,9 +29,11 @@ int main()
 //    WilcoInputReader reader;
     NastranReader reader;
     //std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
-    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
+//    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
+    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
-    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
+//    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
+    reader.setFile(baseTestFilesDirectory + "test4_mixed.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
     reader.setTriangleContainer(&tContainer);
     reader.importModel();

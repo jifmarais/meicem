@@ -307,9 +307,9 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
 {
 
     assert(maxNumberOfPoints > 1); // Not sure if it is expected, but a single point does not give correct results
-    assert(T.n1().z() == 0);
-    assert(T.n2().z() == 0);
-    assert(T.n1().z() == 0);
+    assert(std::fabs(T.n1().z()) < 1e-6);
+    assert(std::fabs(T.n2().z()) < 1e-6);
+    assert(std::fabs(T.n3().z()) < 1e-6);
 
     WeightedPointList_type weightedPoints;
     WeightedPoint wp;
@@ -389,7 +389,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
     }
 
     double theta = acos(triNormal.z());
-    double phi   = atan2(triNormal.y(), triNormal.x());
+    double phi   = atan2(triNormal.x(), triNormal.y());
 
     //CRC: This does not (I think) cater for a triangle in the Y plane
     ComplexMatrix Zrotation = getZrotationMatrix(phi);
@@ -399,9 +399,12 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
 
     Triangle newT = T.transform(rotationMatrix);
     double zOffset = newT.n1().z();
-    newT.n1().set(newT.n1().x(), newT.n1().y(), 0.0);
-    newT.n2().set(newT.n2().x(), newT.n2().y(), 0.0);
-    newT.n3().set(newT.n3().x(), newT.n3().y(), 0.0);
+    //CRC: Should define a gemetrical comparison
+    assert(std::fabs(newT.n1().z() - newT.n2().z()) < 1e-6);
+    assert(std::fabs(newT.n2().z() - newT.n3().z()) < 1e-6);
+    Node newTZOffsetNode {0.0, 0.0, zOffset};
+    //CRC: It should be easier (interface) to change the z values of the nodes of a triangle.
+    newT.set(newT.n1()-newTZOffsetNode, newT.n2()-newTZOffsetNode, newT.n3()-newTZOffsetNode);
 
     Node newObservationPoint = observationPoint.transform(rotationMatrix);
     Node observationZOffsetNode {0.0, 0.0, newObservationPoint.z()};
