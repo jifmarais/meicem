@@ -16,12 +16,16 @@ Quadrature::~Quadrature()
 
 Quadrature::WeightedPoint1DList_type Quadrature::get1DGaussianQuadraturePoints(unsigned maxNumberOfPoints)
 {
+    if (m_cacheNumberOfPointsFor1DGaussianQuadraturePoints == maxNumberOfPoints)
+    {
+        return m_cache1DGaussianQuadraturePoints;
+    }
 
     assert(maxNumberOfPoints > 0);
 
     std::vector<std::vector<double>> pointsWithWeights;
     std::vector<unsigned> validNumber {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    unsigned numberOfIntegrationPoints;
+    unsigned numberOfIntegrationPoints = 1;
 
     std::vector<unsigned>::const_iterator validPointIt;
     for (validPointIt = validNumber.cbegin(); validPointIt < validNumber.cend(); ++validPointIt)
@@ -123,6 +127,8 @@ Quadrature::WeightedPoint1DList_type Quadrature::get1DGaussianQuadraturePoints(u
         weightedPoints.push_back(wp);
     }
 
+    m_cacheNumberOfPointsFor1DGaussianQuadraturePoints = maxNumberOfPoints;
+    m_cache1DGaussianQuadraturePoints = weightedPoints;
     return weightedPoints;
 }
 
@@ -131,9 +137,14 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
 
     assert(maxNumberOfPoints > 0);
 
+    if (m_cacheNumberOfPointsForSimplexTriangleGaussianQuadraturePoints == maxNumberOfPoints)
+    {
+        return m_cacheSimplexTriangleGaussianQuadraturePoints;
+    }
+
     std::vector<std::vector<double>> pointsWithWeights;
     std::vector<unsigned> validNumber {1, 3, 4, 6, 7, 12, 13, 16, 25, 33};
-    unsigned numberOfIntegrationPoints;
+    unsigned numberOfIntegrationPoints = 1;
 
     std::vector<unsigned>::const_iterator validPointIt;
     for (validPointIt = validNumber.cbegin(); validPointIt < validNumber.cend(); ++validPointIt)
@@ -240,6 +251,8 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
         }
     }
 
+    m_cacheSimplexTriangleGaussianQuadraturePoints = weightedPoints;
+    m_cacheNumberOfPointsForSimplexTriangleGaussianQuadraturePoints = maxNumberOfPoints;
     return weightedPoints;
 }
 
@@ -281,25 +294,35 @@ double Quadrature::RAR1Sdxdy(double u, double v, double R)
     return (2.0 * R * v) / cosh(u);
 }
 
-ComplexMatrix Quadrature::getXrotationMatrix(double theta)
+arma::mat Quadrature::getXrotationMatrix(double theta)
 {
-    ComplexMatrix rotation {3}; // This should be a double matrix and not a complex matrix.
-    rotation(0,0) =  1.0;
-    rotation(1,1) =  cos(theta);
-    rotation(1,2) = -sin(theta);
-    rotation(2,1) =  sin(theta);
-    rotation(2,2) =  cos(theta);
+    double ccos = cos(theta);
+    double csin = sin(theta);
+    arma::mat rotation;
+    rotation << 1.0  <<  0.0  <<  0.0  << arma::endr
+             << 0.0  <<  ccos << -csin << arma::endr
+             << 0.0  <<  csin <<  ccos << arma::endr;
+//    rotation(0,0) =  1.0;
+//    rotation(1,1) =  ccos;
+//    rotation(1,2) = -csin;
+//    rotation(2,1) =  csin;
+//    rotation(2,2) =  ccos;
     return rotation;
 }
 
-ComplexMatrix Quadrature::getZrotationMatrix(double phi)
+arma::mat Quadrature::getZrotationMatrix(double phi)
 {
-    ComplexMatrix rotation {3}; // This should be a double matrix and not a complex matrix.
-    rotation(0,0) =  cos(phi);
-    rotation(0,1) = -sin(phi);
-    rotation(1,0) =  sin(phi);
-    rotation(1,1) =  cos(phi);
-    rotation(2,2) =  1.0;
+    double ccos = cos(phi);
+    double csin = sin(phi);
+    arma::mat rotation;
+    rotation << ccos << -csin << 0.0 << arma::endr
+             << csin <<  ccos << 0.0 << arma::endr
+             << 0.0  <<  0.0  << 1.0 << arma::endr;
+//    rotation(0,0) =  ccos;
+//    rotation(0,1) = -csin;
+//    rotation(1,0) =  csin;
+//    rotation(1,1) =  ccos;
+//    rotation(2,2) =  1.0;
     return rotation;
 }
 
@@ -322,8 +345,9 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
     Node pVec   = tempV2 - tempV1;
 
     double phi = atan2(-pVec.y(), pVec.x());
-    ComplexMatrix Zrotation = getZrotationMatrix(phi);
-    ComplexMatrix invZrotation = Zrotation.inverse();
+    arma::mat Zrotation = getZrotationMatrix(phi);
+//    arma::mat invZrotation = arma::inv(Zrotation);
+    arma::mat invZrotation = getZrotationMatrix(-phi);
 
     tempV1 = tempV1.transform(Zrotation);
     tempV2 = tempV2.transform(Zrotation);
@@ -351,13 +375,14 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
     double uUpper = RAR1SuFromXY(tempV2.x(), tempV2.y());
     double uRange = uUpper - uLower;
 
+    double absCruxZoffset = std::fabs(cruxZoffset);
     for (auto itii = weightedPoints1D.begin(); itii < weightedPoints1D.end(); ++itii)
     {
         double uPoint = uLower + 0.5*uRange*(1.0 + itii->node);
 
         for (auto itjj = weightedPoints1D.begin(); itjj < weightedPoints1D.end(); ++itjj)
         {
-            double vLower = RAR1SvFromYUZ(0.0, uPoint, std::fabs(cruxZoffset));
+            double vLower = RAR1SvFromYUZ(0.0, uPoint, absCruxZoffset);
             double vUpper = RAR1SvFromYUZ(tempV1.y(), uPoint, cruxZoffset);
             double vRange = vUpper - vLower;
 
@@ -367,7 +392,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
 
             Node tempNewPoint {xPoint, flip*yPoint, 0.0};
             wp.node = tempNewPoint.transform(invZrotation) + T.n3();
-            double R = vPoint*vPoint + cruxZoffset;
+            double R = vPoint*vPoint + absCruxZoffset;
             wp.weight = itii->weight * itjj->weight * vRange * uRange * 0.25 * RAR1Sdxdy(uPoint, vPoint, R);
             weightedPoints.push_back(wp);
         }
@@ -392,10 +417,12 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
     double phi   = atan2(triNormal.x(), triNormal.y());
 
     //CRC: This does not (I think) cater for a triangle in the Y plane
-    ComplexMatrix Zrotation = getZrotationMatrix(phi);
-    ComplexMatrix Xrotation = getXrotationMatrix(theta);
-    ComplexMatrix rotationMatrix = Xrotation*Zrotation;
-    ComplexMatrix invRotationMatrix = rotationMatrix.inverse();
+    //CRC: These should be replaced by scalar matrices (not complex)
+
+//    ComplexMatrix rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
+//    ComplexMatrix invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
+    arma::mat rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
+    arma::mat invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
 
     Triangle newT = T.transform(rotationMatrix);
     double zOffset = newT.n1().z();

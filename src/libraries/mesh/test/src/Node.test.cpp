@@ -284,7 +284,8 @@ BOOST_AUTO_TEST_CASE(transformNode)
     Node p2;
     Node p3;
     p1.set(0.0, 0.0, 1.0);
-    ComplexMatrix m {3};
+    arma::mat m(3, 3);
+    m.fill(0.0);
     double angle = asin(1.0); // 90 degrees
     m(0, 0) =  cos(angle); // Rotate about Z
     m(0, 1) = -sin(angle);

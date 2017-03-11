@@ -4,9 +4,9 @@
 NearFieldValue::NearFieldValue()
 {
     //ctor
-    m_Xcomponent = {0.0, 0.0};
-    m_Ycomponent = {0.0, 0.0};
-    m_Zcomponent = {0.0, 0.0};
+    m_field(0) = {0.0, 0.0};
+    m_field(1) = {0.0, 0.0};
+    m_field(2) = {0.0, 0.0};
 }
 
 NearFieldValue::~NearFieldValue()
@@ -16,39 +16,50 @@ NearFieldValue::~NearFieldValue()
 
 void NearFieldValue::set(std::complex<double> x, std::complex<double> y, std::complex<double> z)
 {
-    m_Xcomponent = x;
-    m_Ycomponent = y;
-    m_Zcomponent = z;
+    m_field(0) = x;
+    m_field(1) = y;
+    m_field(2) = z;
 }
 
 void NearFieldValue::setX(std::complex<double> val)
 {
-    m_Xcomponent = val;
+    m_field(0) = val;
 }
 
 void NearFieldValue::setY(std::complex<double> val)
 {
-    m_Ycomponent = val;
+    m_field(1) = val;
 }
 
 void NearFieldValue::setZ(std::complex<double> val)
 {
-    m_Zcomponent = val;
+    m_field(2) = val;
 }
+
+NearFieldValue::cvec NearFieldValue::getVec() const
+{
+    return m_field;
+}
+
+void NearFieldValue::setVec(NearFieldValue::cvec value)
+{
+    m_field = value;
+}
+
 
 std::complex<double> NearFieldValue::getX() const
 {
-    return m_Xcomponent;
+    return m_field(0);
 }
 
 std::complex<double> NearFieldValue::getY() const
 {
-    return m_Ycomponent;
+    return m_field(1);
 }
 
 std::complex<double> NearFieldValue::getZ() const
 {
-    return m_Zcomponent;
+    return m_field(2);
 }
 
 bool NearFieldValue::operator==(const NearFieldValue& rhs) const
@@ -58,17 +69,17 @@ bool NearFieldValue::operator==(const NearFieldValue& rhs) const
       return true;
     }
 
-    if (rhs.getX() != m_Xcomponent)
+    if (rhs.getX() != m_field(0))
     {
         return false;
     }
 
-    if (rhs.getY() != m_Ycomponent)
+    if (rhs.getY() != m_field(1))
     {
         return false;
     }
 
-    if (rhs.getZ() != m_Zcomponent)
+    if (rhs.getZ() != m_field(2))
     {
         return false;
     }
@@ -88,9 +99,9 @@ NearFieldValue& NearFieldValue::operator=(const NearFieldValue& rhs)
       return *this;
     }
 
-    m_Xcomponent = rhs.getX();
-    m_Ycomponent = rhs.getY();
-    m_Zcomponent = rhs.getZ();
+    m_field(0) = rhs.getX();
+    m_field(1) = rhs.getY();
+    m_field(2) = rhs.getZ();
 
     return *this;
 }
@@ -99,9 +110,9 @@ NearFieldValue NearFieldValue::operator+(const NearFieldValue& rhs) const
 {
     NearFieldValue r;
 
-    r.setX(m_Xcomponent + rhs.getX());
-    r.setY(m_Ycomponent + rhs.getY());
-    r.setZ(m_Zcomponent + rhs.getZ());
+    r.setX(m_field(0) + rhs.getX());
+    r.setY(m_field(1) + rhs.getY());
+    r.setZ(m_field(2) + rhs.getZ());
     return r;
 }
 
@@ -115,9 +126,9 @@ NearFieldValue NearFieldValue::operator-(const NearFieldValue& rhs) const
 {
     NearFieldValue r;
 
-    r.setX(m_Xcomponent - rhs.getX());
-    r.setY(m_Ycomponent - rhs.getY());
-    r.setZ(m_Zcomponent - rhs.getZ());
+    r.setX(m_field(0) - rhs.getX());
+    r.setY(m_field(1) - rhs.getY());
+    r.setZ(m_field(2) - rhs.getZ());
     return r;
 }
 
@@ -137,17 +148,17 @@ bool NearFieldValue::tolerantEqualTo(const NearFieldValue &rhs) const
 
     double tolerance {1e-15};
 
-    if (std::abs(rhs.getX() - m_Xcomponent) > tolerance)
+    if (std::abs(rhs.getX() - m_field(0)) > tolerance)
     {
         return false;
     }
 
-    if (std::abs(rhs.getY() - m_Ycomponent) > tolerance)
+    if (std::abs(rhs.getY() - m_field(1)) > tolerance)
     {
         return false;
     }
 
-    if (std::abs(rhs.getZ() - m_Zcomponent) > tolerance)
+    if (std::abs(rhs.getZ() - m_field(2)) > tolerance)
     {
         return false;
     }

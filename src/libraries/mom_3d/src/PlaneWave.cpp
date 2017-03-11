@@ -15,8 +15,8 @@ PlaneWave::~PlaneWave()
 
 void PlaneWave::setAngleOfIncidence(double theta, double phi)
 {
-    m_incidentTheta = theta/180*EMconst::pi;
-    m_incidentPhi   = phi/180*EMconst::pi;
+    m_incidentTheta = theta*EMconst::pi/180;
+    m_incidentPhi   = phi*EMconst::pi/180;
 }
 
 void PlaneWave::setPolarisationAngle(double eta)

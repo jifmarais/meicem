@@ -27,11 +27,11 @@ Edge EdgeContainer::at(SizeType index) const
     Edge e;
     auto pContainer = m_triangleContainer.getPointContainer();
     e.set(pContainer.at(m_node1Index.at(index)), pContainer.at(m_node2Index.at(index)));
-    std::vector<TriangleContainer::SizeType> tIndeces = m_associatedTriangleIndeces.at(index);
-    for (unsigned ii = 0; ii < tIndeces.size() ; ++ii)
-    {
-        e.associateTriangle(tIndeces.at(ii));
-    }
+    e.setSortedAssociatedTriangles(m_associatedTriangleIndeces.at(index));
+//    for (unsigned ii = 0; ii < tIndeces.size() ; ++ii)
+//    {
+//        e.associateTriangle(tIndeces.at(ii));
+//    }
     return e;
 }
 
@@ -72,7 +72,15 @@ void EdgeContainer::buildNonboundaryEdgeList()
                      std::sort(edgePointList.begin(), edgePointList.end());
                      m_node1Index.push_back(edgePointList.at(0));
                      m_node2Index.push_back(edgePointList.at(1));
-                     m_associatedTriangleIndeces.push_back({indexOuter, indexInner});
+                     // Add items in sorted order (smallest to largest - basis function direction)
+                     if (indexOuter < indexInner)
+                     {
+                         m_associatedTriangleIndeces.push_back({indexOuter, indexInner});
+                     }
+                     else
+                     {
+                         m_associatedTriangleIndeces.push_back({indexInner, indexOuter});
+                     }
                  }
             }
 

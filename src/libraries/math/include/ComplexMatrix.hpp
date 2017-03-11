@@ -1,4 +1,5 @@
 #pragma once
+#include <armadillo>
 #include <complex>
 #include <vector>
 
