@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 
 # Compiler options
 if(UNIX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -std=c++11 ")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -std=c++11 -O2 ")
 #    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 ")
 endif(UNIX)
 
@@ -25,6 +25,21 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/libraries)
 # BOOST libraries
 find_package( Boost REQUIRED COMPONENTS program_options )
 target_link_libraries(meicem ${Boost_LIBRARIES})
+
+# Math libraries
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+target_link_libraries(meicem ${ARMADILLO_LIBRARIES})
+
+## Math libraries - LAPACK
+#find_package( LAPACK REQUIRED )
+#include_directories(${LAPACK_INCLUDE_DIR})
+#target_link_libraries(meicem ${LAPACK_LIBRARIES})
+
+## Math libraries - BLAS
+#find_package( BLAS REQUIRED )
+#include_directories(${BLAS_INCLUDE_DIR})
+#target_link_libraries(meicem ${BLAS_LIBRARIES})
 
 # Local libraries
 #target_link_libraries(meicem Vector)

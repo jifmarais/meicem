@@ -1,7 +1,9 @@
 #pragma once
+#include <armadillo>
 #include "ComplexMatrix.hpp"
 #include "TriangleContainer.hpp"
 #include "EdgeContainer.hpp"
+#include "PlaneWave.hpp"
 
 class MoM
 {
@@ -11,12 +13,12 @@ class MoM
 
         void            setFrequency(double freq);
         void            setTriangleContainer(const TriangleContainer& tContainer);
-        ComplexMatrix 	fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints);
-        ComplexMatrix 	calculateRHS(double numberOfIntegrationPoints);
-        void		writeCurrentsToOS(std::string fname, ComplexMatrix solutionMatrix) const;
+        arma::cx_mat    fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints);
+        arma::cx_vec    calculateRHS(double numberOfIntegrationPoints, PlaneWave pw);
+        void		    writeCurrentsToOS(std::string fname, arma::cx_vec solutionMatrix) const;
 
-        ComplexMatrix fillZmatrixTriangleEfficient();
-        ComplexMatrix fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints);
+        arma::cx_mat    fillZmatrixTriangleEfficient();
+        arma::cx_mat    fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints);
 protected:
     private:
         double 					m_frequency;

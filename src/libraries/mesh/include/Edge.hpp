@@ -14,6 +14,7 @@ class Edge
         void    set(Node node1,
                     Node node2);
         void    associateTriangle(TriangleContainer::SizeType triangleIndex);
+        void    setSortedAssociatedTriangles(std::vector<TriangleContainer::SizeType> sortedUniqueTriangleList);
         std::vector<TriangleContainer::SizeType>
                 getTriangles();
         double  length() const;

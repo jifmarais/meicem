@@ -34,6 +34,11 @@ void Edge::associateTriangle(TriangleContainer::SizeType triangleIndex)
     m_triangleIndeces.erase( std::unique( m_triangleIndeces.begin(), m_triangleIndeces.end() ), m_triangleIndeces.end() );
 }
 
+void Edge::setSortedAssociatedTriangles(std::vector<TriangleContainer::SizeType> sortedUniqueTriangleList)
+{
+    m_triangleIndeces = sortedUniqueTriangleList;
+}
+
 std::vector<TriangleContainer::SizeType> Edge::getTriangles()
 {
     return m_triangleIndeces;

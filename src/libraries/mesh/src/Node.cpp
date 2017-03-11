@@ -21,9 +21,9 @@ Node::~Node()
 
 void Node::set(double x, double y, double z, double tolerance)
 {
-    m_x = x;
-    m_y = y;
-    m_z = z;
+    m_point(0) = x;
+    m_point(1) = y;
+    m_point(2) = z;
     m_tolerance = tolerance;
 }
 
@@ -34,9 +34,9 @@ void Node::set(double x, double y, double z)
 
 bool Node::operator==(const Node& rhs) const
 {
-    return ( isEqual(m_x, rhs.x()) &&
-             isEqual(m_y, rhs.y()) &&
-             isEqual(m_z, rhs.z()) );
+    return ( isEqual(m_point(0), rhs.x()) &&
+             isEqual(m_point(1), rhs.y()) &&
+             isEqual(m_point(2), rhs.z()) );
 }
 
 bool Node::operator!=(const Node& rhs) const
@@ -46,9 +46,9 @@ bool Node::operator!=(const Node& rhs) const
 
 Node& Node::operator=(const Node& rhs)
 {
-    m_x = rhs.x();
-    m_y = rhs.y();
-    m_z = rhs.z();
+    m_point(0) = rhs.x();
+    m_point(1) = rhs.y();
+    m_point(2) = rhs.z();
     return *this;
 }
 
@@ -65,7 +65,7 @@ bool operator!=(const Node& lhs, const Node& rhs)
 Node Node::operator+(const Node& rhs) const
 {
     Node v;
-    v.set( m_x + rhs.x(), m_y + rhs.y(), m_z + rhs.z() );
+    v.set( m_point(0) + rhs.x(), m_point(1) + rhs.y(), m_point(2) + rhs.z() );
     return v;
 }
 
@@ -78,7 +78,7 @@ Node& Node::operator+=(const Node& rhs)
 Node Node::operator-(const Node& rhs) const
 {
     Node v;
-    v.set( m_x - rhs.x(), m_y - rhs.y(), m_z - rhs.z() );
+    v.set( m_point(0) - rhs.x(), m_point(1) - rhs.y(), m_point(2) - rhs.z() );
     return v;
 }
 
@@ -91,7 +91,7 @@ Node& Node::operator-=(const Node& rhs)
 Node Node::operator*(const double rhs) const
 {
     Node v;
-    v.set( m_x * rhs, m_y * rhs, m_z * rhs );
+    v.set( m_point(0) * rhs, m_point(1) * rhs, m_point(2) * rhs );
     return v;
 }
 
@@ -118,7 +118,7 @@ Node& Node::operator*=(const double rhs)
 Node Node::operator/(const double rhs) const
 {
     Node v;
-    v.set( m_x / rhs, m_y / rhs, m_z / rhs );
+    v.set( m_point(0) / rhs, m_point(1) / rhs, m_point(2) / rhs );
     return v;
 }
 
@@ -131,7 +131,7 @@ Node& Node::operator/=(const double rhs)
 
 double Node::magnitude() const
 {
-    return sqrt(m_x*m_x + m_y*m_y + m_z*m_z);
+    return sqrt(m_point(0)*m_point(0) + m_point(1)*m_point(1) + m_point(2)*m_point(2));
 }
 
 Node Node::norm() const
@@ -154,16 +154,18 @@ Node Node::norm() const
 Node Node::cross(const Node& u, const Node& v)
 {
     Node n;
-    n.set(u.y()*v.z() - u.z()*v.y() ,
-          u.z()*v.x() - u.x()*v.z() ,
-          u.x()*v.y() - u.y()*v.x() );
+    n.setVec(arma::cross(u.getVec(), v.getVec()));
+//    n.set(u.y()*v.z() - u.z()*v.y() ,
+//          u.z()*v.x() - u.x()*v.z() ,
+//          u.x()*v.y() - u.y()*v.x() );
     return n;
 }
 
 double Node::dot(const Node &u, const Node &v)
 {
     double n;
-    n  = u.x()*v.x() + u.y()*v.y() + u.z()*v.z();
+//    n  = u.x()*v.x() + u.y()*v.y() + u.z()*v.z();
+    n = arma::dot(u.getVec(), v.getVec());
     return n;
 }
 
@@ -182,31 +184,42 @@ double Node::distance(const Node& p1) const
     return distance(*this, p1);
 }
 
-Node Node::transform(const ComplexMatrix& transformMatrix) const
+Node Node::transform(const arma::mat& transformMatrix) const
 {
-    assert(transformMatrix.getRowCount() == 3);
-    assert(transformMatrix.getColumnCount() == 3);
+    assert(transformMatrix.n_rows == 3);
+    assert(transformMatrix.n_cols == 3);
 
     Node newNode;
-    newNode.set(transformMatrix(0,0).real()*m_x + transformMatrix(0,1).real()*m_y + transformMatrix(0,2).real()*m_z,
-                transformMatrix(1,0).real()*m_x + transformMatrix(1,1).real()*m_y + transformMatrix(1,2).real()*m_z,
-                transformMatrix(2,0).real()*m_x + transformMatrix(2,1).real()*m_y + transformMatrix(2,2).real()*m_z);
+    newNode.setVec(transformMatrix*m_point);
+//    newNode.set(transformMatrix(0,0)*m_point(0) + transformMatrix(0,1)*m_point(1) + transformMatrix(0,2)*m_point(2),
+//                transformMatrix(1,0)*m_point(0) + transformMatrix(1,1)*m_point(1) + transformMatrix(1,2)*m_point(2),
+//                transformMatrix(2,0)*m_point(0) + transformMatrix(2,1)*m_point(1) + transformMatrix(2,2)*m_point(2));
     return newNode;
+}
+
+void Node::setVec(vec p)
+{
+    m_point = p;
+}
+
+Node::vec Node::getVec() const
+{
+    return m_point;
 }
 
 double Node::x() const
 {
-    return m_x;
+    return m_point(0);
 }
 
 double Node::y() const
 {
-    return m_y;
+    return m_point(1);
 }
 
 double Node::z() const
 {
-    return m_z;
+    return m_point(2);
 }
 
 bool Node::isEqual(double n1, double n2) const
@@ -216,5 +229,5 @@ bool Node::isEqual(double n1, double n2) const
 
 void Node::print() const
 {
-    std::cout << "(" << m_x << ", " << m_y << ", " << m_z << ")" << std::endl;
+    std::cout << "(" << m_point(0) << ", " << m_point(1) << ", " << m_point(2) << ")" << std::endl;
 }

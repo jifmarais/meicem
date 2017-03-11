@@ -124,7 +124,7 @@ void Triangle::setOppositeEdge(const Node p1, const Node p2)
     //JIF: This needs tests (it had bugs and caused problems already)
     assert((m_nodes[0] == p1) || (m_nodes[1] == p1) || (m_nodes[2] == p1));
     assert((m_nodes[0] == p2) || (m_nodes[1] == p2) || (m_nodes[2] == p2));
-    Node normalBefore = this->normal();
+//    Node normalBefore = this->normal();
 
     Node tmp;
     // Skip the first one - if it is the opposite edge, it is correct already
@@ -150,7 +150,7 @@ void Triangle::setOppositeEdge(const Node p1, const Node p2)
         }
     }
 
-    assert(this->normal() == normalBefore);
+//    assert(this->normal() == normalBefore);
     assert(m_nodes[0] != m_nodes[1]);
     assert(m_nodes[0] != m_nodes[2]);
     assert(m_nodes[1] != m_nodes[2]);
@@ -169,10 +169,10 @@ Node Triangle::fromSimplex(const Node& p) const
     return globalCoordinate;
 }
 
-Triangle Triangle::transform(const ComplexMatrix& transformMatrix) const
+Triangle Triangle::transform(const arma::mat& transformMatrix) const
 {
-    assert(transformMatrix.getRowCount() == 3);
-    assert(transformMatrix.getColumnCount() == 3);
+    assert(transformMatrix.n_rows == 3);
+    assert(transformMatrix.n_cols == 3);
 
     Triangle newT;
     newT.set(m_nodes[0].transform(transformMatrix),

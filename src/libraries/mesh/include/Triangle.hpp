@@ -1,4 +1,5 @@
 #pragma once
+#include <armadillo>
 #include "Node.hpp"
 #include "ComplexMatrix.hpp"
 
@@ -24,7 +25,7 @@ class Triangle
         Node	n2() const;
         Node    n3() const;
 
-        Triangle transform(const ComplexMatrix& transformMatrix) const; // Needs tests
+        Triangle transform(const arma::mat &transformMatrix) const; // Needs tests
 protected:
     private:
         Node    m_nodes [3];

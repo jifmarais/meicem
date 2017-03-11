@@ -1,10 +1,12 @@
 #pragma once
+#include <armadillo>
 #include "ComplexMatrix.hpp"
 
 class Node
 {
     public:
 
+        typedef arma::vec::fixed<3> vec;
         Node();
         Node(double, double, double);
         virtual     ~Node();
@@ -29,17 +31,17 @@ class Node
         static double   dot(const Node&u, const Node&v);
         double 	    distance(const Node& p1) const;
         static double distance(const Node& p1, const Node& p2);
+        void        setVec(vec p) ;
+        vec       getVec() const;
         double      x() const;
         double      y() const;
         double      z() const;
-        Node 		transform(const ComplexMatrix& transformMatrix) const;
+        Node 		transform(const arma::mat &transformMatrix) const;
 
         void print() const;
 protected:
     private:
-        double m_x;
-        double m_y;
-        double m_z;
+        vec  m_point;
         double m_tolerance;
 
         bool   isEqual(double n1, double n2) const;

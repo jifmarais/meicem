@@ -36,9 +36,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature2Up)
     double answer = 9.0 + (1.0/3.0);
     unsigned min = 2;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -55,9 +56,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature3Up)
     double answer = 6.0;
     unsigned min = 3;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -74,9 +76,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature4Up)
     double answer = -26;
     unsigned min = 4;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -93,9 +96,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature5Up)
     double answer = 3.8666666666666667;
     unsigned min = 5;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -112,9 +116,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature6Up)
     double answer = -5.17142857142857;
     unsigned min = 6;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -131,9 +136,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature7Up)
     double answer = -39.8952380952381;
     unsigned min = 7;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -150,9 +156,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature8Up)
     double answer = -1.29841269841274;
     unsigned min = 8;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -169,9 +176,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature9Up)
     double answer = 10.5999999999999;
     unsigned min = 9;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -188,9 +196,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature10Up)
     double answer = 12.3967099567099;
     unsigned min = 10;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -207,9 +216,10 @@ BOOST_AUTO_TEST_CASE(test1DQuadrature11Up)
     double answer = -2.1748340548341;
     unsigned min = 11;
     unsigned max = 12;
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPoint1DList_type wps = Quadrature::get1DGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPoint1DList_type wps = quadrature.get1DGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -231,9 +241,10 @@ BOOST_AUTO_TEST_CASE(testTriangleGauss01)
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 1.0, 0.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.getTriangleSimplexGaussianQuadraturePoints(numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -255,9 +266,10 @@ BOOST_AUTO_TEST_CASE(testTriangleGauss02)
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 2.0, 0.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::getTriangleGaussianQuadraturePoints(T, numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.getTriangleGaussianQuadraturePoints(T, numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -277,6 +289,7 @@ BOOST_AUTO_TEST_CASE(testTriangleGaussSimplex_loop1)
     unsigned max = 11;
     double tol = 1e-6;
 
+    Quadrature quadrature;
     for (unsigned min = minmin; min <= minmax; ++min)
     {
         Node n1 {-1.0, 0.0, 0.0};
@@ -285,7 +298,7 @@ BOOST_AUTO_TEST_CASE(testTriangleGaussSimplex_loop1)
         Triangle T {n1, n2, n3};
         for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
         {
-            Quadrature::WeightedPointList_type wps = Quadrature::getTriangleSimplexGaussianQuadraturePoints(numPoints);
+            Quadrature::WeightedPointList_type wps = quadrature.getTriangleSimplexGaussianQuadraturePoints(numPoints);
             double integral = 0;
             for (unsigned ii=0; ii < wps.size(); ++ii)
             {
@@ -316,6 +329,7 @@ BOOST_AUTO_TEST_CASE(testTriangleGauss_loop2)
     unsigned max = 11;
     double tol = 1e-6;
 
+    Quadrature quadrature;
     for (unsigned min = minmin; min <= minmax; ++min)
     {
         Node n1 {-1.0, 0.0, 0.0};
@@ -324,7 +338,7 @@ BOOST_AUTO_TEST_CASE(testTriangleGauss_loop2)
         Triangle T {n1, n2, n3};
         for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
         {
-            Quadrature::WeightedPointList_type wps = Quadrature::getTriangleGaussianQuadraturePoints(T, numPoints);
+            Quadrature::WeightedPointList_type wps = quadrature.getTriangleGaussianQuadraturePoints(T, numPoints);
             double integral = 0;
             for (unsigned ii=0; ii < wps.size(); ++ii)
             {
@@ -365,9 +379,10 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_0)
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 2.0, 0.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::RAR1S_2D(T, offset, numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.RAR1S_2D(T, offset, numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -402,9 +417,10 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_0_offset)
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 2.0, 0.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::RAR1S_2D(T, offset, numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.RAR1S_2D(T, offset, numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -436,6 +452,7 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_loop1)
     double offset = 0.0;
     double tol = 1e-2;
 
+    Quadrature quadrature;
     for (unsigned min = minmin; min <= minmax; ++min)
     {
         Node n1 {-1.0, 0.0, 0.0};
@@ -444,7 +461,7 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2D_loop1)
         Triangle T {n1, n2, n3};
         for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
         {
-            Quadrature::WeightedPointList_type wps = Quadrature::RAR1S_2D(T, offset, numPoints);
+            Quadrature::WeightedPointList_type wps = quadrature.RAR1S_2D(T, offset, numPoints);
             double integral = 0;
             for (unsigned ii=0; ii < wps.size(); ++ii)
             {
@@ -476,12 +493,13 @@ BOOST_AUTO_TEST_CASE(testRAR1S_1)
     Node n1 {-1.0, 0.0, 0.0};
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 1.0, 0.0};
-    Node observationPoint { 9.0, 2.5, 0.0};
+    Node observationPoint { 9.0, 2.5, 10.0};
 //    Node observationPoint { 0.0, 0.5, 0.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::RAR1S(T, observationPoint, numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.RAR1S(T, observationPoint, numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -503,11 +521,12 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2)
     Node n2 { 1.0, 0.0, 0.0};
     Node n3 { 0.0, 1.0, 0.0};
 //    Node observationPoint { 9.0, 2.5, 0.0};
-    Node observationPoint { 0.0, 0.5, 0.0};
+    Node observationPoint { 0.0, 0.5, 1.0};
     Triangle T {n1, n2, n3};
+    Quadrature quadrature;
     for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
     {
-        Quadrature::WeightedPointList_type wps = Quadrature::RAR1S(T, observationPoint, numPoints);
+        Quadrature::WeightedPointList_type wps = quadrature.RAR1S(T, observationPoint, numPoints);
         double integral = 0;
         for (unsigned ii=0; ii < wps.size(); ++ii)
         {
@@ -528,17 +547,18 @@ BOOST_AUTO_TEST_CASE(testRAR1S_loop1)
     unsigned minmax = 5;
     unsigned max = 11;
 
+    Quadrature quadrature;
     for (unsigned min = minmin; min <= minmax; ++min)
     {
-        Node n1 {-1.0, 0.0, 0.0};
-        Node n2 { 1.0, 0.0, 0.0};
-        Node n3 { 0.0, 1.0, 0.0};
-        Node observationPoint { 0.0, 0.5, 0.0};
+        Node n1 {-1.0, 0.0, 1.0};
+        Node n2 { 1.0, 0.0, 1.0};
+        Node n3 { 0.0, 1.0, 1.0};
+        Node observationPoint { 0.0, 0.5, -10.0};
 //		Node observationPoint { 9.0, 2.5, 0.0};
         Triangle T {n1, n2, n3};
         for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
         {
-            Quadrature::WeightedPointList_type wps = Quadrature::RAR1S(T, observationPoint, numPoints);
+            Quadrature::WeightedPointList_type wps = quadrature.RAR1S(T, observationPoint, numPoints);
             double integral = 0;
             for (unsigned ii=0; ii < wps.size(); ++ii)
             {

@@ -11,6 +11,7 @@
 #include <iostream>
 #include "NearFieldContainer.hpp"
 #include "PlaneWave.hpp"
+#include <armadillo>
 //#include <iterator>
 //#include <complex>
 //#include <cmath>
@@ -33,8 +34,10 @@ int main()
     std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
 //    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
+//    reader.setFile(baseTestFilesDirectory + "test2_4triangles.nas");
     reader.setFile(baseTestFilesDirectory + "test4_mixed.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
+//    reader.setFile(baseTestFilesDirectory + "mini_plate_test_rot.nas");
     reader.setTriangleContainer(&tContainer);
     reader.importModel();
 
@@ -43,8 +46,14 @@ int main()
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
-    ComplexMatrix Zmatrix = MoMSetup.fillZmatrixTriangle(3, 3);
-    ComplexMatrix Vvector = MoMSetup.calculateRHS(1);
+    PlaneWave pw;
+    pw.setFrequency(freq);
+    pw.setAngleOfIncidence(0.0, 0.0);
+//    pw.setAngleOfIncidence(45.0, 0.0);
+//    pw.setAngleOfIncidence(30, 20);
+//    pw.setPolarisationAngle(0.0);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
 
     std::cout << std::endl << "Zimatrix" << std::endl;
 //    Zmatrix.print();
@@ -52,10 +61,9 @@ int main()
     std::cout << std::endl << "Vvector" << std::endl;
 //    Vvector.print();
 
-//    (Zmatrix.inverse()*Zmatrix).print();
     std::cout << std::endl << "Coefficients" << std::endl;
-    ComplexMatrix Vsolution {(unsigned)Vvector.getRowCount(), 1};
-    Vsolution = Zmatrix.inverse()*Vvector;
+    arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
+    Vsolution = arma::solve(Zmatrix, Vvector);
 //    Vsolution.print();
 
     // Calculate currents (and export them)
@@ -70,10 +78,6 @@ int main()
     Node endCorner   {+1.0, +1.0, +1.0};
     nfContainer.setPoints(startCorner, endCorner, 11, 11, 51);
     nfContainer2.setPoints(startCorner, endCorner, 11, 11, 51);
-    PlaneWave pw;
-    pw.setAngleOfIncidence(0.0, 0.0);
-    pw.setPolarisationAngle(0.0);
-    pw.setFrequency(1.5e8);
     for ( unsigned pIndex = 0; pIndex < nfContainer.size(); ++pIndex )
     {
             pw.setFieldPoint(nfContainer.getPointAt(pIndex));

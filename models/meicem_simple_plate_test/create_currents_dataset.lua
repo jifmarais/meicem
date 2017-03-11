@@ -10,35 +10,36 @@ end
 local app = pf.GetApplication()
 printlist(pf.SurfaceCurrentsAndCharges.GetNames())
 local surfaceCurrents = app.Models[1].Configurations[1].SurfaceCurrents
-local ds = surfaceCurrents[1]:GetDataSet()
+local ds_old = surfaceCurrents[1]:GetDataSet()
 
-print(ds)
-
+-- print(ds_old)
+-- 
 frequency = 1
 triangleIndex = 1
 nodeIndex = 1
 
--- This is not general - assumes a single face (just add a FOR loop)
 numTriangles = 0
 for faceIndex = 1, app.Models[1].Configurations[1].Mesh.TriangleFaces.Count do
     numTriangles = numTriangles + app.Models[1].Configurations[1].Mesh.TriangleFaces[faceIndex].Triangles.Count
 end
 print(numTriangles)
-local indeces = {}
-for ii = 1, numTriangles do
-    table.insert(indeces, ii)
-    table.insert(indeces, ii)
-    table.insert(indeces, ii)
-end
 
-ds = pf.DataSet.New()
-ds.Axes:Add( pf.Enums.DataSetAxisEnum.Frequency, "GHz", 0.1, 0.1, 1)
-ds.Axes:Add( pf.Enums.DataSetAxisEnum.MeshIndex,"", indeces)
+-- local indeces = {}
+-- for ii = 1, numTriangles do
+--     table.insert(indeces, ii)
+--     table.insert(indeces, ii)
+--     table.insert(indeces, ii)
+-- end
+-- 
+-- ds = pf.DataSet.New()
+-- ds.Axes:Add( pf.Enums.DataSetAxisEnum.Frequency, "GHz", 0.1, 0.1, 1)
+-- ds.Axes:Add( pf.Enums.DataSetAxisEnum.MeshIndex,"", indeces)
+-- 
+-- ds.Quantities:Add( "ElectricX", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
+-- ds.Quantities:Add( "ElectricY", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
+-- ds.Quantities:Add( "ElectricZ", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
 
-ds.Quantities:Add( "ElectricX", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
-ds.Quantities:Add( "ElectricY", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
-ds.Quantities:Add( "ElectricZ", pf.Enums.DataSetQuantityTypeEnum.Complex, "A/m")
-
+ds = ds_old:CloneStructure()
 print(ds)
 
 --- Read in the OS file
@@ -54,6 +55,7 @@ stringio = require("pl.stringio")
 f = stringio.open(fileAsString)
 -- l1 = f:read()  -- read first line
 -- n,m = f:read ('*n','*n') -- read two numbers
+
 ii = 1
 processLine = true;
 for line in f:lines() do
@@ -84,6 +86,7 @@ for line in f:lines() do
     then
         local fields = stringx.split(line)
 --         print(#fields)
+
         if #fields == 31 
         then
             ds[frequency][(ii-1)*3 + 1].ElectricX = myToNumber(fields[14]) + i*myToNumber(fields[15])
