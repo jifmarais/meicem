@@ -380,10 +380,10 @@ void MoM::writeCurrentsToOS(std::string fname, arma::cx_vec solutionMatrix) cons
             std::vector<EdgeContainer::SizeType> edgeIndices = eContainer.getEdgeIndecesOnTriangle(tIndex);
 
             Triangle T = m_tContainer.at(tIndex);
-            std::cout << std::endl << "Triangle " << tIndex+1 << ": " << std::endl;
-            T.n1().print();
-            T.n2().print();
-            T.n3().print();
+//            std::cout << std::endl << "Triangle " << tIndex+1 << ": " << std::endl;
+//            T.n1().print();
+//            T.n2().print();
+//            T.n3().print();
 
             for (auto nIndex=0; nIndex < 3 ; ++nIndex)
             {

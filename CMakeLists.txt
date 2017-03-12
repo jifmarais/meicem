@@ -63,5 +63,5 @@ add_test (NAME math COMMAND math.test)
 add_test (NAME mesh COMMAND mesh.test)
 add_test (NAME reader_nastran COMMAND reader_nastran.test)
 add_test (NAME reader_wilco_reader COMMAND reader_wilco_input.test)
-add_test (NAME mom_3d COMMAND mom_3d.test)
+add_test (NAME mom_3d COMMAND mom.test)
 

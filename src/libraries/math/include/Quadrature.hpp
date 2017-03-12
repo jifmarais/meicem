@@ -12,6 +12,7 @@ class Quadrature
                 double weight;
         };
         typedef std::vector<WeightedPoint> WeightedPointList_type;
+
         struct WeightedPoint1D{
                 double node;
                 double weight;

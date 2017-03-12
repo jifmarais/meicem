@@ -539,7 +539,7 @@ BOOST_AUTO_TEST_CASE(testRAR1S_2)
     }
 }
 
-BOOST_AUTO_TEST_CASE(testRAR1S_loop1)
+BOOST_AUTO_TEST_CASE(testRAR1S_loop1_pos)
 {
     std::vector<double> answer {0, 75, -36 , -5.5, 10.276188, 8.459682};
 //    std::vector<double> answer {0, 75, -33.0833333333333, 2.5, 12.4693499622071, 7.54417812022769};
@@ -550,9 +550,52 @@ BOOST_AUTO_TEST_CASE(testRAR1S_loop1)
     Quadrature quadrature;
     for (unsigned min = minmin; min <= minmax; ++min)
     {
-        Node n1 {-1.0, 0.0, 1.0};
-        Node n2 { 1.0, 0.0, 1.0};
-        Node n3 { 0.0, 1.0, 1.0};
+        Node n1 {-1.0, 0.0, 2.0};
+        Node n2 { 1.0, 0.0, 2.0};
+        Node n3 { 0.0, 1.0, 2.0};
+        Node observationPoint { 0.0, 0.5, -10.0};
+//		Node observationPoint { 9.0, 2.5, 0.0};
+        Triangle T {n1, n2, n3};
+        for (unsigned numPoints = 2*min; numPoints <= max; ++numPoints)
+        {
+            Quadrature::WeightedPointList_type wps = quadrature.RAR1S(T, observationPoint, numPoints);
+            double integral = 0;
+            for (unsigned ii=0; ii < wps.size(); ++ii)
+            {
+                Node n = wps.at(ii).node;
+                integral += wps.at(ii).weight * funct1(n.x(), min)*funct2(n.y(), min);
+            }
+            double tol = std::pow(1e-1, min);
+            std::string s;
+            s.append("RAR1S failed. [");
+            s.append(std::to_string(integral));
+            s.append(" != ");
+            s.append(std::to_string(answer.at(min)));
+            s.append("] (tolerance = ");
+            s.append(std::to_string(tol));
+            s.append(")");
+            s.append(" (num points = ");
+            s.append(std::to_string(numPoints));
+            s.append(")");
+            BOOST_CHECK_MESSAGE(std::fabs((integral - answer.at(min))/answer.at(min)) < tol, s);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(testRAR1S_loop1_neg)
+{
+    std::vector<double> answer {0, 75, -36 , -5.5, 10.276188, 8.459682};
+//    std::vector<double> answer {0, 75, -33.0833333333333, 2.5, 12.4693499622071, 7.54417812022769};
+    unsigned minmin = 1;
+    unsigned minmax = 5;
+    unsigned max = 11;
+
+    Quadrature quadrature;
+    for (unsigned min = minmin; min <= minmax; ++min)
+    {
+        Node n1 {-1.0, 0.0, -1.0};
+        Node n2 { 1.0, 0.0, -1.0};
+        Node n3 { 0.0, 1.0, -1.0};
         Node observationPoint { 0.0, 0.5, -10.0};
 //		Node observationPoint { 9.0, 2.5, 0.0};
         Triangle T {n1, n2, n3};

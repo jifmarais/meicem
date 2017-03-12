@@ -34,6 +34,10 @@ Quadrature::WeightedPoint1DList_type Quadrature::get1DGaussianQuadraturePoints(u
         {
             numberOfIntegrationPoints = *validPointIt;
         }
+        else
+        {
+            break;
+        }
     }
 
     switch (numberOfIntegrationPoints)
@@ -152,6 +156,10 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
         if ( *validPointIt <= maxNumberOfPoints )
         {
             numberOfIntegrationPoints = *validPointIt;
+        }
+        else
+        {
+            break;
         }
     }
 
@@ -302,11 +310,6 @@ arma::mat Quadrature::getXrotationMatrix(double theta)
     rotation << 1.0  <<  0.0  <<  0.0  << arma::endr
              << 0.0  <<  ccos << -csin << arma::endr
              << 0.0  <<  csin <<  ccos << arma::endr;
-//    rotation(0,0) =  1.0;
-//    rotation(1,1) =  ccos;
-//    rotation(1,2) = -csin;
-//    rotation(2,1) =  csin;
-//    rotation(2,2) =  ccos;
     return rotation;
 }
 
@@ -318,11 +321,6 @@ arma::mat Quadrature::getZrotationMatrix(double phi)
     rotation << ccos << -csin << 0.0 << arma::endr
              << csin <<  ccos << 0.0 << arma::endr
              << 0.0  <<  0.0  << 1.0 << arma::endr;
-//    rotation(0,0) =  ccos;
-//    rotation(0,1) = -csin;
-//    rotation(1,0) =  csin;
-//    rotation(1,1) =  ccos;
-//    rotation(2,2) =  1.0;
     return rotation;
 }
 
@@ -346,7 +344,6 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
 
     double phi = atan2(-pVec.y(), pVec.x());
     arma::mat Zrotation = getZrotationMatrix(phi);
-//    arma::mat invZrotation = arma::inv(Zrotation);
     arma::mat invZrotation = getZrotationMatrix(-phi);
 
     tempV1 = tempV1.transform(Zrotation);
@@ -417,10 +414,6 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
     double phi   = atan2(triNormal.x(), triNormal.y());
 
     //CRC: This does not (I think) cater for a triangle in the Y plane
-    //CRC: These should be replaced by scalar matrices (not complex)
-
-//    ComplexMatrix rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
-//    ComplexMatrix invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
     arma::mat rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
     arma::mat invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
 

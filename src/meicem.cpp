@@ -31,11 +31,13 @@ int main()
     NastranReader reader;
     //std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
 //    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
-    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
+//    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
+    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test3_plate/";
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
 //    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "test2_4triangles.nas");
-    reader.setFile(baseTestFilesDirectory + "test4_mixed.nas");
+//    reader.setFile(baseTestFilesDirectory + "test3_plate.nas");
+    reader.setFile(baseTestFilesDirectory + "test3_plate_rotate.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test_rot.nas");
     reader.setTriangleContainer(&tContainer);
@@ -48,9 +50,9 @@ int main()
     MoMSetup.setFrequency(freq);
     PlaneWave pw;
     pw.setFrequency(freq);
-    pw.setAngleOfIncidence(0.0, 0.0);
+//    pw.setAngleOfIncidence(0.0, 0.0);
 //    pw.setAngleOfIncidence(45.0, 0.0);
-//    pw.setAngleOfIncidence(30, 20);
+    pw.setAngleOfIncidence(30, 20);
 //    pw.setPolarisationAngle(0.0);
     arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
     arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
