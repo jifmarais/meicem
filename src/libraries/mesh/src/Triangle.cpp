@@ -119,6 +119,25 @@ Node Triangle::normal() const
     return normalVector.norm();
 }
 
+Node Triangle::getOppositeNode(const Node p1, const Node p2) const
+{
+    assert((m_nodes[0] == p1) || (m_nodes[1] == p1) || (m_nodes[2] == p1));
+    assert((m_nodes[0] == p2) || (m_nodes[1] == p2) || (m_nodes[2] == p2));
+
+    Node tmp;
+    // Skip the first one - if it is the opposite edge, it is correct already
+    for (auto index = 0 ; index < 3 ; ++index)
+    {
+        if ( (m_nodes[index] != p1) && (m_nodes[index] != p2) )
+        {
+            tmp = m_nodes[index];
+            break;
+        }
+    }
+
+    return tmp;
+}
+
 void Triangle::setOppositeEdge(const Node p1, const Node p2)
 {
     //JIF: This needs tests (it had bugs and caused problems already)

@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(testMixed_value1)
     arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
-    Vsolution.save(baseTestFilesDirectory + "ans");
+//    Vsolution.save(baseTestFilesDirectory + "ans");
     arma::cx_vec ans;
     ans.load(baseTestFilesDirectory + "ans");
 

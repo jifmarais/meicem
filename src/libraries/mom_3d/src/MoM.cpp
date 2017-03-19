@@ -27,49 +27,144 @@ void MoM::setFrequency(double freq)
 
 arma::cx_mat MoM::fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints)
 {
-    return fillZmatrixTriangleInefficient(sourceIntegrationPoints, testIntegrationPoints);
+//    return fillZmatrixTriangleInefficient(sourceIntegrationPoints, testIntegrationPoints);
+    return fillZmatrixTriangleEfficient(sourceIntegrationPoints, testIntegrationPoints);
 }
 
-arma::cx_mat MoM::fillZmatrixTriangleEfficient()
+double MoM::RWGBasisFunctionSign(unsigned baseIndex, unsigned ohterTriangleIndex) const
+{
+    assert(baseIndex != ohterTriangleIndex);
+    int diff  = ohterTriangleIndex - baseIndex;
+    return diff/std::fabs(diff);
+}
+
+arma::cx_mat MoM::fillZmatrixTriangleEfficient(double sourceIntegrationPoints, double testIntegrationPoints)
 {
     // Here we fill the matrix by looping over the triangles instead of the
-    // edges. This is more efficient. Initially, we will be using single point
-    // quadrature for the observation triangle and 6 point quadrature for the
-    // source triangle (to avoid singularities).
+    // edges. This is more efficient.
 
     assert(m_frequency > 0.0);
 
 //    double omega = 2 * EMconst::pi*m_frequency;
-//    double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
+    double k = (2 * EMconst::pi * m_frequency) / EMconst::c0;
+    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 5.0 ;
 
-    // Calculate quadrature points - we use 6 to avoid sigularity at the centre
     Quadrature quadrature;
-    std::vector<Quadrature::WeightedPoint> weightedPointsObservation;
-    weightedPointsObservation = quadrature.getTriangleSimplexGaussianQuadraturePoints(1);
-    std::vector<Quadrature::WeightedPoint> weightedPointsSource;
-    weightedPointsSource = quadrature.getTriangleSimplexGaussianQuadraturePoints(6);
 
     // Container to hold basis functions (non-boundary edges)
     EdgeContainer eContainer(m_tContainer);
     eContainer.buildNonboundaryEdgeList();
 
     arma::cx_mat Zmatrix ((unsigned)eContainer.size(), (unsigned)eContainer.size());
+    Zmatrix.fill(std::complex<double> {0.0, 0.0});
+
+    arma::cx_vec A (3);
+    Quadrature::WeightedPoint wpObs;
+    Quadrature::WeightedPoint wpSrc;
+    Node::vec rho_Src_qp;
+    Node::vec rho_Obs_qp;
 
     // For each observation triangle
-    for (unsigned toIndex = 0 ; toIndex < m_tContainer.size() ; ++toIndex)
+    for (unsigned tObsIndex = 0 ; tObsIndex < m_tContainer.size() ; ++tObsIndex)
     {
-        // For each source triangle
-        for (unsigned toIndex = 0 ; toIndex < m_tContainer.size() ; ++toIndex)
+        Triangle obsTriangle = m_tContainer.at(tObsIndex);
+
+        // Find the basis functions (edges in this case) that involve this triangle
+        std::vector<EdgeContainer::SizeType> observationTriangleEdgeList = eContainer.getEdgeIndecesOnTriangle(tObsIndex);
+
+        std::vector<Quadrature::WeightedPoint> weightedPointsObs  = quadrature.getTriangleGaussianQuadraturePoints(obsTriangle, testIntegrationPoints);
+        // Loop over qudrature points (to perform outer integration)
+        for (unsigned qpObsIndex = 0; qpObsIndex < weightedPointsObs.size() ; ++qpObsIndex)
         {
-            // For each non-boundary edge of the observation triangle (basis function)
-            //getEdgeIndecesOnTriangle
-            for (unsigned toEdgeIndex = 0 ; toEdgeIndex < m_tContainer.size() ; ++toEdgeIndex)
+            wpObs = weightedPointsObs.at(qpObsIndex);
+
+            // Vector to point from the origin
+            Node r_Obs_qp = wpObs.node;
+
+            // For each source triangle
+            for (unsigned tSrcIndex = 0 ; tSrcIndex < m_tContainer.size() ; ++tSrcIndex)
             {
+                Triangle srcTriangle = m_tContainer.at(tSrcIndex);
+                std::vector<EdgeContainer::SizeType> sourceTriangleEdgeList = eContainer.getEdgeIndecesOnTriangle(tSrcIndex);
 
+                std::vector<Quadrature::WeightedPoint> weightedPointsSrc;
+                if (srcTriangle.centre().distance(r_Obs_qp) <  accurateIntegrationDistance)
+                {
+                    weightedPointsSrc = quadrature.RAR1S(srcTriangle, r_Obs_qp, sourceIntegrationPoints);
+                }
+                else
+                {
+                    weightedPointsSrc = quadrature.getTriangleGaussianQuadraturePoints(srcTriangle, sourceIntegrationPoints);
+                }
+
+                //Add matrix contributions
+                // For each basis function involved in the obeservation triangle
+                for (unsigned obeservationTriangleEdgeIndex = 0; obeservationTriangleEdgeIndex < observationTriangleEdgeList.size() ; ++obeservationTriangleEdgeIndex)
+                {
+                    auto observationTriangleEdge = eContainer.at(observationTriangleEdgeList.at(obeservationTriangleEdgeIndex));
+                    auto trianglesBoundingObservationEdge = observationTriangleEdge.getTriangles();
+                    Node nodeOppositeToObservationEdge = obsTriangle.getOppositeNode(observationTriangleEdge.n1(), observationTriangleEdge.n2());
+
+                    for (unsigned obsTriangleIndex = 0; obsTriangleIndex < trianglesBoundingObservationEdge.size() ; ++obsTriangleIndex)
+                    {
+                        if (trianglesBoundingObservationEdge.at(obsTriangleIndex) != tObsIndex)
+                        {
+                            // For each basis function involved in the source triangle
+                            for (unsigned sbeIndex = 0; sbeIndex < sourceTriangleEdgeList.size() ; ++sbeIndex)
+                            {
+                                auto srcEdge = eContainer.at(sourceTriangleEdgeList.at(sbeIndex));
+                                auto trianglesBoundingSourceEdge = srcEdge.getTriangles();
+                                Node nodeOppositeToEdgeSrc = srcTriangle.getOppositeNode(srcEdge.n1(), srcEdge.n2());
+
+                                for (unsigned srcTriangleIndex = 0; srcTriangleIndex < trianglesBoundingSourceEdge.size() ; ++srcTriangleIndex)
+                                {
+                                    if (trianglesBoundingSourceEdge.at(srcTriangleIndex) != tSrcIndex)
+                                    {
+                                        A.fill({0, 0});
+                                        std::complex<double> B {0.0, 0.0};
+                                        double signSrc = RWGBasisFunctionSign(tSrcIndex, trianglesBoundingSourceEdge.at(srcTriangleIndex));
+
+                                        for (unsigned qpSrcIndex = 0; qpSrcIndex < weightedPointsSrc.size() ; ++qpSrcIndex)
+                                        {
+                                            wpSrc = weightedPointsSrc.at(qpSrcIndex);
+
+                                            // Vector to point from the origin
+                                            Node r_Src_qp = wpSrc.node;
+                                            rho_Src_qp = signSrc * (r_Src_qp.getVec() - nodeOppositeToEdgeSrc.getVec()); // Sign handled later
+
+                                            double R = r_Obs_qp.distance(r_Src_qp);
+                                            std::complex<double> G0weight = G0(R, k) * wpSrc.weight;
+
+                                            // CRC: Should use real names for quantities (vector potential and scalar potential)
+                                            // Calculate A
+                                            A += rho_Src_qp * G0weight;
+
+                                            // Calculate B
+                                            B += G0weight;
+                                        }
+
+                                        rho_Obs_qp = r_Obs_qp.getVec() - nodeOppositeToObservationEdge.getVec(); // Sign handled later
+
+                                        double signObs = RWGBasisFunctionSign(tObsIndex, trianglesBoundingObservationEdge.at(obsTriangleIndex));
+//                                        double signSrc = RWGBasisFunctionSign(tSrcIndex, trianglesBoundingSourceEdge.at(srcTriangleIndex));
+
+//                                        std::cout << signObs << "  " << signSrc << std::endl;
+                                        std::complex<double> Adotfm = RWGBasisFunction(obsTriangle, observationTriangleEdge) * RWGBasisFunction(srcTriangle, srcEdge) * ( dot(A, rho_Obs_qp*signObs) ) * wpObs.weight;
+                                        std::complex<double> tmp = divRWGBasisFunction(obsTriangle, observationTriangleEdge, signObs) * B * divRWGBasisFunction(srcTriangle, srcEdge, signSrc) * wpObs.weight;
+
+                                        Zmatrix(observationTriangleEdgeList.at(obeservationTriangleEdgeIndex), sourceTriangleEdgeList.at(sbeIndex)) += (k*Adotfm - tmp/k);
+//                                        std::cout << observationTriangleEdgeList.at(obeservationTriangleEdgeIndex) << "  " << sourceTriangleEdgeList.at(sbeIndex) << "  " << (k*Adotfm - tmp/k) << std::endl;
+//                                        std::cout << Zmatrix(observationTriangleEdgeList.at(obeservationTriangleEdgeIndex), sourceTriangleEdgeList.at(sbeIndex)) << std::endl;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-
         }
     }
+    Zmatrix *= EMconst::j * EMconst::Z0;
 
     return Zmatrix;
 }
@@ -79,16 +174,18 @@ std::complex<double> MoM::G0(const double R, const double k) const
     return exp(1.0 * EMconst::j * k * R) / (4.0 * EMconst::pi * R);
 }
 
-double MoM::RWGBasisFunction(const Triangle T) const
+double MoM::RWGBasisFunction(const Triangle T, const Edge E) const
 {
-    double ln = T.n2().distance(T.n3());
+//    double ln = T.n2().distance(T.n3());
+    double ln = E.length();
     double A  = T.area();
     return (ln/(2.0*A));
 }
 
-double MoM::divRWGBasisFunction(const Triangle T, const double sign) const
+double MoM::divRWGBasisFunction(const Triangle T, const Edge E, const double sign) const
 {
-    double ln = T.n2().distance(T.n3());
+//    double ln = T.n2().distance(T.n3());
+    double ln = E.length();
     double A  = T.area();
     return sign*ln/A;
 }
@@ -125,14 +222,16 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
         assert(boundingTrianglesIndexList_m.size() == 2);
         for (unsigned triangle_mIndex = 0; triangle_mIndex < boundingTrianglesIndexList_m.size() ; ++triangle_mIndex)
         {
-            Triangle triangle_m = m_tContainer.at(boundingTrianglesIndexList_m.at(triangle_mIndex));
+            auto tmIndex = boundingTrianglesIndexList_m.at(triangle_mIndex);
+            Triangle triangle_m = m_tContainer.at(tmIndex);
 
             //set triangle n1 to be the vertex opposite to the edge
-            triangle_m.setOppositeEdge(edge_m.n1(), edge_m.n2());
+            Node nodeOppositeToEdge_m = triangle_m.getOppositeNode(edge_m.n1(), edge_m.n2());
 
             // Triangle current is from triangle with smaller index to larger index
             // First triangle is positive, second triangle is negative (they are sorted)
-            double sign_m = -(double)triangle_mIndex*2.0 + 1.0;
+            double sign_m = RWGBasisFunctionSign(tmIndex, boundingTrianglesIndexList_m.at((triangle_mIndex + 1) % boundingTrianglesIndexList_m.size()));
+//            double sign_m = -(double)triangle_mIndex*2.0 + 1.0;
             assert((sign_m == -1.0) || (sign_m == 1.0));
 
             std::vector<Quadrature::WeightedPoint> weightedPointsTest  = quadrature.getTriangleGaussianQuadraturePoints(triangle_m, testIntegrationPoints);
@@ -141,16 +240,22 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
             Quadrature::WeightedPoint wpn;
             std::vector<Quadrature::WeightedPoint> weightedPointsSource;
             arma::cx_vec A (3);
+            std::complex<double> B {0.0, 0.0};
+            std::complex<double> G0weight;
             Node::vec rho_n_qp;
             Node::vec rho_m_qp;
+            Triangle triangle_n;
+            Node nodeOppositeToEdge_n;
+            Node r_m_qp;
+            Node r_n_qp;
             // Loop over qudrature points (to perform outer integration)
             for (unsigned qpmIndex = 0; qpmIndex < weightedPointsTest.size() ; ++qpmIndex)
             {
                 wpm = weightedPointsTest.at(qpmIndex);
 
                 // Vector to point from the origin
-                Node r_m_qp = wpm.node;
-                rho_m_qp = sign_m * (r_m_qp.getVec() - triangle_m.n1().getVec());
+                r_m_qp = wpm.node;
+                rho_m_qp = sign_m * (r_m_qp.getVec() - nodeOppositeToEdge_m.getVec());
 
                 // For each edge/basis function n
                 for (unsigned n = 0 ; n < eContainer.size() ; ++n)
@@ -163,13 +268,14 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
                     assert(boundingTrianglesIndexList_n.size() == 2);
                     for (unsigned triangle_nIndex = 0 ; triangle_nIndex < boundingTrianglesIndexList_n.size() ; ++triangle_nIndex)
                     {
-                        Triangle triangle_n = m_tContainer.at(boundingTrianglesIndexList_n.at(triangle_nIndex));
+                        auto tnIndex = boundingTrianglesIndexList_n.at(triangle_nIndex);
+                        triangle_n = m_tContainer.at(tnIndex);
 
                         //set triangle n1 to be the vertex opposite to the edge
-                        triangle_n.setOppositeEdge(edge_n.n1(), edge_n.n2());
+                        nodeOppositeToEdge_n = triangle_n.getOppositeNode(edge_n.n1(), edge_n.n2());
 
                         // First triangle is positive, second triangle is negative
-                        double sign_n = -(double)triangle_nIndex*2.0 + 1.0;
+                        double sign_n = RWGBasisFunctionSign(tnIndex, boundingTrianglesIndexList_n.at((triangle_nIndex + 1) % boundingTrianglesIndexList_n.size()));
                         assert((sign_n == -1.0) || (sign_n == 1.0));
 
                         if (triangle_n.centre().distance(r_m_qp) <  accurateIntegrationDistance)
@@ -184,7 +290,7 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
                         }
 
                         A.fill({0, 0});
-                        std::complex<double> B {0.0, 0.0};
+                        B = 0.0;
 
                         // Loop over qudrature points (to perform integration)
                         for (unsigned qpnIndex = 0; qpnIndex < weightedPointsSource.size() ; ++qpnIndex)
@@ -192,11 +298,11 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
                             wpn = weightedPointsSource.at(qpnIndex);
 
                             // Vector to point from the origin
-                            Node r_n_qp = wpn.node;
-                            rho_n_qp = sign_n * (r_n_qp.getVec() - triangle_n.n1().getVec());
+                            r_n_qp = wpn.node;
+                            rho_n_qp = sign_n * (r_n_qp.getVec() - nodeOppositeToEdge_n.getVec());
 
                             double R = r_m_qp.distance(r_n_qp);
-                            std::complex<double> G0weight = G0(R, k) * wpn.weight;
+                            G0weight = G0(R, k) * wpn.weight;
 
                             // CRC: Should use real names for quantities (vector potential and scalar potential)
                             // Calculate A
@@ -205,11 +311,13 @@ arma::cx_mat MoM::fillZmatrixTriangleInefficient(double sourceIntegrationPoints,
                             // Calculate B
                             B += G0weight;
                         }
-                        B *= divRWGBasisFunction(triangle_n, sign_n);
-                        std::complex<double> Adotfm = RWGBasisFunction(triangle_m) * RWGBasisFunction(triangle_n)*( dot(A, rho_m_qp) ) * wpm.weight;
-                        std::complex<double> tmp = divRWGBasisFunction(triangle_m, sign_m) * B * wpm.weight;
+                        B *= divRWGBasisFunction(triangle_n, edge_n, sign_n);
+                        std::complex<double> Adotfm = RWGBasisFunction(triangle_m, edge_m) * RWGBasisFunction(triangle_n, edge_n)*( dot(A, rho_m_qp) ) * wpm.weight;
+                        std::complex<double> tmp = divRWGBasisFunction(triangle_m, edge_m, sign_m) * B * wpm.weight;
 
                         Zmatrix(m, n) += k*Adotfm - tmp/k;
+//                        std::cout << m << "  " << n << "  " << (k*Adotfm - tmp/k) << std::endl;
+//                        std::cout << Zmatrix(m, n) << std::endl;
                     }
                 }
             }
@@ -233,7 +341,8 @@ arma::cx_vec MoM::calculateRHS(double numberOfIntegrationPoints, PlaneWave pw)
     // For each edge/basis function m
     for (unsigned m = 0 ; m < eContainer.size() ; ++m)
     {
-        auto triangleList_m = eContainer.at(m).getTriangles();
+        auto edge_m = eContainer.at(m);
+        auto triangleList_m = edge_m.getTriangles();
 
         Node::vec rho_m_qp;
         Node r_m_qp;
@@ -257,7 +366,7 @@ arma::cx_vec MoM::calculateRHS(double numberOfIntegrationPoints, PlaneWave pw)
                 rho_m_qp = sign_m * (r_m_qp.getVec() - triangle_m.n1().getVec());
 
                 pw.setFieldPoint(r_m_qp);
-                Vvector(m) += RWGBasisFunction(triangle_m) * arma::dot(pw.getElectricField().getVec(), rho_m_qp) * wpm.weight;
+                Vvector(m) += RWGBasisFunction(triangle_m, edge_m) * arma::dot(pw.getElectricField().getVec(), rho_m_qp) * wpm.weight;
            }
         }
     }
@@ -400,19 +509,19 @@ void MoM::writeCurrentsToOS(std::string fname, arma::cx_vec solutionMatrix) cons
                         Edge e = eContainer.at(edgeIndices.at(eIndex));
                         std::vector<TriangleContainer::SizeType> triangleIndeces = e.getTriangles();
 
-                        double sign = -1.0;
-                        if (tIndex == triangleIndeces.at(0))
+                        TriangleContainer::SizeType otherTriangleIndex = triangleIndeces.at(0);
+                        if (tIndex == otherTriangleIndex)
                         {
-                            // Current flowing out of this triangle
-                            sign = 1.0;
+                            otherTriangleIndex = triangleIndeces.at(1);
                         }
+                        double sign = RWGBasisFunctionSign(tIndex, otherTriangleIndex);
 
                         Triangle Tl = T;
                         Tl.setOppositeEdge(e.n1(), e.n2());
                         Node nodeOppositeToEdge = Tl.n1();
 
                         Node rho = n - nodeOppositeToEdge;
-                        Node current = sign*rho*RWGBasisFunction(Tl);
+                        Node current = sign*rho*RWGBasisFunction(Tl, e);
 
                         NearFieldValue val;
                         val = nodeCurrents[nIndex];

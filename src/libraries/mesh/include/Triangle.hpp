@@ -17,6 +17,7 @@ class Triangle
         Node    operator[](unsigned index) const;
         double  area() const;
         Node	centre() const;
+        Node    getOppositeNode(const Node p1, const Node p2) const;
         void    setOppositeEdge(const Node p1, const Node p2); // Needs tests
         Node	normal() const;
         Node	toSimplex(const Node& p) const;
