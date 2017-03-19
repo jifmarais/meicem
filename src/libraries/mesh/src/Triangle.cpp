@@ -119,23 +119,25 @@ Node Triangle::normal() const
     return normalVector.norm();
 }
 
-Node Triangle::getOppositeNode(const Node p1, const Node p2) const
+const Node& Triangle::getOppositeNode(const Node p1, const Node p2) const
 {
     assert((m_nodes[0] == p1) || (m_nodes[1] == p1) || (m_nodes[2] == p1));
     assert((m_nodes[0] == p2) || (m_nodes[1] == p2) || (m_nodes[2] == p2));
 
-    Node tmp;
+//    Node tmp;
     // Skip the first one - if it is the opposite edge, it is correct already
     for (auto index = 0 ; index < 3 ; ++index)
     {
         if ( (m_nodes[index] != p1) && (m_nodes[index] != p2) )
         {
-            tmp = m_nodes[index];
+            return m_nodes[index];
             break;
         }
     }
 
-    return tmp;
+    assert(false); // This should never happen and thus the return statement below is to avoid the warning.
+    return m_nodes[0];
+//    return tmp;
 }
 
 void Triangle::setOppositeEdge(const Node p1, const Node p2)
@@ -201,23 +203,23 @@ Triangle Triangle::transform(const arma::mat& transformMatrix) const
     return newT;
 }
 
-Node Triangle::operator[](unsigned index) const
+Node& Triangle::operator[](unsigned index)
 {
     assert(index < 3);
     return m_nodes[index];
 }
 
-Node Triangle::n1() const
+const Node& Triangle::n1() const
 {
     return m_nodes[0];
 }
 
-Node Triangle::n2() const
+const Node& Triangle::n2() const
 {
     return m_nodes[1];
 }
 
-Node Triangle::n3() const
+const Node &Triangle::n3() const
 {
     return m_nodes[2];
 }

@@ -38,7 +38,7 @@ void Edge::setSortedAssociatedTriangles(const std::vector<TriangleContainer::Siz
     m_triangleIndeces = sortedUniqueTriangleList;
 }
 
-std::vector<TriangleContainer::SizeType> Edge::getTriangles()
+const std::vector<TriangleContainer::SizeType>& Edge::getTriangles()
 {
     return m_triangleIndeces;
 }
@@ -79,12 +79,12 @@ void Edge::correctOrientation(Triangle t)
     }
 }
 
-Node Edge::n1() const
+const Node& Edge::n1() const
 {
     return m_nodes[0];
 }
 
-Node Edge::n2() const
+const Node& Edge::n2() const
 {
     return m_nodes[1];
 }

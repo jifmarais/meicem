@@ -202,7 +202,7 @@ void Node::setVec(vec p)
     m_point = p;
 }
 
-Node::vec Node::getVec() const
+const Node::vec& Node::getVec() const
 {
     return m_point;
 }

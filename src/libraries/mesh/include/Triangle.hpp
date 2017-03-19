@@ -14,17 +14,17 @@ class Triangle
         void    set(Node, Node, Node);
         bool    operator==(const Triangle& rhs) const;
         bool    operator!=(const Triangle& rhs) const;
-        Node    operator[](unsigned index) const;
+        Node&    operator[](unsigned index);
         double  area() const;
         Node	centre() const;
-        Node    getOppositeNode(const Node p1, const Node p2) const;
+        const Node &getOppositeNode(const Node p1, const Node p2) const;
         void    setOppositeEdge(const Node p1, const Node p2); // Needs tests
         Node	normal() const;
         Node	toSimplex(const Node& p) const;
         Node	fromSimplex(const Node& p) const;
-        Node	n1() const;
-        Node	n2() const;
-        Node    n3() const;
+        const Node &n1() const;
+        const Node &n2() const;
+        const Node &n3() const;
 
         Triangle transform(const arma::mat &transformMatrix) const; // Needs tests
 protected:

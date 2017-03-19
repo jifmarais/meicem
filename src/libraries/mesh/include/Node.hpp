@@ -32,7 +32,7 @@ class Node
         double 	    distance(const Node& p1) const;
         static double distance(const Node& p1, const Node& p2);
         void        setVec(vec p) ;
-        vec       getVec() const;
+        const vec &getVec() const;
         double      x() const;
         double      y() const;
         double      z() const;

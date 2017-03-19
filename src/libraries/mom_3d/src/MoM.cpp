@@ -123,7 +123,9 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                     auto testIndex = testTriangleEdgeList.at(testTriangleEdgeIndex);
                     auto testTriangleEdge = eContainer.at(testIndex);
                     auto trianglesBoundingTestEdge = testTriangleEdge.getTriangles();
+//                    auto trianglesBoundingTestEdge = eContainer.associatedTriaglesAt(testIndex);
                     Node nodeOppositeToTestEdge = testTriangle.getOppositeNode(testTriangleEdge.n1(), testTriangleEdge.n2());
+//                    Node nodeOppositeToTestEdge = testTriangle.getOppositeNode(eContainer.node1At(testIndex), eContainer.node2At(testIndex));
                     rho_Test_qp = r_Test_qp.getVec() - nodeOppositeToTestEdge.getVec(); // Sign handled later
                     double RWGTest = RWGBasisFunction(testTriangle, testTriangleEdge);
 
@@ -140,7 +142,9 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                                 auto sourceIndex = sourceTriangleEdgeList.at(sourceTriangleEdgeIndex);
                                 auto srcEdge = eContainer.at(sourceIndex);
                                 auto trianglesBoundingSourceEdge = srcEdge.getTriangles();
+//                                auto trianglesBoundingSourceEdge = eContainer.associatedTriaglesAt(sourceIndex);
                                 Node nodeOppositeToEdgeSrc = srcTriangle.getOppositeNode(srcEdge.n1(), srcEdge.n2());
+//                                Node nodeOppositeToEdgeSrc = srcTriangle.getOppositeNode(eContainer.node1At(sourceIndex), eContainer.node2At(sourceIndex));
                                 double RWGSrc = RWGBasisFunction(srcTriangle, srcEdge);
                                 double divRWGSrcNoSign = divRWGBasisFunction(srcTriangle, srcEdge, 1.0);
 

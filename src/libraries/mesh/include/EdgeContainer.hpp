@@ -18,9 +18,12 @@ class EdgeContainer
         void                    buildNonboundaryEdgeList();
         Edge                    at(SizeType index) const;
         SizeType    		size() const;
-        std::vector<SizeType>	getEdgeIndecesOnTriangle(SizeType tIndex) const;
+        const std::vector<SizeType> &getEdgeIndecesOnTriangle(SizeType tIndex) const;
 
-    protected:
+        Node node1At(SizeType index) const;
+        Node node2At(SizeType index) const;
+        const std::vector<TriangleContainer::SizeType> &associatedTriaglesAt(SizeType index) const;
+protected:
     private:
         void buildTriangleToEdgeMap();
 

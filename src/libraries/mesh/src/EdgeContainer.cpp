@@ -21,6 +21,24 @@ const TriangleContainer& EdgeContainer::getTriangleContainer() const
     return m_triangleContainer;
 }
 
+Node EdgeContainer::node1At(SizeType index) const
+{
+    assert(index < size());
+    return m_triangleContainer.getPointContainer().at(m_node1Index.at(index));
+}
+
+Node EdgeContainer::node2At(SizeType index) const
+{
+    assert(index < size());
+    return m_triangleContainer.getPointContainer().at(m_node2Index.at(index));
+}
+
+const std::vector<TriangleContainer::SizeType>& EdgeContainer::associatedTriaglesAt(SizeType index) const
+{
+    assert(index < size());
+    return (m_edgeToTriangleIndecesMap.at(index));
+}
+
 Edge EdgeContainer::at(SizeType index) const
 {
     assert(index < size());
@@ -114,7 +132,7 @@ NodeContainer::SizeType EdgeContainer::size() const
     return m_node1Index.size();
 }
 
-std::vector<EdgeContainer::SizeType> EdgeContainer::getEdgeIndecesOnTriangle(EdgeContainer::SizeType tIndex) const
+const std::vector<EdgeContainer::SizeType>& EdgeContainer::getEdgeIndecesOnTriangle(EdgeContainer::SizeType tIndex) const
 {
 //    //JIF: This method does not have a test
 //    std::vector<SizeType> indexList;

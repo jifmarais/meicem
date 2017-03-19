@@ -14,13 +14,12 @@ class Edge
         void    set(const Node node1, const Node node2);
         void    associateTriangle(TriangleContainer::SizeType triangleIndex);
         void    setSortedAssociatedTriangles(const std::vector<TriangleContainer::SizeType> sortedUniqueTriangleList);
-        std::vector<TriangleContainer::SizeType>
-                getTriangles();
+        const std::vector<TriangleContainer::SizeType> &getTriangles();
         double  length() const;
         Node	normal() const;
         void	correctOrientation(Triangle t);
-        Node    n1() const;
-        Node    n2() const;
+        const Node &n1() const;
+        const Node &n2() const;
 
     protected:
     private:
