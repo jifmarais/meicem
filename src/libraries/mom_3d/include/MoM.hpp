@@ -12,18 +12,25 @@ class MoM
         virtual         ~MoM();
 
         void            setFrequency(double freq);
+        void            setNumberOfSourceIntegrationPoints(unsigned n);
+        void            setNumberOfTestIntegrationPoints(unsigned n);
         void            setTriangleContainer(const TriangleContainer& tContainer);
-        arma::cx_mat    fillZmatrixTriangle(double sourceIntegrationPoints, double testIntegrationPoints);
-        arma::cx_vec    calculateRHS(double numberOfIntegrationPoints, PlaneWave pw);
+        arma::cx_mat    fillZmatrixTriangle();
+        arma::cx_vec    calculateRHS(PlaneWave pw);
         void		    writeCurrentsToOS(std::string fname, arma::cx_vec solutionMatrix) const;
 
-        arma::cx_mat    fillZmatrixTriangleEfficient(double sourceIntegrationPoints, double testIntegrationPoints);
-        arma::cx_mat    fillZmatrixTriangleInefficient(double sourceIntegrationPoints, double testIntegrationPoints);
+        arma::cx_mat    fillZmatrixTriangleEfficient();
+        arma::cx_mat    fillZmatrixTriangleInefficient();
 protected:
     private:
         double 					m_frequency;
+        double 					m_omega;
+        double 					m_k;
         TriangleContainer& 		m_tContainer;
-        std::complex<double> 	G0(const double R, const double k) const;
+        unsigned				m_numberOfSourceIntegrationPoints;
+        unsigned				m_numberOfTestIntegrationPoints;
+
+        std::complex<double> 	G0(const double R) const;
         double 					RWGBasisFunction(const Triangle T, const Edge E) const;
         double 					divRWGBasisFunction(const Triangle T, const double sign) const;
         double 					divRWGBasisFunction(const Triangle T, const Edge E, const double sign) const;

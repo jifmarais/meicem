@@ -27,8 +27,10 @@ BOOST_AUTO_TEST_CASE(testTwoTriangles_value)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
@@ -57,8 +59,10 @@ BOOST_AUTO_TEST_CASE(testTwoTriangles_rotation)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution1((unsigned)Vvector.n_rows);
     Vsolution1 = arma::solve(Zmatrix, Vvector);
 
@@ -70,8 +74,8 @@ BOOST_AUTO_TEST_CASE(testTwoTriangles_rotation)
     MoMSetup2.setFrequency(freq);
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(30.0, 20.0);
-    Zmatrix = MoMSetup2.fillZmatrixTriangle(6, 3);
-    Vvector = MoMSetup2.calculateRHS(6, pw);
+    Zmatrix = MoMSetup2.fillZmatrixTriangle();
+    Vvector = MoMSetup2.calculateRHS(pw);
     arma::cx_vec Vsolution2((unsigned)Vvector.n_rows);
     Vsolution2 = arma::solve(Zmatrix, Vvector);
 
@@ -95,8 +99,10 @@ BOOST_AUTO_TEST_CASE(testFourTriangles_value1)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
@@ -110,8 +116,8 @@ BOOST_AUTO_TEST_CASE(testFourTriangles_value1)
     BOOST_CHECK_MESSAGE(approx_equal(Vsolution, ans, "reldiff", 1e-3), "Answer is not correct.");
 
     pw.setAngleOfIncidence(30.0, 20.0);
-    Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    Vvector = MoMSetup.calculateRHS(6, pw);
+    Zmatrix = MoMSetup.fillZmatrixTriangle();
+    Vvector = MoMSetup.calculateRHS(pw);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
     ans(0) = {-2.7053098135e-06, -0.00042470442645};
@@ -137,8 +143,10 @@ BOOST_AUTO_TEST_CASE(testFourTriangles_rotation)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution1((unsigned)Vvector.n_rows);
     Vsolution1 = arma::solve(Zmatrix, Vvector);
 
@@ -150,8 +158,8 @@ BOOST_AUTO_TEST_CASE(testFourTriangles_rotation)
     MoMSetup2.setFrequency(freq);
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(30.0, 20.0);
-    Zmatrix = MoMSetup2.fillZmatrixTriangle(6, 3);
-    Vvector = MoMSetup2.calculateRHS(6, pw);
+    Zmatrix = MoMSetup2.fillZmatrixTriangle();
+    Vvector = MoMSetup2.calculateRHS(pw);
     arma::cx_vec Vsolution2((unsigned)Vvector.n_rows);
     Vsolution2 = arma::solve(Zmatrix, Vvector);
 
@@ -175,8 +183,10 @@ BOOST_AUTO_TEST_CASE(testPlate_value1)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
@@ -203,8 +213,10 @@ BOOST_AUTO_TEST_CASE(testPlate_rotation)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution1((unsigned)Vvector.n_rows);
     Vsolution1 = arma::solve(Zmatrix, Vvector);
 
@@ -216,8 +228,8 @@ BOOST_AUTO_TEST_CASE(testPlate_rotation)
     MoMSetup2.setFrequency(freq);
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(30.0, 20.0);
-    Zmatrix = MoMSetup2.fillZmatrixTriangle(6, 3);
-    Vvector = MoMSetup2.calculateRHS(6, pw);
+    Zmatrix = MoMSetup2.fillZmatrixTriangle();
+    Vvector = MoMSetup2.calculateRHS(pw);
     arma::cx_vec Vsolution2((unsigned)Vvector.n_rows);
     Vsolution2 = arma::solve(Zmatrix, Vvector);
 
@@ -241,8 +253,10 @@ BOOST_AUTO_TEST_CASE(testMixed_value1)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution((unsigned)Vvector.n_rows);
     Vsolution = arma::solve(Zmatrix, Vvector);
 
@@ -269,8 +283,10 @@ BOOST_AUTO_TEST_CASE(testMixed_rotation)
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
     arma::cx_vec Vsolution1((unsigned)Vvector.n_rows);
     Vsolution1 = arma::solve(Zmatrix, Vvector);
 
@@ -282,8 +298,8 @@ BOOST_AUTO_TEST_CASE(testMixed_rotation)
     MoMSetup2.setFrequency(freq);
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(30.0, 20.0);
-    Zmatrix = MoMSetup2.fillZmatrixTriangle(6, 3);
-    Vvector = MoMSetup2.calculateRHS(6, pw);
+    Zmatrix = MoMSetup2.fillZmatrixTriangle();
+    Vvector = MoMSetup2.calculateRHS(pw);
     arma::cx_vec Vsolution2((unsigned)Vvector.n_rows);
     Vsolution2 = arma::solve(Zmatrix, Vvector);
 

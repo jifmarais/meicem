@@ -1,62 +1,60 @@
 #include "Node.hpp"
-
 #include "NodeContainer.hpp"
 #include "ComplexMatrix.hpp"
 #include "TriangleContainer.hpp"
 #include "reader_nastran.hpp"
-//#include "reader_wilco_input.hpp"
 #include "MoM.hpp"
-//#include "math.h"
 #include "assert.h"
 #include <iostream>
+#include <chrono>
 #include "NearFieldContainer.hpp"
 #include "PlaneWave.hpp"
 #include <armadillo>
-//#include <iterator>
-//#include <complex>
-//#include <cmath>
 
-//#include <boost/program_options.hpp>
-//namespace po = boost::program_options;
-
-
-//int main( int argc, char *argv[] )
 int main()
 {
     std::cout << "Let the MEICEM mayhem begin..." << std::endl;
 
     NodeContainer pContainer;
     TriangleContainer tContainer(pContainer);
-//    WilcoInputReader reader;
     NastranReader reader;
-    //std::string baseTestFilesDirectory = "../src/libraries/reader_wilco_input/test/test_files/";
-    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
+//    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
 //    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
-//    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test3_plate/";
+    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test3_plate/";
+
+//    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test4_mixed/";
+//    reader.setFile(baseTestFilesDirectory + "test4_mixed.nas");
+
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
-    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
+//    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "test2_4triangles.nas");
 //    reader.setFile(baseTestFilesDirectory + "test1_2triangles.nas");
-//    reader.setFile(baseTestFilesDirectory + "test3_plate.nas");
+    reader.setFile(baseTestFilesDirectory + "test3_plate.nas");
 //    reader.setFile(baseTestFilesDirectory + "test3_plate_rotate.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test_rot.nas");
     reader.setTriangleContainer(&tContainer);
     reader.importModel();
 
-//    double freq = reader.getFrequency();
     double freq = 1e8;
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
+    MoMSetup.setNumberOfSourceIntegrationPoints(3);
+    MoMSetup.setNumberOfTestIntegrationPoints(3);
     PlaneWave pw;
     pw.setFrequency(freq);
     pw.setAngleOfIncidence(0.0, 0.0);
 //    pw.setAngleOfIncidence(45.0, 0.0);
 //    pw.setAngleOfIncidence(30, 20);
 //    pw.setPolarisationAngle(0.0);
-    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle(6, 3);
-    arma::cx_vec Vvector = MoMSetup.calculateRHS(6, pw);
+
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    arma::cx_mat Zmatrix = MoMSetup.fillZmatrixTriangle();
+    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds> (end - begin).count() <<std::endl;
+
+    arma::cx_vec Vvector = MoMSetup.calculateRHS(pw);
 
     std::cout << std::endl << "Zimatrix" << std::endl;
 //    Zmatrix.print();

@@ -28,10 +28,6 @@ Edge EdgeContainer::at(SizeType index) const
     auto pContainer = m_triangleContainer.getPointContainer();
     e.set(pContainer.at(m_node1Index.at(index)), pContainer.at(m_node2Index.at(index)));
     e.setSortedAssociatedTriangles(m_associatedTriangleIndeces.at(index));
-//    for (unsigned ii = 0; ii < tIndeces.size() ; ++ii)
-//    {
-//        e.associateTriangle(tIndeces.at(ii));
-//    }
     return e;
 }
 
