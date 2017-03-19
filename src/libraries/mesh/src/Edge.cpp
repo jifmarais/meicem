@@ -19,8 +19,7 @@ Edge::~Edge()
     //dtor
 }
 
-void Edge::set(Node node1,
-               Node node2)
+void Edge::set(const Node node1, const Node node2)
 {
     m_nodes[0] = node1;
     m_nodes[1] = node2;
@@ -34,7 +33,7 @@ void Edge::associateTriangle(TriangleContainer::SizeType triangleIndex)
     m_triangleIndeces.erase( std::unique( m_triangleIndeces.begin(), m_triangleIndeces.end() ), m_triangleIndeces.end() );
 }
 
-void Edge::setSortedAssociatedTriangles(std::vector<TriangleContainer::SizeType> sortedUniqueTriangleList)
+void Edge::setSortedAssociatedTriangles(const std::vector<TriangleContainer::SizeType> sortedUniqueTriangleList)
 {
     m_triangleIndeces = sortedUniqueTriangleList;
 }
