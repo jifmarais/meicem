@@ -27,13 +27,36 @@ Edge EdgeContainer::at(SizeType index) const
     Edge e;
     auto pContainer = m_triangleContainer.getPointContainer();
     e.set(pContainer.at(m_node1Index.at(index)), pContainer.at(m_node2Index.at(index)));
-    e.setSortedAssociatedTriangles(m_associatedTriangleIndeces.at(index));
+    e.setSortedAssociatedTriangles(m_edgeToTriangleIndecesMap.at(index));
     return e;
+}
+
+void EdgeContainer::buildTriangleToEdgeMap()
+{
+    m_triangleToEdgeIndecesMap.clear();
+
+    for (unsigned triangleIndex = 0; triangleIndex < m_triangleContainer.size(); ++ triangleIndex )
+    {
+        std::vector<EdgeContainer::SizeType> edgeList;
+        for (unsigned edgeIndex = 0; edgeIndex < m_edgeToTriangleIndecesMap.size(); ++edgeIndex)
+        {
+            auto triangleList = m_edgeToTriangleIndecesMap.at(edgeIndex);
+            for (unsigned assosiatedTriangleIndex = 0; assosiatedTriangleIndex < triangleList.size(); ++assosiatedTriangleIndex)
+            {
+                if (triangleList.at(assosiatedTriangleIndex) == triangleIndex)
+                {
+                    edgeList.push_back(edgeIndex);
+                }
+            }
+        }
+        m_triangleToEdgeIndecesMap.push_back(edgeList);
+    }
 }
 
 void EdgeContainer::buildNonboundaryEdgeList()
 {
     NodeContainer pContainer = m_triangleContainer.getPointContainer();
+    m_edgeToTriangleIndecesMap.clear();
 
     // Loop over all triangles and build a unique list of non-boundary edges.
     for (unsigned indexOuter = 0; indexOuter < m_triangleContainer.size() ; ++ indexOuter)
@@ -71,11 +94,11 @@ void EdgeContainer::buildNonboundaryEdgeList()
                      // Add items in sorted order (smallest to largest - basis function direction)
                      if (indexOuter < indexInner)
                      {
-                         m_associatedTriangleIndeces.push_back({indexOuter, indexInner});
+                         m_edgeToTriangleIndecesMap.push_back({indexOuter, indexInner});
                      }
                      else
                      {
-                         m_associatedTriangleIndeces.push_back({indexInner, indexOuter});
+                         m_edgeToTriangleIndecesMap.push_back({indexInner, indexOuter});
                      }
                  }
             }
@@ -83,6 +106,7 @@ void EdgeContainer::buildNonboundaryEdgeList()
         }
 
     }
+    buildTriangleToEdgeMap();
 }
 
 NodeContainer::SizeType EdgeContainer::size() const
@@ -92,30 +116,21 @@ NodeContainer::SizeType EdgeContainer::size() const
 
 std::vector<EdgeContainer::SizeType> EdgeContainer::getEdgeIndecesOnTriangle(EdgeContainer::SizeType tIndex) const
 {
-    //JIF: This method does not have a test
-    std::vector<SizeType> indexList;
+//    //JIF: This method does not have a test
+//    std::vector<SizeType> indexList;
 
-    for (unsigned eIndex = 0; eIndex < m_associatedTriangleIndeces.size(); ++eIndex)
-    {
-        for (unsigned tAssociatedIndex = 0; tAssociatedIndex < m_associatedTriangleIndeces.at(eIndex).size(); ++tAssociatedIndex)
-        {
-            if (m_associatedTriangleIndeces.at(eIndex).at(tAssociatedIndex) == tIndex)
-            {
-                // edge is associated with the triangle
-                indexList.push_back(eIndex);
-            }
-        }
-    }
+//    for (unsigned eIndex = 0; eIndex < m_edgeToTriangleIndecesMap.size(); ++eIndex)
+//    {
+//        for (unsigned tAssociatedIndex = 0; tAssociatedIndex < m_edgeToTriangleIndecesMap.at(eIndex).size(); ++tAssociatedIndex)
+//        {
+//            if (m_edgeToTriangleIndecesMap.at(eIndex).at(tAssociatedIndex) == tIndex)
+//            {
+//                // edge is associated with the triangle
+//                indexList.push_back(eIndex);
+//            }
+//        }
+//    }
 
-    return indexList;
+//    return indexList;
+    return m_triangleToEdgeIndecesMap.at(tIndex);
 }
-
-//EdgeContainer::SizeType EdgeContainer::add(Edge e)
-//{
-//    return 1;
-//}
-
-//bool EdgeContainer::isBoundaryEdge(SizeType index1) const
-//{
-//    return false;
-//}

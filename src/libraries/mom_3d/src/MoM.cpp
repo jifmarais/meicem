@@ -117,10 +117,10 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                 }
 
                 //Add matrix contributions
-                // For each basis function involved in the obeservation triangle
-                for (unsigned obeservationTriangleEdgeIndex = 0; obeservationTriangleEdgeIndex < testTriangleEdgeList.size() ; ++obeservationTriangleEdgeIndex)
+                // For each basis function involved in the test triangle
+                for (unsigned testTriangleEdgeIndex = 0; testTriangleEdgeIndex < testTriangleEdgeList.size() ; ++testTriangleEdgeIndex)
                 {
-                    auto testIndex = testTriangleEdgeList.at(obeservationTriangleEdgeIndex);
+                    auto testIndex = testTriangleEdgeList.at(testTriangleEdgeIndex);
                     auto testTriangleEdge = eContainer.at(testIndex);
                     auto trianglesBoundingTestEdge = testTriangleEdge.getTriangles();
                     Node nodeOppositeToTestEdge = testTriangle.getOppositeNode(testTriangleEdge.n1(), testTriangleEdge.n2());
