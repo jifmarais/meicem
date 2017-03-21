@@ -13,6 +13,12 @@ properties.Label = "Rectangle1"
 properties.Width = "4"
 Rectangle1 = project.Geometry:AddRectangle(properties)
 
+-- Add scale transform
+properties = cf.Scale.GetDefaultProperties()
+properties.ScaleFactor = "0.2"
+Rectangle1 = project.Geometry["Rectangle1"]
+Scale1 = Rectangle1.Transforms:AddScale(properties)
+
 -- Set the frequency to single frequency.
 StandardConfiguration1 = project.SolutionConfigurations["StandardConfiguration1"]
 FrequencyRange1 = StandardConfiguration1.Frequency
@@ -92,6 +98,9 @@ project.Mesher:Mesh()
 Union1 = project.Geometry["Rectangle1"]
 geometryTargets = { Union1 }
 project.Exporter.Mesh:ExportParts("test3_plate_rotate.nas",geometryTargets,{})
+
+-- Save project
+app:SaveAs([[test3_plate_rotate.cfx]])
 
 Rotate2:Delete()
 Rotate1:Delete()
