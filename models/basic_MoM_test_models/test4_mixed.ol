@@ -1,7 +1,7 @@
 ##File Type: Charges
 ##File Format: 4
 ##Source: test4_mixed
-##Date: 2017-03-12 08:30:18  
+##Date: 2017-03-21 17:16:29  
 ** File exported by FEKO kernel version 2017-339
 
 

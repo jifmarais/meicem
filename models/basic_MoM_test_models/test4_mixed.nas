@@ -1,7 +1,7 @@
 $ NASTRAN file exported by FEKO version 2017-339
 $
 $ Filename: test4_mixed.nas
-$ Date:     2017-03-12 08:30:14                     
+$ Date:     2017-03-21 17:16:29                     
 $
 $ Number of segments:             0
 $           triangles:          989

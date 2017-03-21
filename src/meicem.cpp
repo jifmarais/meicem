@@ -19,18 +19,20 @@ int main()
     TriangleContainer tContainer(pContainer);
     NastranReader reader;
 //    std::string baseTestFilesDirectory = "../models/meicem_simple_plate_test/";
-//    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
-//    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test3_plate/";
+    std::string baseTestFilesDirectory = "../models/basic_MoM_test_models/";
 
-    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test4_mixed/";
+//    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test4_mixed/";
     reader.setFile(baseTestFilesDirectory + "test4_mixed.nas");
 
 //    reader.setFile(baseTestFilesDirectory + "input_cononical_2basisfunction.txt");
 //    reader.setFile(baseTestFilesDirectory + "simple_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "test2_4triangles.nas");
 //    reader.setFile(baseTestFilesDirectory + "test1_2triangles.nas");
+
+//    std::string baseTestFilesDirectory = "../src/libraries/mom_3d/test/models/test3_plate/";
 //    reader.setFile(baseTestFilesDirectory + "test3_plate.nas");
 //    reader.setFile(baseTestFilesDirectory + "test3_plate_rotate.nas");
+
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test.nas");
 //    reader.setFile(baseTestFilesDirectory + "mini_plate_test_rot.nas");
     reader.setTriangleContainer(&tContainer);
@@ -40,7 +42,7 @@ int main()
 
     MoM MoMSetup {tContainer};
     MoMSetup.setFrequency(freq);
-    MoMSetup.setNumberOfSourceIntegrationPoints(6);
+    MoMSetup.setNumberOfSourceIntegrationPoints(3);
     MoMSetup.setNumberOfTestIntegrationPoints(3);
     PlaneWave pw;
     pw.setFrequency(freq);

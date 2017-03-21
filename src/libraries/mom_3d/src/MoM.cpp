@@ -61,7 +61,7 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
 
     assert(m_frequency > 0.0);
 
-    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 15.0 ; //With this value, it is basically disabled and thus only use RAR1S when calculating self impedance
+    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 150.0 ; //With this value, it is basically disabled and thus only use RAR1S when calculating self impedance
 
     Quadrature quadrature;
 
@@ -139,30 +139,30 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                                 double RWGSrc = RWGBasisFunction(srcTriangle, srcEdge);
                                 double divRWGSrcNoSign = divRWGBasisFunction(srcTriangle, srcEdge, 1.0);
 
+                                A.fill({0, 0});
+                                B = {0.0, 0.0};
+                                for (unsigned qpSrcIndex = 0; qpSrcIndex < weightedPointsSrc.size() ; ++qpSrcIndex)
+                                {
+                                    const Quadrature::WeightedPoint& wpSrc = weightedPointsSrc.at(qpSrcIndex);
+
+                                    // Vector to point from the origin
+                                    const Node& r_Src_qp = wpSrc.node;
+                                    const Node::vec rho_Src_qp = r_Src_qp.getVec() - nodeOppositeToEdgeSrc.getVec(); // Sign handled later
+
+                                    const std::complex<double> G0weight = G0(r_Test_qp.distance(r_Src_qp)) * wpSrc.weight;
+
+                                    // CRC: Should use real names for quantities (vector potential and scalar potential)
+                                    // Calculate A
+                                    A += rho_Src_qp * G0weight;
+
+                                    // Calculate B
+                                    B += G0weight;
+                                }
+
                                 for (unsigned srcTriangleIndex = 0; srcTriangleIndex < trianglesBoundingSourceEdge.size() ; ++srcTriangleIndex)
                                 {
                                     if (trianglesBoundingSourceEdge.at(srcTriangleIndex) != tSrcIndex)
                                     {
-                                        A.fill({0, 0});
-                                        B = {0.0, 0.0};
-
-                                        for (unsigned qpSrcIndex = 0; qpSrcIndex < weightedPointsSrc.size() ; ++qpSrcIndex)
-                                        {
-                                            const Quadrature::WeightedPoint& wpSrc = weightedPointsSrc.at(qpSrcIndex);
-
-                                            // Vector to point from the origin
-                                            const Node& r_Src_qp = wpSrc.node;
-                                            const Node::vec rho_Src_qp = r_Src_qp.getVec() - nodeOppositeToEdgeSrc.getVec(); // Sign handled later
-
-                                            const std::complex<double> G0weight = G0(r_Test_qp.distance(r_Src_qp)) * wpSrc.weight;
-
-                                            // CRC: Should use real names for quantities (vector potential and scalar potential)
-                                            // Calculate A
-                                            A += rho_Src_qp * G0weight;
-
-                                            // Calculate B
-                                            B += G0weight;
-                                        }
 
                                         double signSrc = RWGBasisFunctionSign(tSrcIndex, trianglesBoundingSourceEdge.at(srcTriangleIndex));
 
