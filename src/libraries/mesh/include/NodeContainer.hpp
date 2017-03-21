@@ -14,9 +14,9 @@ class NodeContainer
 
         void        	setTolerance(double);
         double      	getTolerance() const;
-        SizeType    	add(const Node&);
+        SizeType    	add(Node);
         SizeType	find(const Node&) const;
-        Node		at(SizeType) const;
+        const Node&		at(SizeType) const;
         SizeType    	size() const;
         void        	clear();
 
@@ -25,6 +25,7 @@ class NodeContainer
         std::vector<double>     m_x;
         std::vector<double>     m_y;
         std::vector<double>     m_z;
+        std::vector<Node>		m_nodeList;
         SizeType                m_size;
         double                  m_tolerance;
 

@@ -264,7 +264,7 @@ Quadrature::WeightedPointList_type Quadrature::getTriangleSimplexGaussianQuadrat
     return weightedPoints;
 }
 
-Quadrature::WeightedPointList_type Quadrature::getTriangleGaussianQuadraturePoints(Triangle &T, unsigned maxNumberOfPoints)
+Quadrature::WeightedPointList_type Quadrature::getTriangleGaussianQuadraturePoints(const Triangle &T, unsigned maxNumberOfPoints)
 {
     WeightedPointList_type weightedPoints = getTriangleSimplexGaussianQuadraturePoints(maxNumberOfPoints);
 
@@ -324,7 +324,7 @@ arma::mat Quadrature::getZrotationMatrix(double phi)
     return rotation;
 }
 
-Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZoffset, unsigned maxNumberOfPoints)
+Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(const Triangle &T, double cruxZoffset, unsigned maxNumberOfPoints)
 {
 
     assert(maxNumberOfPoints > 1); // Not sure if it is expected, but a single point does not give correct results
@@ -398,7 +398,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(Triangle T, double cruxZ
     return weightedPoints;
 }
 
-Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node observationPoint, unsigned maxNumberOfPoints)
+Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, const Node& observationPoint, unsigned maxNumberOfPoints)
 {
     WeightedPointList_type weightedPoints;
     WeightedPointList_type weightedPointsSingleTriangle;
@@ -414,30 +414,30 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
     double phi   = atan2(triNormal.x(), triNormal.y());
 
     //CRC: This does not (I think) cater for a triangle in the Y plane
-    arma::mat rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
-    arma::mat invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
+    const arma::mat rotationMatrix = getXrotationMatrix(theta)*getZrotationMatrix(phi);
+    const arma::mat invRotationMatrix = getZrotationMatrix(-phi)*getXrotationMatrix(-theta);
 
     Triangle newT = T.transform(rotationMatrix);
     double zOffset = newT.n1().z();
     //CRC: Should define a gemetrical comparison
     assert(std::fabs(newT.n1().z() - newT.n2().z()) < 1e-6);
     assert(std::fabs(newT.n2().z() - newT.n3().z()) < 1e-6);
-    Node newTZOffsetNode {0.0, 0.0, zOffset};
+    const Node newTZOffsetNode {0.0, 0.0, zOffset};
     //CRC: It should be easier (interface) to change the z values of the nodes of a triangle.
     newT.set(newT.n1()-newTZOffsetNode, newT.n2()-newTZOffsetNode, newT.n3()-newTZOffsetNode);
 
-    Node newObservationPoint = observationPoint.transform(rotationMatrix);
-    Node observationZOffsetNode {0.0, 0.0, newObservationPoint.z()};
-    Node newObservationPointNoZ = newObservationPoint - observationZOffsetNode;
+    const Node newObservationPoint = observationPoint.transform(rotationMatrix);
+    const Node observationZOffsetNode {0.0, 0.0, newObservationPoint.z()};
+    const Node newObservationPointNoZ = newObservationPoint - observationZOffsetNode;
 
-    Node newTriCentre = newT.centre();
+    const Node newTriCentre = newT.centre();
 
     // Split the triangle at the projection of the observation point
     for (unsigned tIndex = 0; tIndex < 3 ; ++tIndex)
     {
-        Node edge     = newT[(tIndex+1)%3] - newT[tIndex];
-        Node toCentre = newTriCentre - newT[tIndex];
-        Node toObs    = newObservationPointNoZ - newT[tIndex];
+        const Node edge     = newT[(tIndex+1)%3] - newT[tIndex];
+        const Node toCentre = newTriCentre - newT[tIndex];
+        const Node toObs    = newObservationPointNoZ - newT[tIndex];
 
         double sign = 1.0;
         if ((edge.cross(toCentre).z() * edge.cross(toObs).z()) < 0.0)
@@ -447,7 +447,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, Node obs
         //CRC: What if triangle is collapsed?
         //CRC: What if observation point is on triangle edge?
 
-        Triangle subTriangle {newT[tIndex], newT[(tIndex+1)%3], newObservationPointNoZ};
+        const Triangle subTriangle {newT[tIndex], newT[(tIndex+1)%3], newObservationPointNoZ};
         weightedPointsSingleTriangle = RAR1S_2D(subTriangle, zOffset, maxNumberOfPoints);
 
         // For each point retruned by RAR1S_2D, add actual point

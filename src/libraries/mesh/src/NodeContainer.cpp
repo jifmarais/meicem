@@ -30,7 +30,7 @@ double NodeContainer::getTolerance() const
     return m_tolerance;
 }
 
-NodeContainer::SizeType NodeContainer::add(const Node &p)
+NodeContainer::SizeType NodeContainer::add(Node p)
 {
     // Check if the point is already in the container
     SizeType index = find(p);
@@ -41,6 +41,7 @@ NodeContainer::SizeType NodeContainer::add(const Node &p)
         m_y.push_back(p.y());
         m_z.push_back(p.z());
         m_size += 1;
+        m_nodeList.push_back(p);
     }
 
     return index;
@@ -66,13 +67,13 @@ NodeContainer::SizeType NodeContainer::find(const Node &p) const
     return NodeContainer::invalidIndex;
 }
 
-Node NodeContainer::at(SizeType index) const
+const Node &NodeContainer::at(SizeType index) const
 {
     assert(index < size());
-
-    Node p;
-    p.set(m_x[index], m_y[index], m_z[index], m_tolerance);
-    return p;
+    return m_nodeList.at(index);
+//    Node p;
+//    p.set(m_x[index], m_y[index], m_z[index], m_tolerance);
+//    return p;
 }
 
 
@@ -91,5 +92,6 @@ void NodeContainer::clear()
     m_x.clear();
     m_y.clear();
     m_z.clear();
+    m_nodeList.clear();
     m_size = 0;
 }

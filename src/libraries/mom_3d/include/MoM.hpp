@@ -17,7 +17,7 @@ class MoM
         void            setTriangleContainer(const TriangleContainer& tContainer);
         arma::cx_mat    fillZmatrixTriangle();
         arma::cx_vec    calculateRHS(PlaneWave pw);
-        void		    writeCurrentsToOS(std::string fname, arma::cx_vec solutionMatrix) const;
+        void		    writeCurrentsToOS(std::string fname, const arma::cx_vec& solutionMatrix) const;
 
         arma::cx_mat    fillZmatrixTriangleEfficient();
         arma::cx_mat    fillZmatrixTriangleInefficient();
@@ -31,9 +31,8 @@ protected:
         unsigned				m_numberOfTestIntegrationPoints;
 
         std::complex<double> 	G0(const double R) const;
-        double 					RWGBasisFunction(const Triangle T, const Edge E) const;
-        double 					divRWGBasisFunction(const Triangle T, const double sign) const;
-        double 					divRWGBasisFunction(const Triangle T, const Edge E, const double sign) const;
+        double 					RWGBasisFunction(const Triangle &T, const Edge &E) const;
+        double 					divRWGBasisFunction(const Triangle& T, const Edge& E, const double sign) const;
         double 					RWGBasisFunctionSign(unsigned baseIndex, unsigned ohterTriangleIndex) const;
 };
 

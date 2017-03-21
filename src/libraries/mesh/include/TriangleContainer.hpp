@@ -17,16 +17,17 @@ class TriangleContainer
         SizeType    		add(Triangle t);
         SizeType    		find(Triangle t) const;
         SizeType                find(SizeType i1, SizeType i2, SizeType i3) const;
-        Triangle     		at(SizeType index) const;
+        const Triangle &at(SizeType index) const;
         SizeType    		size() const;
         bool                    hasCommonNode(SizeType index1, SizeType index2) const;
 
     protected:
     private:
-        NodeContainer& 		m_pointContainer;
+        NodeContainer& 			m_pointContainer;
         std::vector<SizeType>	m_node1;
         std::vector<SizeType>	m_node2;
         std::vector<SizeType>	m_node3;
+        std::vector<Triangle>   m_triangleList;
         double                  m_tolerance;
         SizeType                matchIndices(SizeType ii, SizeType i1, SizeType i2, SizeType i3) const;
 };

@@ -29,6 +29,8 @@ TriangleContainer::SizeType TriangleContainer::add(Triangle t)
     m_node2.push_back(pIndex);
     pIndex = m_pointContainer.add(t.n3());
     m_node3.push_back(pIndex);
+
+    m_triangleList.push_back(t);
     return index;
 }
 
@@ -69,13 +71,14 @@ TriangleContainer::SizeType TriangleContainer::find(Triangle t) const
                 m_pointContainer.find(t.n3()));
 }
 
-Triangle TriangleContainer::at(SizeType index) const
+const Triangle& TriangleContainer::at(SizeType index) const
 {
     assert(index < size());
-    Node p1 = m_pointContainer.at(m_node1[index]);
-    Node p2 = m_pointContainer.at(m_node2[index]);
-    Node p3 = m_pointContainer.at(m_node3[index]);
-    return Triangle {p1, p2, p3};
+//    Node p1 = m_pointContainer.at(m_node1[index]);
+//    Node p2 = m_pointContainer.at(m_node2[index]);
+//    Node p3 = m_pointContainer.at(m_node3[index]);
+//    return Triangle {p1, p2, p3};
+    return m_triangleList.at(index);
 }
 
 NodeContainer::SizeType TriangleContainer::size() const

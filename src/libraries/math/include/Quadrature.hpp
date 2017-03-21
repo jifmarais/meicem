@@ -24,9 +24,9 @@ class Quadrature
 
         WeightedPoint1DList_type get1DGaussianQuadraturePoints(unsigned maxNumberOfPoints);
         WeightedPointList_type 	getTriangleSimplexGaussianQuadraturePoints(unsigned maxNumberOfPoints);
-        WeightedPointList_type   RAR1S(const Triangle& T, Node observationPoint, unsigned maxNumberOfPoints);
-        WeightedPointList_type   RAR1S_2D(Triangle T, double offset, unsigned maxNumberOfPoints);
-        Quadrature::WeightedPointList_type getTriangleGaussianQuadraturePoints(Triangle &T, unsigned maxNumberOfPoints);
+        WeightedPointList_type   RAR1S(const Triangle& T, const Node &observationPoint, unsigned maxNumberOfPoints);
+        WeightedPointList_type   RAR1S_2D(const Triangle& T, double offset, unsigned maxNumberOfPoints);
+        Quadrature::WeightedPointList_type getTriangleGaussianQuadraturePoints(const Triangle &T, unsigned maxNumberOfPoints);
 protected:
 private:
         static double RAR1SuFromXY(double x, double y);

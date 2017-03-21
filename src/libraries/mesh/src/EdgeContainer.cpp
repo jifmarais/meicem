@@ -39,14 +39,10 @@ const std::vector<TriangleContainer::SizeType>& EdgeContainer::associatedTriagle
     return (m_edgeToTriangleIndecesMap.at(index));
 }
 
-Edge EdgeContainer::at(SizeType index) const
+const Edge& EdgeContainer::at(SizeType index) const
 {
     assert(index < size());
-    Edge e;
-    auto pContainer = m_triangleContainer.getPointContainer();
-    e.set(pContainer.at(m_node1Index.at(index)), pContainer.at(m_node2Index.at(index)));
-    e.setSortedAssociatedTriangles(m_edgeToTriangleIndecesMap.at(index));
-    return e;
+    return m_edgeList.at(index);
 }
 
 void EdgeContainer::buildTriangleToEdgeMap()
@@ -75,6 +71,7 @@ void EdgeContainer::buildNonboundaryEdgeList()
 {
     NodeContainer pContainer = m_triangleContainer.getPointContainer();
     m_edgeToTriangleIndecesMap.clear();
+    m_edgeList.clear();
 
     // Loop over all triangles and build a unique list of non-boundary edges.
     for (unsigned indexOuter = 0; indexOuter < m_triangleContainer.size() ; ++ indexOuter)
@@ -106,18 +103,23 @@ void EdgeContainer::buildNonboundaryEdgeList()
                  if (edgePointList.size() == 2)
                  {
                      // Found a common edge
+                     Edge e;
                      std::sort(edgePointList.begin(), edgePointList.end());
+                     e.set(pContainer.at(edgePointList.at(0)), pContainer.at(edgePointList.at(1)));
                      m_node1Index.push_back(edgePointList.at(0));
                      m_node2Index.push_back(edgePointList.at(1));
                      // Add items in sorted order (smallest to largest - basis function direction)
                      if (indexOuter < indexInner)
                      {
+                         e.setSortedAssociatedTriangles({indexOuter, indexInner});
                          m_edgeToTriangleIndecesMap.push_back({indexOuter, indexInner});
                      }
                      else
                      {
+                         e.setSortedAssociatedTriangles({indexInner, indexOuter});
                          m_edgeToTriangleIndecesMap.push_back({indexInner, indexOuter});
                      }
+                     m_edgeList.push_back(e);
                  }
             }
 
