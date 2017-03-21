@@ -333,10 +333,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(const Triangle &T, doubl
     assert(std::fabs(T.n3().z()) < 1e-6);
 
     WeightedPointList_type weightedPoints;
-    WeightedPoint wp;
-    WeightedPoint1DList_type weightedPoints1D;
-
-    weightedPoints1D = get1DGaussianQuadraturePoints(maxNumberOfPoints);
+    const WeightedPoint1DList_type weightedPoints1D = get1DGaussianQuadraturePoints(maxNumberOfPoints);
 
     Node tempV1 = T.n1() - T.n3();
     Node tempV2 = T.n2() - T.n3();
@@ -387,9 +384,10 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(const Triangle &T, doubl
             double yPoint = RAR1SyFromVUZ(vPoint, uPoint, cruxZoffset);
             double xPoint = RAR1SxFromYU(yPoint, uPoint);
 
-            Node tempNewPoint {xPoint, flip*yPoint, 0.0};
+            const Node tempNewPoint {xPoint, flip*yPoint, 0.0};
+            WeightedPoint wp;
             wp.node = tempNewPoint.transform(invZrotation) + T.n3();
-            double R = vPoint*vPoint + absCruxZoffset;
+            const double R = vPoint*vPoint + absCruxZoffset;
             wp.weight = itii->weight * itjj->weight * vRange * uRange * 0.25 * RAR1Sdxdy(uPoint, vPoint, R);
             weightedPoints.push_back(wp);
         }
@@ -401,7 +399,6 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S_2D(const Triangle &T, doubl
 Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, const Node& observationPoint, unsigned maxNumberOfPoints)
 {
     WeightedPointList_type weightedPoints;
-    WeightedPointList_type weightedPointsSingleTriangle;
     WeightedPoint wp;
 
     Node triNormal = T.normal();
@@ -410,6 +407,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, const No
         triNormal *= 1.0;
     }
 
+//    assert(triNormal.z() > 1e-6);
     double theta = acos(triNormal.z());
     double phi   = atan2(triNormal.x(), triNormal.y());
 
@@ -448,7 +446,7 @@ Quadrature::WeightedPointList_type Quadrature::RAR1S(const Triangle& T, const No
         //CRC: What if observation point is on triangle edge?
 
         const Triangle subTriangle {newT[tIndex], newT[(tIndex+1)%3], newObservationPointNoZ};
-        weightedPointsSingleTriangle = RAR1S_2D(subTriangle, zOffset, maxNumberOfPoints);
+        const WeightedPointList_type weightedPointsSingleTriangle = RAR1S_2D(subTriangle, zOffset, maxNumberOfPoints);
 
         // For each point retruned by RAR1S_2D, add actual point
         for (auto it = weightedPointsSingleTriangle.begin(); it < weightedPointsSingleTriangle.end(); ++it)

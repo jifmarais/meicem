@@ -61,7 +61,7 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
 
     assert(m_frequency > 0.0);
 
-    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 15.0 ;
+    double accurateIntegrationDistance = (EMconst::c0 / m_frequency) / 15.0 ; //With this value, it is basically disabled and thus only use RAR1S when calculating self impedance
 
     Quadrature quadrature;
 
@@ -101,9 +101,10 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
 
 
                 std::vector<Quadrature::WeightedPoint> weightedPointsSrc;
-                if (srcTriangle.centre().distance(r_Test_qp) <  accurateIntegrationDistance)
+                if ((srcTriangle.centre().distance(r_Test_qp) <  accurateIntegrationDistance) ||
+                    (tTestIndex == tSrcIndex) )
                 {
-                    weightedPointsSrc = quadrature.RAR1S(srcTriangle, r_Test_qp, m_numberOfSourceIntegrationPoints*2);
+                    weightedPointsSrc = quadrature.RAR1S(srcTriangle, r_Test_qp, m_numberOfSourceIntegrationPoints);
                 }
                 else
                 {
