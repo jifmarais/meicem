@@ -74,10 +74,6 @@ TriangleContainer::SizeType TriangleContainer::find(Triangle t) const
 const Triangle& TriangleContainer::at(SizeType index) const
 {
     assert(index < size());
-//    Node p1 = m_pointContainer.at(m_node1[index]);
-//    Node p2 = m_pointContainer.at(m_node2[index]);
-//    Node p3 = m_pointContainer.at(m_node3[index]);
-//    return Triangle {p1, p2, p3};
     return m_triangleList.at(index);
 }
 

@@ -29,8 +29,6 @@ protected:
 
         std::vector<Edge>						m_edgeList;
         const TriangleContainer&                m_triangleContainer;
-        std::vector<NodeContainer::SizeType>	m_node1Index;
-        std::vector<NodeContainer::SizeType>	m_node2Index;
         std::vector<std::vector<TriangleContainer::SizeType>> m_edgeToTriangleIndecesMap;
         std::vector<std::vector<EdgeContainer::SizeType>> 	  m_triangleToEdgeIndecesMap;
 };

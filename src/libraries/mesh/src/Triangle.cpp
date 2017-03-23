@@ -209,6 +209,12 @@ Node& Triangle::operator[](unsigned index)
     return m_nodes[index];
 }
 
+const Node& Triangle::at(unsigned index) const
+{
+    assert(index < 3);
+    return m_nodes[index];
+}
+
 const Node& Triangle::n1() const
 {
     return m_nodes[0];

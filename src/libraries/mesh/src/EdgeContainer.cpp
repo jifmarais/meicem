@@ -24,13 +24,13 @@ const TriangleContainer& EdgeContainer::getTriangleContainer() const
 Node EdgeContainer::node1At(SizeType index) const
 {
     assert(index < size());
-    return m_triangleContainer.getPointContainer().at(m_node1Index.at(index));
+    return m_edgeList.at(index).n1();
 }
 
 Node EdgeContainer::node2At(SizeType index) const
 {
     assert(index < size());
-    return m_triangleContainer.getPointContainer().at(m_node2Index.at(index));
+    return m_edgeList.at(index).n2();
 }
 
 const std::vector<TriangleContainer::SizeType>& EdgeContainer::associatedTriaglesAt(SizeType index) const
@@ -76,15 +76,13 @@ void EdgeContainer::buildNonboundaryEdgeList()
     // Loop over all triangles and build a unique list of non-boundary edges.
     for (unsigned indexOuter = 0; indexOuter < m_triangleContainer.size() ; ++ indexOuter)
     {
-        Triangle tOuter;
-        tOuter = m_triangleContainer.at(indexOuter);
+        const Triangle& tOuter = m_triangleContainer.at(indexOuter);
 
         for (unsigned indexInner = indexOuter + 1; indexInner < m_triangleContainer.size() ; ++ indexInner)
         {
             if ( m_triangleContainer.hasCommonNode(indexInner, indexOuter) )
             {
-                 Triangle tInner;
-                 tInner = m_triangleContainer.at(indexInner);
+                 const Triangle& tInner = m_triangleContainer.at(indexInner);
 
                  // Find common nodes
                  std::vector<NodeContainer::SizeType> edgePointList;
@@ -92,9 +90,9 @@ void EdgeContainer::buildNonboundaryEdgeList()
                  {
                      for (unsigned jj = 0; jj < 3; ++jj)
                      {
-                         if (tOuter[ii] == tInner[jj])
+                         if (tOuter.at(ii) == tInner.at(jj))
                          {
-                             edgePointList.push_back(pContainer.find(tOuter[ii]));
+                             edgePointList.push_back(pContainer.find(tOuter.at(ii)));
                          }
                      }
                  }
@@ -106,8 +104,6 @@ void EdgeContainer::buildNonboundaryEdgeList()
                      Edge e;
                      std::sort(edgePointList.begin(), edgePointList.end());
                      e.set(pContainer.at(edgePointList.at(0)), pContainer.at(edgePointList.at(1)));
-                     m_node1Index.push_back(edgePointList.at(0));
-                     m_node2Index.push_back(edgePointList.at(1));
                      // Add items in sorted order (smallest to largest - basis function direction)
                      if (indexOuter < indexInner)
                      {
@@ -131,26 +127,10 @@ void EdgeContainer::buildNonboundaryEdgeList()
 
 NodeContainer::SizeType EdgeContainer::size() const
 {
-    return m_node1Index.size();
+    return m_edgeList.size();
 }
 
 const std::vector<EdgeContainer::SizeType>& EdgeContainer::getEdgeIndecesOnTriangle(EdgeContainer::SizeType tIndex) const
 {
-//    //JIF: This method does not have a test
-//    std::vector<SizeType> indexList;
-
-//    for (unsigned eIndex = 0; eIndex < m_edgeToTriangleIndecesMap.size(); ++eIndex)
-//    {
-//        for (unsigned tAssociatedIndex = 0; tAssociatedIndex < m_edgeToTriangleIndecesMap.at(eIndex).size(); ++tAssociatedIndex)
-//        {
-//            if (m_edgeToTriangleIndecesMap.at(eIndex).at(tAssociatedIndex) == tIndex)
-//            {
-//                // edge is associated with the triangle
-//                indexList.push_back(eIndex);
-//            }
-//        }
-//    }
-
-//    return indexList;
     return m_triangleToEdgeIndecesMap.at(tIndex);
 }

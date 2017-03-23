@@ -14,7 +14,8 @@ class Triangle
         void    set(Node, Node, Node);
         bool    operator==(const Triangle& rhs) const;
         bool    operator!=(const Triangle& rhs) const;
-        Node&    operator[](unsigned index);
+        Node&   operator[](unsigned index);
+        const Node& at(unsigned index) const;
         double  area() const;
         Node	centre() const;
         const Node &getOppositeNode(const Node p1, const Node p2) const;

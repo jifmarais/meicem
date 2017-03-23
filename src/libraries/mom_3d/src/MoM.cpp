@@ -120,8 +120,8 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                     const auto& trianglesBoundingTestEdge = testTriangleEdge.getTriangles();
                     const Node& nodeOppositeToTestEdge = testTriangle.getOppositeNode(testTriangleEdge.n1(), testTriangleEdge.n2());
                     const Node::vec rho_Test_qp = r_Test_qp.getVec() - nodeOppositeToTestEdge.getVec(); // Sign handled later
-                    double RWGTest = RWGBasisFunction(testTriangle, testTriangleEdge);
-                    double divRWGTestNoSign = divRWGBasisFunction(testTriangle, testTriangleEdge, 1.0);
+                    const double RWGTest = RWGBasisFunction(testTriangle, testTriangleEdge);
+                    const double divRWGTestNoSign = divRWGBasisFunction(testTriangle, testTriangleEdge, 1.0);
 
                     for (unsigned testTriangleIndex = 0; testTriangleIndex < trianglesBoundingTestEdge.size() ; ++testTriangleIndex)
                     {
@@ -136,8 +136,8 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                                 const Edge& srcEdge = eContainer.at(sourceIndex);
                                 const auto& trianglesBoundingSourceEdge = srcEdge.getTriangles();
                                 const Node& nodeOppositeToEdgeSrc = srcTriangle.getOppositeNode(srcEdge.n1(), srcEdge.n2());
-                                double RWGSrc = RWGBasisFunction(srcTriangle, srcEdge);
-                                double divRWGSrcNoSign = divRWGBasisFunction(srcTriangle, srcEdge, 1.0);
+                                const double RWGSrc = RWGBasisFunction(srcTriangle, srcEdge);
+                                const double divRWGSrcNoSign = divRWGBasisFunction(srcTriangle, srcEdge, 1.0);
 
                                 A.fill({0, 0});
                                 B = {0.0, 0.0};
@@ -159,17 +159,16 @@ arma::cx_mat MoM::fillZmatrixTriangleEfficient()
                                     B += G0weight;
                                 }
 
+                                const std::complex<double> Adotfm = RWGTest * RWGSrc * signTest * ( dot(A, rho_Test_qp) ) * wpTest.weight;
+                                const std::complex<double> tmp = divRWGTestNoSign * signTest * B * divRWGSrcNoSign * wpTest.weight;
+                                const std::complex<double> val = m_k*Adotfm - tmp/m_k;
+
                                 for (unsigned srcTriangleIndex = 0; srcTriangleIndex < trianglesBoundingSourceEdge.size() ; ++srcTriangleIndex)
                                 {
                                     if (trianglesBoundingSourceEdge.at(srcTriangleIndex) != tSrcIndex)
                                     {
-
                                         double signSrc = RWGBasisFunctionSign(tSrcIndex, trianglesBoundingSourceEdge.at(srcTriangleIndex));
-
-                                        const std::complex<double> Adotfm = RWGTest * RWGSrc * signSrc * signTest * ( dot(A, rho_Test_qp) );
-                                        const std::complex<double> tmp = divRWGTestNoSign * signTest * B * divRWGSrcNoSign*signSrc;
-
-                                        Zmatrix(testIndex, sourceIndex) += (m_k*Adotfm - tmp/m_k) * wpTest.weight;
+                                        Zmatrix(testIndex, sourceIndex) += signSrc * val ;
                                     }
                                 }
                             }
